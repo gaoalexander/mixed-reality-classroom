@@ -1,4 +1,4 @@
-# Mixed-Reality-Classroom
+# Mixed Reality Classroom
 
 Server program to be deployed on cloud platform (Google Cloud).
 
