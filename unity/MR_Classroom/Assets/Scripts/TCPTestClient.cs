@@ -2,7 +2,9 @@ using System;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Collections.Generic;
 using UnityEngine;
+using SimpleJSON;
 
 public class TCPTestClient : MonoBehaviour
 {
@@ -10,6 +12,11 @@ public class TCPTestClient : MonoBehaviour
     public Action<TCPTestClient> OnDisconnected = delegate { };
     public Action<string> OnLog = delegate { };
     public Action<TCPTestServer.ServerMessage> OnMessageReceived = delegate { };
+
+    public GameObject[] objects;
+    Dictionary<int, GameObject> grabbableObjects;
+
+    public int id;
 
     public bool IsConnected
     {
@@ -31,7 +38,27 @@ public class TCPTestClient : MonoBehaviour
 
     private void Start()
     {
+        for(int i = 0; i < objects.Length; i++)
+        {
+            grabbableObjects.Add(objects[i].GetComponent<Grab>().objectId, objects[i]);
+        }
         ConnectToTcpServer();
+    }
+
+    private void Update()
+    {
+
+    }
+
+    private void UpdateAllObjects(TCPTestServer.ServerMessage serverMessage)
+    {
+        JSONNode current_data = JSON.Parse(serverMessage.Data);
+        //Loop through all objects and update them...
+       for(int i = 0; i < current_data.Count; i++)
+        {
+            GameObject current = grabbableObjects[Int32.Parse(current_data[i]["uid"])];
+            current.transform.position = new Vector3(current_data[i]["x"], current_data[i]["y"], current_data[i]["z"]);
+        }
     }
 
         /// <summary>   

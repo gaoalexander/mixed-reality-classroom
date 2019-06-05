@@ -29,6 +29,8 @@ public class Grab : MonoBehaviour, IPointerDownHandler
     private float lastTouchCoor;
 
     public TCPTestClient client;
+
+    public int objectId;
     
     // these OnPointer functions are automatically called when
     // the pointer interacts with a game object that this script is attached to
@@ -117,8 +119,12 @@ public class Grab : MonoBehaviour, IPointerDownHandler
     public JSONNode GrabRequest(Vector3 position)
     {
         JSONNode node = new JSONObject();
-        node["type"] = "OBJECT";
-        node[this.name] = position;
+        node["type"] = "object";
+        node["lockid"] = client.id;
+        node["uid"] = objectId;
+        node["x"] = position.x;
+        node["y"] = position.y;
+        node["z"] = position.z;
         return node;
     }
 }
