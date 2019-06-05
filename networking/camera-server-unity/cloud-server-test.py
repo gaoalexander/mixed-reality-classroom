@@ -9,13 +9,7 @@ from cv2 import aruco
 
 # CAMERA CLIENT - SERVER SOCKET
 '''
-TCP_IP_ADDRESS = "127.0.0.1"                                # LAN IP ADDRESS OF SERVER
-TCP_PORT_NO = 20380
-serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-serversocket.bind(('', TCP_PORT_NO))
-serversocket.listen(5)
-clientsocket, address = serversocket.accept()
+
 
  I don't think we need this anymore, given that the SocketServer below is connecting to unity clients
 # SERVER - UITY CLIENT SOCKET
@@ -31,6 +25,64 @@ clientsocket2.setblocking(False)
 '''
 #-----------------------------------------------------------------------------------
 # INITIALIZE / DECLARE GLOBAL VARIABLES
+
+
+'''
+import socketserver
+import threading
+import json
+
+state = {}
+clients = {}
+
+class MyTCPHandler(socketserver.BaseRequestHandler):
+    """
+    The RequestHandler class for our server.
+    It is instantiated once per connection to the server, and must
+    override the handle() method to implement communication to the
+    client.
+    """
+
+    def handle(self):
+        # self.request is the TCP socket connected to the client
+        self.data = self.request.recv(1024).strip()
+        #print "{} wrote:".format(self.client_address[0])
+        print (self.data)
+        clients[self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1])] = self.request
+        senddata = {}
+        
+        data = json.loads(self.data)
+        if (data["type"] == "object"):
+                if (state[data['uid']] is not None and state[data['uid']]['lockid'] != data['lockid'] and state[data['uid']]['lockid'] != ""):
+                        print("object in use")
+                else:
+                        state[data['uid']] = data
+                senddata = state
+                senddata["type"] = "object"
+        elif (data["type"] == "check"):
+                senddata["type"] = "check"
+                senddata["success"] = np.array_equal(combination_ids,target)
+        for client in clients.values():
+                client.sendall(json.dumps(senddata))
+
+HOST, PORT = "", 20390
+
+# Create the server, binding to localhost on port 9999
+server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
+
+# Activate the server; this will keep running until you
+# interrupt the program with Ctrl-C
+t = threading.Thread(target=server.serve_forever)
+t.setDaemon(True) # don't hang on exit
+t.start()
+#-----------------------------------------------------------------------------------
+TCP_IP_ADDRESS = "127.0.0.1"                                # LAN IP ADDRESS OF SERVER
+TCP_PORT_NO = 20380
+serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+serversocket.bind(('', TCP_PORT_NO))
+serversocket.listen(5)
+clientsocket, address = serversocket.accept()
 
 buf = []
 bytesrecvd = 0
@@ -63,55 +115,6 @@ def detectMarkers(image_array):
         return combination_ids
 
 #-----------------------------------------------------------------------------------
-'''
-import socketserver
-import threading
-
-state = {}
-clients = {}
-
-class MyTCPHandler(socketserver.BaseRequestHandler):
-    """
-    The RequestHandler class for our server.
-    It is instantiated once per connection to the server, and must
-    override the handle() method to implement communication to the
-    client.
-    """
-
-    def handle(self):
-        # self.request is the TCP socket connected to the client
-        self.data = self.request.recv(1024).strip()
-        #print "{} wrote:".format(self.client_address[0])
-        print (self.data)
-        clients[self.request.getpeername() + ":" + self.request.gethostname()] = self.request
-        senddata = {}
-        
-        data = json.loads(self.data)
-        if (data["type"] == "object"):
-                if (state[data['uid']] is not None and state[data['uid']]['lockid'] != data['lockid'] and state[data['uid']]['lockid'] != ""):
-                        print("object in use")
-                else:
-                        state[data['uid']] = data
-                senddata = state
-                senddata["type"] = "object"
-        elif (data["type"] == "check"):
-                senddata["type"] = "check"
-                senddata["success"] = np.array_equal(combination_ids,target)
-        for client in clients.values():
-                client.sendall(json.dumps(senddata))
-
-HOST, PORT = "", 20390
-
-# Create the server, binding to localhost on port 9999
-server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
-
-# Activate the server; this will keep running until you
-# interrupt the program with Ctrl-C
-t = threading.Thread(target=server.serve_forever)
-t.setDaemon(True) # don't hang on exit
-t.start()
-#-----------------------------------------------------------------------------------
-'''
 
 while True:
         data = clientsocket.recv(DATALEN)
@@ -129,7 +132,8 @@ while True:
                 print(detected)
                 cv2.imshow('local', imarr)
                 cv2.waitKey(1)
-                
+'''
+
                 b_array = bytearray()
                 size = len(detected)
                 sbytes = size.to_bytes(2, 'little')
