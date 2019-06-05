@@ -49,6 +49,7 @@ public class Grab : MonoBehaviour, IPointerDownHandler
     // Use this for initialization
     private void Start()
     {
+        
         lastTouchCoor = 0.5f;
         rigidBody = this.gameObject.GetComponent<Rigidbody>();
         originalConstraints = rigidBody.constraints;
@@ -57,10 +58,9 @@ public class Grab : MonoBehaviour, IPointerDownHandler
     // Update is called once per frame
     private void Update()
     {
-    
-      
-            // stop grabbing if the user isn't clicking
-          if (isGrabbing == true && MiraController.ClickButton == false)
+
+        // stop grabbing if the user isn't clicking
+        if (isGrabbing == true && MiraController.ClickButton == false)
         {
             rigidBody.constraints = originalConstraints;
             isGrabbing = false;

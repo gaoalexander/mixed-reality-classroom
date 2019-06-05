@@ -44,26 +44,34 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
     """
 
     def handle(self):
-        # self.request is the TCP socket connected to the client
-        self.data = self.request.recv(1024).strip()
-        #print "{} wrote:".format(self.client_address[0])
-        print (self.data)
         clients[self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1])] = self.request
-        senddata = {}
-        
-        data = json.loads(self.data)
-        if (data["type"] == "object"):
-                if (data['uid'] in state and state[data['uid']]['lockid'] != data['lockid'] and state[data['uid']]['lockid'] != ""):
-                        print("object in use")
-                else:
-                        state[data['uid']] = data
-                senddata = state
-                senddata["type"] = "object"
-        elif (data["type"] == "check"):
-                senddata["type"] = "check"
-                senddata["success"] = np.array_equal(combination_ids,target)
-        for client in clients.values():
-                client.sendall(json.dumps(senddata).encode('utf-8'))
+
+        while(True):
+            try:
+                # self.request is the TCP socket connected to the client
+                self.data = self.request.recv(4096).strip()
+            except:
+                print ("cannot receive data")
+                return
+            if not self.data:
+                return
+            #print "{} wrote:".format(self.client_address[0])
+            print (self.data)
+            senddata = {}
+            array = self.data.decode('utf-8').split('`')
+            data = json.loads(array[-2])
+            if (data["type"] == "object"):
+                    if (data['uid'] in state and state[data['uid']]['lockid'] != data['lockid'] and state[data['uid']]['lockid'] != ""):
+                            print("object in use")
+                    else:
+                            state[data['uid']] = data
+                    senddata = state
+                    senddata["type"] = "object"
+            elif (data["type"] == "check"):
+                    senddata["type"] = "check"
+                    senddata["success"] = np.array_equal(combination_ids,target)
+            for client in clients.values():
+                    client.sendall(json.dumps(senddata).encode('utf-8'))
 
 HOST, PORT = "", 20390
 
@@ -72,11 +80,16 @@ server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
 
 # Activate the server; this will keep running until you
 # interrupt the program with Ctrl-C
-#t = threading.Thread(target=server.serve_forever)
-#t.setDaemon(True) # don't hang on exit
-#t.start()
-server.serve_forever()
+t = threading.Thread(target=server.serve_forever)
+t.setDaemon(True) # don't hang on exit
+t.start()
+
+while(True):
+    pass
+
+#server.serve_forever()
 #-----------------------------------------------------------------------------------
+'''
 TCP_IP_ADDRESS = "127.0.0.1"                                # LAN IP ADDRESS OF SERVER
 TCP_PORT_NO = 20380
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -133,6 +146,7 @@ while True:
                 print(detected)
                 cv2.imshow('local', imarr)
                 cv2.waitKey(1)
+                '''
 '''
 
                 b_array = bytearray()

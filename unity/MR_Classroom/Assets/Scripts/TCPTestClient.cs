@@ -38,6 +38,7 @@ public class TCPTestClient : MonoBehaviour
 
     private void Start()
     {
+        grabbableObjects = new Dictionary<int, GameObject>();
         for(int i = 0; i < objects.Length; i++)
         {
             grabbableObjects.Add(objects[i].GetComponent<Grab>().objectId, objects[i]);
@@ -50,15 +51,28 @@ public class TCPTestClient : MonoBehaviour
 
     }
 
-    private void UpdateAllObjects(TCPTestServer.ServerMessage serverMessage)
+    private void UpdateAllObjects(string serverMessage)
     {
-        JSONNode current_data = JSON.Parse(serverMessage.Data);
-        //Loop through all objects and update them...
-       for(int i = 0; i < current_data.Count; i++)
-        {
-            GameObject current = grabbableObjects[Int32.Parse(current_data[i]["uid"])];
-            current.transform.position = new Vector3(current_data[i]["x"], current_data[i]["y"], current_data[i]["z"]);
-        }
+            Debug.Log("HERE IS THE SERVER MESSAGE :" + serverMessage);
+            JSONNode current_data = JSON.Parse(serverMessage);
+            //Loop through all objects and update them...
+            for (int i = 0; i < current_data.Count; i++)
+            {
+                Debug.Log(current_data[i]);
+               if(current_data[i]["uid"] != null) {
+                Debug.Log("Updating all objects");
+                int uid = current_data[i]["uid"].AsInt;
+                float x = current_data[i]["x"].AsFloat;
+                float y = current_data[i]["y"].AsFloat;
+                float z = current_data[i]["z"].AsFloat;
+                GameObject current = grabbableObjects[uid];
+                current.transform.position = new Vector3(x, y, z);
+                Debug.Log(string.Format("updated {0} position: {1}, {2}, {3}", uid, x, y, z));
+                }
+
+            }
+        
+      
     }
 
         /// <summary>   
@@ -102,15 +116,21 @@ public class TCPTestClient : MonoBehaviour
                     // Read incoming stream into byte array.                    
                     while (running && stream.CanRead)
                     {
+                        //Debug.Log("BEFORE READING:");
                         length = stream.Read(bytes, 0, bytes.Length);
+                        //Debug.Log("AFTER READING:");
                         if (length != 0)
                         {
                             var incomingData = new byte[length];
                             Array.Copy(bytes, 0, incomingData, 0, length);
                             // Convert byte array to string message.                        
                             string serverJson = Encoding.ASCII.GetString(incomingData);
-                            TCPTestServer.ServerMessage serverMessage = JsonUtility.FromJson<TCPTestServer.ServerMessage>(serverJson);
-                            MessageReceived(serverMessage);
+                            //Debug.Log("MESSAGE RECEIVED");
+                            //Debug.Log(JSON.Parse(serverJson).ToString());
+                            UpdateAllObjects(serverJson);
+
+                            //TCPTestServer.ServerMessage serverMessage = JsonUtility.FromJson<TCPTestServer.ServerMessage>(serverJson);
+
                         }
                     }
                 }
@@ -133,7 +153,8 @@ public class TCPTestClient : MonoBehaviour
 
     public void MessageReceived(TCPTestServer.ServerMessage serverMessage)
     {
-        OnMessageReceived(serverMessage);
+       
+        //OnMessageReceived(serverMessage);
     }
 
     /// <summary>   
@@ -150,7 +171,7 @@ public class TCPTestClient : MonoBehaviour
                 if (writestream.CanWrite)
                 {
                     // Convert string message to byte array.                 
-                    byte[] clientMessageAsByteArray = Encoding.ASCII.GetBytes(clientMessage);
+                    byte[] clientMessageAsByteArray = Encoding.ASCII.GetBytes(clientMessage+"`");
                     // Write byte array to socketConnection stream.                 
                     writestream.Write(clientMessageAsByteArray, 0, clientMessageAsByteArray.Length);
                     OnLog("sending:" + clientMessage);
@@ -173,5 +194,6 @@ public class TCPTestClient : MonoBehaviour
     public void OnApplicationQuit()
     {
         clientReceiveThread.Join();
+        CloseConnection();
     }
 }
