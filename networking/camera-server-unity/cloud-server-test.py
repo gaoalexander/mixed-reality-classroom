@@ -107,9 +107,10 @@ server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
 
 # Activate the server; this will keep running until you
 # interrupt the program with Ctrl-C
-t = threading.Thread(target=server.serve_forever)
-t.setDaemon(True) # don't hang on exit
-t.start()
+#t = threading.Thread(target=server.serve_forever)
+#t.setDaemon(True) # don't hang on exit
+#t.start()
+server.serve_forever()
 #-----------------------------------------------------------------------------------
 '''
 
