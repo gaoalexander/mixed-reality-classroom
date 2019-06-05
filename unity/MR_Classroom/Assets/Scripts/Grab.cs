@@ -13,11 +13,12 @@
 
 using UnityEngine;
 using UnityEngine.EventSystems;
+using SimpleJSON;
 
 /// <summary>
 /// An example of how to use MiraController and the event system to grab 3D objects with Unity's physics simulation system
 /// </summary>
-public class MiraPhysicsGrabExample : MonoBehaviour, IPointerDownHandler
+public class Grab : MonoBehaviour, IPointerDownHandler
 {
     private bool isGrabbing = false;
 
@@ -27,8 +28,8 @@ public class MiraPhysicsGrabExample : MonoBehaviour, IPointerDownHandler
     private float lastTouchPosition;
     private float lastTouchCoor;
 
-    public MiraController controller;
-
+    public TCPTestClient client;
+    
     // these OnPointer functions are automatically called when
     // the pointer interacts with a game object that this script is attached to
     public void OnPointerDown(PointerEventData pointerData)
@@ -108,7 +109,16 @@ public class MiraPhysicsGrabExample : MonoBehaviour, IPointerDownHandler
             // adjusted by the users touch, in the direction it was from the controller
 			Vector3 newLength = MiraController.Direction.normalized * (currentDistance + touchInfluence + touchIncrement);
             Vector3 newPosition = MiraController.Position + newLength;
-            transform.position = newPosition;
+            //transform.position = newPosition;
+            client.SendTCPMessage(GrabRequest(newPosition).ToString()); 
         }
+    }
+
+    public JSONNode GrabRequest(Vector3 position)
+    {
+        JSONNode node = new JSONObject();
+        node["type"] = "OBJECT";
+        node[this.name] = position;
+        return node;
     }
 }
