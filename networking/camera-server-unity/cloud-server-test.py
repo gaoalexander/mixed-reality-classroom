@@ -53,7 +53,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         
         data = json.loads(self.data)
         if (data["type"] == "object"):
-                if (state[data['uid']] is not None and state[data['uid']]['lockid'] != data['lockid'] and state[data['uid']]['lockid'] != ""):
+                if (data['uid'] in state and state[data['uid']]['lockid'] != data['lockid'] and state[data['uid']]['lockid'] != ""):
                         print("object in use")
                 else:
                         state[data['uid']] = data
@@ -63,7 +63,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                 senddata["type"] = "check"
                 senddata["success"] = np.array_equal(combination_ids,target)
         for client in clients.values():
-                client.sendall(json.dumps(senddata))
+                client.sendall(json.dumps(senddata).encode('utf-8'))
 
 HOST, PORT = "", 20390
 
