@@ -138,8 +138,8 @@ clientsocket, address = serversocket.accept()
 buf = []
 bytesrecvd = 0
 
-WIDTH = 640
-HEIGHT = 480
+WIDTH = 1280
+HEIGHT = 720
 DATALEN = WIDTH * HEIGHT
 frame = 1
 
@@ -154,7 +154,7 @@ parameters =  aruco.DetectorParameters_create()
 def detectMarkers(image_array):
         corners, ids, rejectedImgPoints = aruco.detectMarkers(image_array, aruco_dict, parameters=parameters)
         if ids is None:
-                combination_ids = [4]
+                return None
         else:
                 combination_ids = np.reshape(ids, ids.shape[0])
         combination_ids.sort()
@@ -162,27 +162,38 @@ def detectMarkers(image_array):
         if np.array_equal(combination_ids,target):
                 print("YOU PICKED THE RIGHT PIECES.")
         else: print("KEEP TRYING.")
-        gray = aruco.drawDetectedMarkers(imarr, corners)
+        gray = aruco.drawDetectedMarkers(image_array, corners)
         return combination_ids
 
 #-----------------------------------------------------------------------------------
 
+count = 0;
 while True:
         data = clientsocket.recv(DATALEN)
         if not data: break
         bytesrecvd += len(data)
         buf.extend(data)
-
         if bytesrecvd >= DATALEN:
                 # print("buffer complete!")
+                count += 1
+                print(count)
                 flattened = buf[0:DATALEN]
                 imarr = np.array(flattened, dtype=np.uint8)
                 imarr = np.reshape(imarr, (HEIGHT, WIDTH))
-
-                detected = detectMarkers(imarr)
-                print(detected)
                 cv2.imshow('local', imarr)
                 cv2.waitKey(1)
+                detected = detectMarkers(imarr)
+                print(detected)
+                if(detected is not None):
+                    senddata = {}
+                    senddata["type"] = "active"
+                    senddata["ids"] = detected.tolist()
+                    for client in clients.values():
+                        client.sendall(json.dumps(senddata).encode('utf-8'))
+                buf = []                # CLEAR BUFFER
+                bytesrecvd = 0          # RESET BYTES RECEIVED COUNTER
+             
+
                 
 '''
 
@@ -197,7 +208,6 @@ while True:
                         clientsocket2.send(b_array)
                 except:
                         print("client closed")
-                buf = []                # CLEAR BUFFER
-                bytesrecvd = 0          # RESET BYTES RECEIVED COUNTER
-             
-'''
+                        '''
+              
+

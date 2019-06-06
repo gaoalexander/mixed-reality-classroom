@@ -9,9 +9,9 @@ import time
 #-----------------------------------------------------------------------------------
 # SETUP SOCKETS
 
-cap = cv2.VideoCapture(0)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+cap = cv2.VideoCapture(1)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 print("FPS:",cap.get(cv2.CAP_PROP_FPS))
 print("RES:",cap.get(cv2.CAP_PROP_FRAME_WIDTH),cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
@@ -26,21 +26,21 @@ clientsocket.connect((TCP_IP_ADDRESS, TCP_PORT_NO))
 # SEND VIDEO FRAMES FROM CV2 CAPTURE TO SERVER
 
 frame_number = 1
-t = 0.0
+# t = 0.0
 while(True):
         # Capture frame-by-frame
         ret,frame=cap.read()
-        if frame_number % 1 == 0:   #LIMIT FRAMERATE BY ONLY PASSING CERTAIN FRAMES TO SEND, INDENT BLOCK OF CODE BENEATH HERE
+        if frame_number % 6 == 0:   #LIMIT FRAMERATE BY ONLY PASSING CERTAIN FRAMES TO SEND, INDENT BLOCK OF CODE BENEATH HERE
                 grayscale = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 flattened = grayscale.flatten()
                 hsize = 14              # Bytes
                 dsize = flattened.shape[0]      # Bytes
                 frame_w = grayscale.shape[1]
                 frame_h = grayscale.shape[0]
-                t = time.time()
+                #t = time.time()
                 clientsocket.send(flattened)
-        dt = time.time() - t
-        print(dt)
+        # dt = time.time() - t
+        # print(dt)
         print("frame #: ",frame_number)
         frame_number += 1
 
