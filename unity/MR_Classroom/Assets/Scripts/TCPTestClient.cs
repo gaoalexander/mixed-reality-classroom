@@ -12,9 +12,12 @@ public class TCPTestClient : MonoBehaviour
     public Action<TCPTestClient> OnDisconnected = delegate { };
     public Action<string> OnLog = delegate { };
     public Action<TCPTestServer.ServerMessage> OnMessageReceived = delegate { };
+    string message; 
 
     public GameObject[] objects;
     Dictionary<int, GameObject> grabbableObjects;
+    public GameObject plasmaMembrane;
+    public GameObject centrosomes;
 
     public int id;
 
@@ -48,37 +51,64 @@ public class TCPTestClient : MonoBehaviour
 
     private void Update()
     {
+        if(IsConnected && message != null)
+        {
+            Debug.Log("HERE IS THE SERVER MESSAGE :" + message);
+            JSONNode current_data = JSON.Parse(message);
 
-    }
-
-    private void UpdateAllObjects(string serverMessage)
-    {
-            Debug.Log("HERE IS THE SERVER MESSAGE :" + serverMessage);
-            JSONNode current_data = JSON.Parse(serverMessage);
-            //Loop through all objects and update them...
-            for (int i = 0; i < current_data.Count; i++)
+            Debug.Log("!!!!!!!" + current_data["type"]);
+            if (current_data["type"] == "active")
             {
-                Debug.Log(current_data[i]);
-               if(current_data[i]["uid"] != null) {
-                Debug.Log("Updating all objects");
-                int uid = current_data[i]["uid"].AsInt;
-                float x = current_data[i]["x"].AsFloat;
-                float y = current_data[i]["y"].AsFloat;
-                float z = current_data[i]["z"].AsFloat;
-                GameObject current = grabbableObjects[uid];
-                current.transform.position = new Vector3(x, y, z);
-                Debug.Log(string.Format("updated {0} position: {1}, {2}, {3}", uid, x, y, z));
+                Debug.Log("Heyoooo");
+                JSONArray current_ids = current_data["ids"].AsArray;
+                for (int a = 0; a < current_ids.Count; a++)
+                {
+                    if (current_ids[a].AsInt == 0)
+                    {
+                        plasmaMembrane.SetActive(true);
+                    }
+                    else if (current_ids[a].AsInt == 4)
+                    {
+                        centrosomes.SetActive(true);
+                    }
+                    else
+                    {
+                        grabbableObjects[current_ids[a]].SetActive(true);
+                    }
                 }
-
             }
-        
+            else
+            {
+                //Loop through all objects and update them...
+                for (int i = 0; i < current_data.Count; i++)
+                {
+                    Debug.Log(current_data[i]);
+                    if (current_data[i]["uid"] != null)
+                    {
+                        Debug.Log("Updating all objects");
+                        int uid = current_data[i]["uid"].AsInt;
+                        float x = current_data[i]["x"].AsFloat;
+                        float y = current_data[i]["y"].AsFloat;
+                        float z = current_data[i]["z"].AsFloat;
+                        GameObject current = grabbableObjects[uid];
+                        current.transform.position = new Vector3(x, y, z);
+                        Debug.Log(string.Format("updated {0} position: {1}, {2}, {3}", uid, x, y, z));
+                    }
+
+                }
+            }
+           
+        }
       
+
+
     }
 
-        /// <summary>   
-        /// Setup socket connection.    
-        /// </summary>  
-        public void ConnectToTcpServer()
+
+    /// <summary>   
+    /// Setup socket connection.    
+    /// </summary>  
+    public void ConnectToTcpServer()
     {
         try
         {
@@ -116,19 +146,15 @@ public class TCPTestClient : MonoBehaviour
                     // Read incoming stream into byte array.                    
                     while (running && stream.CanRead)
                     {
-                        //Debug.Log("BEFORE READING:");
+                        Debug.Log("BEFORE READING:");
                         length = stream.Read(bytes, 0, bytes.Length);
-                        //Debug.Log("AFTER READING:");
+                        Debug.Log("AFTER READING:");
                         if (length != 0)
                         {
                             var incomingData = new byte[length];
                             Array.Copy(bytes, 0, incomingData, 0, length);
                             // Convert byte array to string message.                        
-                            string serverJson = Encoding.ASCII.GetString(incomingData);
-                            //Debug.Log("MESSAGE RECEIVED");
-                            //Debug.Log(JSON.Parse(serverJson).ToString());
-                            UpdateAllObjects(serverJson);
-
+                            message = Encoding.ASCII.GetString(incomingData);
                             //TCPTestServer.ServerMessage serverMessage = JsonUtility.FromJson<TCPTestServer.ServerMessage>(serverJson);
 
                         }
