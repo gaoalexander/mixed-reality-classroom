@@ -23,6 +23,16 @@ import json
 state = {}
 clients = {}
 
+# MQ
+tosend = []
+import datetime, threading
+
+def sendmessages():
+    for message in tosend:
+        for client in clients.values():
+            client.sendall(json.dumps(message).encode('utf-8'))
+    threading.Timer(1, sendmessages).start()
+
 class ThreadedTCPHandler(socketserver.BaseRequestHandler):
     """
     The RequestHandler class for our server.
@@ -56,12 +66,14 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
                             state[data['uid']] = data
                     senddata = state
                     senddata["type"] = "object"
+
+                    tosend.append(senddata)
+
             elif (data["type"] == "check"):
                     senddata["type"] = "check"
                     senddata["success"] = np.array_equal(combination_ids,target)
-            for client in clients.values():
-                    client.sendall(json.dumps(senddata).encode('utf-8'))
                     
+                    tosend.append(senddata)
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass
@@ -76,6 +88,7 @@ server = ThreadedTCPServer((HOST, PORT), ThreadedTCPHandler)
 t = threading.Thread(target=server.serve_forever)
 t.setDaemon(True) # don't hang on exit
 t.start()
+sendmessages()
 
 #while(True):
 #    pass
@@ -108,42 +121,43 @@ parameters =  aruco.DetectorParameters_create()
 #-----------------------------------------------------------------------------------
 
 def detectMarkers(image_array):
-        corners, ids, rejectedImgPoints = aruco.detectMarkers(image_array, aruco_dict, parameters=parameters)
-        if ids is None:
-                return None
-        else:
-                combination_ids = np.reshape(ids, ids.shape[0])
-        combination_ids.sort()
-        # combination_ids = np.array([0,1,2])
-        if np.array_equal(combination_ids,target):
-                print("YOU PICKED THE RIGHT PIECES.")
-        else: print("KEEP TRYING.")
-        gray = aruco.drawDetectedMarkers(image_array, corners)
-        return combination_ids
+    corners, ids, rejectedImgPoints = aruco.detectMarkers(image_array, aruco_dict, parameters=parameters)
+    if ids is None:
+        return None
+    else:
+        combination_ids = np.reshape(ids, ids.shape[0])
+    combination_ids.sort()
+    # combination_ids = np.array([0,1,2])
+    if np.array_equal(combination_ids,target):
+        print("YOU PICKED THE RIGHT PIECES.")
+    else: print("KEEP TRYING.")
+    gray = aruco.drawDetectedMarkers(image_array, corners)
+    return combination_ids
 
 #-----------------------------------------------------------------------------------
 
 while True:
-        data = clientsocket.recv(DATALEN)
-        if not data: break
-        bytesrecvd += len(data)
-        buf.extend(data)
-        if bytesrecvd >= DATALEN:
-                # print("buffer complete!")
-                flattened = buf[0:DATALEN]
-                imarr = np.array(flattened, dtype=np.uint8)
-                imarr = np.reshape(imarr, (HEIGHT, WIDTH))
-                #cv2.imshow('local', imarr)
-                #cv2.waitKey(1)
-                detected = detectMarkers(imarr)
-                print(detected)
-                if(detected is not None):
-                    senddata = {}
-                    senddata["type"] = "active"
-                    senddata["ids"] = detected.tolist()
-                    for client in clients.values():
-                        client.sendall(json.dumps(senddata).encode('utf-8'))
-                buf = []                # CLEAR BUFFER
-                bytesrecvd = 0          # RESET BYTES RECEIVED COUNTER
-             
+    data = clientsocket.recv(DATALEN)
+    if not data: break
+    bytesrecvd += len(data)
+    buf.extend(data)
+    if bytesrecvd >= DATALEN:
+        # print("buffer complete!")
+        flattened = buf[0:DATALEN]
+        imarr = np.array(flattened, dtype=np.uint8)
+        imarr = np.reshape(imarr, (HEIGHT, WIDTH))
+        #cv2.imshow('local', imarr)
+        #cv2.waitKey(1)
+        detected = detectMarkers(imarr)
+        print(detected)
+        if(detected is not None):
+            senddata = {}
+            senddata["type"] = "active"
+            senddata["ids"] = detected.tolist()
+            tosend.append(senddata)
+        #     for client in clients.values():
+        #         client.sendall(json.dumps(senddata).encode('utf-8'))
+        buf = []                # CLEAR BUFFER
+        bytesrecvd = 0          # RESET BYTES RECEIVED COUNTER
+        
 
