@@ -25,13 +25,15 @@ clients = {}
 
 # MQ
 tosend = []
-import datetime, threading
+
+interval = 0.01
+
 
 def sendmessages():
     for message in tosend:
         for client in clients.values():
             client.sendall(json.dumps(message).encode('utf-8'))
-    threading.Timer(1, sendmessages).start()
+    threading.Timer(interval, sendmessages).start()
 
 class ThreadedTCPHandler(socketserver.BaseRequestHandler):
     """
