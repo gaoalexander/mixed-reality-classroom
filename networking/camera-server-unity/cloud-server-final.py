@@ -18,22 +18,28 @@ from cv2 import aruco
 import socket
 import socketserver
 import threading
+from queue import Queue
+
 import json
 
 state = {}
 clients = {}
 
 # MQ
-tosend = []
+# tosend = []
+tosend = Queue(maxsize=0)
 
-interval = 0.01
-
+# interval = 0.01
 
 def sendmessages():
-    for message in tosend:
+    while True:
+        message = tosend.get()
         for client in clients.values():
             client.sendall(json.dumps(message).encode('utf-8'))
-    threading.Timer(interval, sendmessages).start()
+        tosend.task_done()
+
+# def sendmessages():
+    # threading.Timer(interval, sendmessages).start()
 
 class ThreadedTCPHandler(socketserver.BaseRequestHandler):
     """
@@ -90,7 +96,10 @@ server = ThreadedTCPServer((HOST, PORT), ThreadedTCPHandler)
 t = threading.Thread(target=server.serve_forever)
 t.setDaemon(True) # don't hang on exit
 t.start()
-sendmessages()
+
+senderThread = threading.Thread(target=sendmessages)
+senderThread.setDaemon(True)
+senderThread.start()
 
 #while(True):
 #    pass
