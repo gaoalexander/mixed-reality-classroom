@@ -75,13 +75,13 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
                     senddata = state
                     senddata["type"] = "object"
 
-                    tosend.append(senddata)
+                    tosend.put(senddata)
 
             elif (data["type"] == "check"):
                     senddata["type"] = "check"
                     senddata["success"] = np.array_equal(combination_ids,target)
                     
-                    tosend.append(senddata)
+                    tosend.put(senddata)
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass
@@ -165,7 +165,7 @@ while True:
             senddata = {}
             senddata["type"] = "active"
             senddata["ids"] = detected.tolist()
-            tosend.append(senddata)
+            tosend.put(senddata)
         #     for client in clients.values():
         #         client.sendall(json.dumps(senddata).encode('utf-8'))
         buf = []                # CLEAR BUFFER
