@@ -35,7 +35,11 @@ def sendmessages():
     while True:
         message = tosend.get()
         for client in clients.values():
-            client.sendall(json.dumps(message).encode('utf-8'))
+            try:
+                client.sendall(json.dumps(message).encode('utf-8'))
+            except OSError as e:
+                print("" + e)
+
         tosend.task_done()
 
 # def sendmessages():
