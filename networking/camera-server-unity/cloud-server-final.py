@@ -34,12 +34,13 @@ tosend = Queue(maxsize=0)
 def sendmessages():
     while True:
         message = tosend.get()
-        for client in clients:
+
+        for client, socket in clients.items():
             try:
-                clients[client].sendall(json.dumps(message).encode('utf-8'))
+                socket.sendall(json.dumps(message).encode('utf-8'))
             except OSError as e:
                 print(e)
-                clients[client].close()
+                socket.close()
                 clients.pop(client)
 
         tosend.task_done()
