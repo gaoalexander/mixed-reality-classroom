@@ -104,15 +104,21 @@ public class Grab : MonoBehaviour, IPointerDownHandler
             }
             lastTouchPosition = thisTouch;
 
-            
+
             // get the distance from this object to the controller
+
             float currentDistance = (MiraController.Position - transform.position).magnitude;
+
             // the new distance of the grabbed object is the current distance,
             // adjusted by the users touch, in the direction it was from the controller
-			Vector3 newLength = MiraController.Direction.normalized * (currentDistance + touchInfluence + touchIncrement);
+
+
+            Vector3 newLength = MiraController.Direction.normalized * (currentDistance + touchInfluence + touchIncrement);
             Vector3 newPosition = MiraController.Position + newLength;
+
+            Vector3 reallyNewPositon = new Vector3(newPosition.x, 0, newPosition.z);
             //transform.position = newPosition;
-            client.SendTCPMessage(GrabRequest(newPosition).ToString()); 
+            client.SendTCPMessage(GrabRequest(reallyNewPositon).ToString()); 
         }
     }
 
