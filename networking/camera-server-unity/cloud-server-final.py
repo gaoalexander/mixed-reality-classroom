@@ -38,7 +38,7 @@ def sendmessages():
             try:
                 client.sendall(json.dumps(message).encode('utf-8'))
             except OSError as e:
-                print("" + e)
+                print(e)
 
         tosend.task_done()
 
