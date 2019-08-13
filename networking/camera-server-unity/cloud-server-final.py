@@ -42,6 +42,7 @@ def sendmessages():
             except OSError as e:
                 toflush.append(client)
                 print(e)
+
         tosend.task_done()
 
         for i in range(0, len(toflush)):
@@ -79,20 +80,21 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
             array = self.data.decode('utf-8').split('`')
             data = json.loads(array[-2])
             if (data["type"] == "object"):
-                    if (data['uid'] in state and state[data['uid']]['lockid'] != data['lockid'] and state[data['uid']]['lockid'] != ""):
-                            print("object in use")
-                    else:
-                            state[data['uid']] = data
-                    senddata = state
-                    senddata["type"] = "object"
+                if (data['uid'] in state and state[data['uid']]['lockid'] != data['lockid'] and state[data['uid']]['lockid'] != ""):
+                    print("object in use")
+                else:
+                    state[data['uid']] = data
+                
+                senddata = state
+                senddata["type"] = "object"
 
-                    tosend.put(senddata)
+                tosend.put(senddata)
 
             elif (data["type"] == "check"):
-                    senddata["type"] = "check"
-                    senddata["success"] = np.array_equal(combination_ids,target)
-                    
-                    tosend.put(senddata)
+                senddata["type"] = "check"
+                senddata["success"] = np.array_equal(combination_ids,target)
+                
+                tosend.put(senddata)
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass
