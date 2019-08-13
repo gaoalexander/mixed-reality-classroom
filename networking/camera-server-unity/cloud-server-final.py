@@ -30,6 +30,7 @@ clients = {}
 tosend = Queue(maxsize=0)
 
 # interval = 0.01
+toflush = []
 
 def sendmessages():
     while True:
@@ -39,11 +40,14 @@ def sendmessages():
             try:
                 socket.sendall(json.dumps(message).encode('utf-8'))
             except OSError as e:
+                toflush.append(client)
                 print(e)
-                socket.close()
-                clients.pop(client)
-
         tosend.task_done()
+
+        for i in range(0, len(toflush)):
+            clients[client].close()
+            clients.pop(client)
+            toflush.pop(i)
 
 # def sendmessages():
     # threading.Timer(interval, sendmessages).start()
