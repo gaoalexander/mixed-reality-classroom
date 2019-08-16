@@ -8,6 +8,7 @@ namespace MK.Glow.Legacy
     {
         [SerializeField] private float _glowIntensity = .18f;
         [SerializeField] private float _outlineIntensity = 10f;
+        [SerializeField] private float _outlineSize = 1f;
 
         private void Start()
         {
@@ -25,9 +26,10 @@ namespace MK.Glow.Legacy
                 mkGlow.workflow = Workflow.Selective;
                 mkGlow.bloomIntensity = _glowIntensity;
 
-                GlowComposite outline = camera.gameObject.AddComponent<GlowComposite>();
-                outline.Intensity = _outlineIntensity;
-                secondaryCamera.AddComponent<GlowPrePass>();
+                GlowComposite outlineComposite = camera.gameObject.AddComponent<GlowComposite>();
+                outlineComposite.intensity = _outlineIntensity;
+                GlowPrePass outlinePrePass = secondaryCamera.AddComponent<GlowPrePass>();
+                outlinePrePass.size = _outlineSize;
             }
         }
     }

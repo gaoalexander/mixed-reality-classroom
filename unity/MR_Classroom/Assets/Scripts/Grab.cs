@@ -112,7 +112,7 @@ public class Grab : MonoBehaviour, IPointerDownHandler
 			Vector3 newLength = MiraController.Direction.normalized * (currentDistance + touchInfluence + touchIncrement);
             Vector3 newPosition = MiraController.Position + newLength;
             //transform.position = newPosition;
-            client.SendTCPMessage(GrabRequest(newPosition).ToString()); 
+            client.SendTCPMessage(GrabRequest(newPosition).ToString());
         }
     }
 

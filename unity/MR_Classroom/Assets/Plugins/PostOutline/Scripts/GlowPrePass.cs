@@ -9,6 +9,8 @@ public class GlowPrePass : MonoBehaviour
 
     private Material _blurMat;
 
+    public float size = 1f;
+
     void OnEnable()
     {
         PrePass = new RenderTexture(1024, 1024, 24);
@@ -24,7 +26,11 @@ public class GlowPrePass : MonoBehaviour
         Shader.SetGlobalTexture("_GlowBlurredTex", Blurred);
 
         _blurMat = new Material(Shader.Find("Hidden/Blur"));
-        _blurMat.SetVector("_BlurSize", new Vector2(Blurred.texelSize.x * 1.5f, Blurred.texelSize.y * 1.5f));
+    }
+
+    private void Start()
+    {
+        _blurMat.SetVector("_BlurSize", new Vector2(Blurred.texelSize.x * 1.5f * size, Blurred.texelSize.y * 1.5f * size));
     }
 
     void OnRenderImage(RenderTexture src, RenderTexture dst)

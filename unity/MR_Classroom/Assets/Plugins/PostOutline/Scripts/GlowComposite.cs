@@ -5,7 +5,7 @@
 public class GlowComposite : MonoBehaviour
 {
 	[Range (0, 10)]
-	public float Intensity = 2;
+	public float intensity = 2;
 
 	private Material _compositeMat;
 
@@ -16,7 +16,7 @@ public class GlowComposite : MonoBehaviour
 
 	void OnRenderImage(RenderTexture src, RenderTexture dst)
 	{
-		_compositeMat.SetFloat("_Intensity", Intensity);
+		_compositeMat.SetFloat("_Intensity", intensity);
         Graphics.Blit(src, dst, _compositeMat, 0);
 	}
 }
