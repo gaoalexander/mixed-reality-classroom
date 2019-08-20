@@ -627,11 +627,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cba994f14ed1b443b276da05268e44b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  correctOrganelle: 0
+  correctOrganelles: 00000000
   _snapToCenter: 0
   _snapPositions: []
-  status: 0
-  placedOrganelle: 0
+  status: 
+  placedOrganelles: 00000000
 --- !u!65 &448370940
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1360,7 +1360,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   typeOfCell: 1
-  correctPositions: []
+  correctPositions:
+  - {fileID: 448370939}
 --- !u!1 &975804451
 GameObject:
   m_ObjectHideFlags: 0
@@ -1925,11 +1926,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cba994f14ed1b443b276da05268e44b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  correctOrganelle: 0
+  correctOrganelles: 05000000
   _snapToCenter: 0
   _snapPositions: []
-  status: 0
-  placedOrganelle: 0
+  status: 
+  placedOrganelles: 
 --- !u!64 &1354486628
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2460,12 +2461,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cba994f14ed1b443b276da05268e44b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  correctOrganelle: 4
+  correctOrganelles: 04000000
   _snapToCenter: 1
   _snapPositions:
   - {fileID: 1746265409}
-  status: 0
-  placedOrganelle: 0
+  status: 
+  placedOrganelles: 00000000
 --- !u!65 &1746265411
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2584,7 +2585,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   typeOfCell: 0
-  correctPositions: []
+  correctPositions:
+  - {fileID: 1354486627}
+  - {fileID: 1746265410}
 --- !u!1 &2076310287
 GameObject:
   m_ObjectHideFlags: 0

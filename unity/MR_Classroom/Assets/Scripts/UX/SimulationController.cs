@@ -96,16 +96,19 @@ public class SimulationController : MonoBehaviour
 
         foreach (OrganellePosition organellePosition in _correctPositions)
         {
-            if (organellePosition.status == OrganellePosition.Status.Correct)
+            foreach (OrganellePosition.Status status in organellePosition.status)
             {
-                correctOrganelles++;
+                if (status == OrganellePosition.Status.Correct)
+                {
+                    correctOrganelles++;
+                }
+                if (status == OrganellePosition.Status.Empty)
+                {
+                    emptySpotsLeft = true;
+                    break;
+                }
+                totalOrganelles++;
             }
-            if (organellePosition.status == OrganellePosition.Status.Empty)
-            {
-                emptySpotsLeft = true;
-                break;
-            }
-            totalOrganelles++;
         }
 
         if (!emptySpotsLeft)

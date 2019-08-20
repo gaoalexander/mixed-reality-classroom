@@ -4,22 +4,36 @@ using UnityEngine;
 
 public class OrganellePosition : MonoBehaviour
 {
-    public SimulationController.Organelle correctOrganelle;
+    public SimulationController.Organelle[] correctOrganelles = new SimulationController.Organelle[1];
 
     [SerializeField] private bool _snapToCenter;
     [SerializeField] private Transform[] _snapPositions;
 
     private List<int> _organellesIn = new List<int>();
-    private int _currentOrganelle = -1;
-    
+    private int[] _currentOrganelles = new int[1];
+
     public enum Status
     {
         Empty,
         Correct,
         Incorrect
     }
-    public Status status = Status.Empty;
-    public SimulationController.Organelle placedOrganelle = SimulationController.Organelle.None;
+    public Status[] status = new Status[1];
+    public SimulationController.Organelle[] placedOrganelles = new SimulationController.Organelle[1];
+
+    private void OnEnable()
+    {
+        status = new Status[correctOrganelles.Length];
+        placedOrganelles = new SimulationController.Organelle[correctOrganelles.Length];
+        _currentOrganelles = new int[correctOrganelles.Length];
+
+        for (int i = 0; i < correctOrganelles.Length; i++)
+        {
+            status[i] = Status.Empty;
+            placedOrganelles[i] = SimulationController.Organelle.None;
+            _currentOrganelles[i] = -1;
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -46,28 +60,83 @@ public class OrganellePosition : MonoBehaviour
             organelle.currentOrganellePosition = organelle.previousOrganellePositions[lastIndex];
             organelle.previousOrganellePositions.RemoveAt(lastIndex);
         }
-        if (_currentOrganelle == organelle.id)
+        int i = 0;
+        foreach (int currentOrganelle in _currentOrganelles)
         {
-            _currentOrganelle = -1;
-            status = Status.Empty;
-            placedOrganelle = SimulationController.Organelle.None;
+            if (currentOrganelle == organelle.id)
+            {
+                _currentOrganelles[i] = -1;
+                status[i] = Status.Empty;
+                placedOrganelles[i] = SimulationController.Organelle.None;
+                break;
+            }
+            i++;
         }
     }
 
     public void OnGrabFinished(OrganelleController organelleObj)
     {
-        if (_currentOrganelle == -1)
-        {
-            _currentOrganelle = organelleObj.id;
-            placedOrganelle = organelleObj.organelle;
+        List<int> wrongSpots = new List<int>();
+        List<int> sameSpots = new List<int>();
+        List<int> emptySpots = new List<int>();
+        int i = 0;
 
-            if (organelleObj.organelle == correctOrganelle)
+        int finalIndex = -1;
+
+        foreach (int currentOrganelle in _currentOrganelles)
+        {
+            if (organelleObj.organelle == correctOrganelles[i] && currentOrganelle == -1)
             {
-                status = Status.Correct;
+                sameSpots.Add(i);
+            }
+            if (currentOrganelle == -1)
+            {
+                emptySpots.Add(i);
+            }
+            if (placedOrganelles[i] != correctOrganelles[i] && organelleObj.organelle == correctOrganelles[i])
+            {
+                wrongSpots.Add(i);
+            }
+            i++;
+        }
+
+        if (sameSpots.Count > 0)
+        {
+            finalIndex = sameSpots[0];
+        }
+        else if (emptySpots.Count > 0 && wrongSpots.Count > 0)
+        {
+            //pass the element from the wrong spot to the empty spot and fill the wrong spot with the current one
+            _currentOrganelles[emptySpots[0]] = _currentOrganelles[wrongSpots[0]];
+            placedOrganelles[emptySpots[0]] = placedOrganelles[wrongSpots[0]];
+
+            if (placedOrganelles[emptySpots[0]] == correctOrganelles[emptySpots[0]])
+            {
+                status[emptySpots[0]] = Status.Correct;
             }
             else
             {
-                status = Status.Incorrect;
+                status[emptySpots[0]] = Status.Incorrect;
+            }
+            finalIndex = wrongSpots[0];
+        }
+        else if (emptySpots.Count > 0)
+        {
+            finalIndex = emptySpots[0];
+        }
+
+        if (finalIndex != -1)
+        {
+            _currentOrganelles[finalIndex] = organelleObj.id;
+            placedOrganelles[finalIndex] = organelleObj.organelle;
+
+            if (organelleObj.organelle == correctOrganelles[finalIndex])
+            {
+                status[finalIndex] = Status.Correct;
+            }
+            else
+            {
+                status[finalIndex] = Status.Incorrect;
             }
 
             if (_snapToCenter)
