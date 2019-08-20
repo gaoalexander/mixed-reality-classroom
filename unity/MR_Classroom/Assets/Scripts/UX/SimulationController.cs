@@ -45,6 +45,8 @@ public class SimulationController : MonoBehaviour
     [SerializeField] private CellController _plantCell;
     [SerializeField] private CellController _prokaryoticCell;
 
+    [SerializeField] private Transform _startPosition;
+
     //to test while no controller available
     public bool done;
 
@@ -70,14 +72,17 @@ public class SimulationController : MonoBehaviour
             case TypeOfCell.Animal:
                 _animalCell.gameObject.SetActive(true);
                 _correctPositions = _animalCell.correctPositions;
+                _animalCell.transform.position = _startPosition.position;
                 break;
             case TypeOfCell.Plant:
                 _plantCell.gameObject.SetActive(true);
                 _correctPositions = _plantCell.correctPositions;
+                _plantCell.transform.position = _startPosition.position;
                 break;
             case TypeOfCell.Prokaryotic:
                 _prokaryoticCell.gameObject.SetActive(true);
                 _correctPositions = _prokaryoticCell.correctPositions;
+                _prokaryoticCell.transform.position = _startPosition.position;
                 break;
         }
     }

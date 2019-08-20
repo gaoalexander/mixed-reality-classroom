@@ -11,7 +11,10 @@ public class GlowPrePass : MonoBehaviour
 
     public float size = 1f;
 
-    void OnEnable()
+    public string glowPrePassTexName = "";
+    public string glowBlurredTexName = "";
+
+    void Start()
     {
         PrePass = new RenderTexture(1024, 1024, 24);
         PrePass.antiAliasing = QualitySettings.antiAliasing;
@@ -21,20 +24,32 @@ public class GlowPrePass : MonoBehaviour
         var glowShader = Shader.Find("Hidden/GlowReplace");
         camera.targetTexture = PrePass;
         camera.SetReplacementShader(glowShader, "Glowable");
-        Shader.SetGlobalTexture("_GlowPrePassTex", PrePass);
 
-        Shader.SetGlobalTexture("_GlowBlurredTex", Blurred);
+        if (glowPrePassTexName.Length > 0)
+        {
+            Shader.SetGlobalTexture(glowPrePassTexName, PrePass);
+        }
+        else
+        {
+            Shader.SetGlobalTexture("_GlowPrePassTex", PrePass);
+        }
+
+        if (glowBlurredTexName.Length > 0)
+        {
+            Shader.SetGlobalTexture(glowBlurredTexName, Blurred);
+        }
+        else
+        {
+            Shader.SetGlobalTexture("_GlowBlurredTex", Blurred);
+        }
 
         _blurMat = new Material(Shader.Find("Hidden/Blur"));
-    }
-
-    private void Start()
-    {
         _blurMat.SetVector("_BlurSize", new Vector2(Blurred.texelSize.x * 1.5f * size, Blurred.texelSize.y * 1.5f * size));
     }
 
     void OnRenderImage(RenderTexture src, RenderTexture dst)
     {
+        Debug.Log(glowBlurredTexName);
         Graphics.Blit(src, dst);
 
         Graphics.SetRenderTarget(Blurred);

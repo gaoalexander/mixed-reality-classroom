@@ -111,6 +111,7 @@
     <None Include="Assets\Plugins\_MK\MKGlowFree\Shaders\VariantsSelective\Legacy\Other\MK_Illumin-Diffuse.shader" />
     <None Include="Assets\Plugins\_MK\MKGlowFree\Shaders\VariantsLuminance\UI\UI-Unlit-Text.shader" />
     <None Include="Assets\Plugins\_MK\MKGlowFree\Shaders\Effect\MKGlowSM35.shader" />
+    <None Include="Assets\Plugins\PostOutline\Resources\GlowReplaceRight.shader" />
     <None Include="Assets\Plugins\_MK\MKGlowFree\Shaders\VariantsSelective\Legacy\Particle\MK_Particle Add.shader" />
     <None Include="Assets\Plugins\_MK\MKGlowFree\Shaders\VariantsSelective\Legacy\Transparent\MK_Transparent-Diffuse.shader" />
     <None Include="Assets\Plugins\_MK\MKGlowFree\Shaders\VariantsSelective\Legacy\Transparent\MK_Transparent-DiffuseBumpSpec.shader" />
@@ -134,11 +135,14 @@
     <None Include="Assets\Plugins\PostOutline\Resources\GlowReplace.shader" />
     <None Include="Assets\Plugins\_MK\MKGlowFree\Shaders\VariantsLuminance\UI\UI-Lit-Detail.shader" />
     <None Include="Assets\Plugins\_MK\MKGlowFree\Shaders\VariantsLuminance\UI\UI-DefaultFont.shader" />
+    <None Include="Assets\Plugins\PostOutline\Resources\GlowCompositeRight.shader" />
+    <None Include="Assets\Plugins\PostOutline\Resources\GlowReplaceLeft.shader" />
     <None Include="Assets\Plugins\_MK\MKGlowFree\Shaders\Inc\Debug.hlsl" />
     <None Include="Assets\Plugins\PostOutline\Resources\GlowComposite.shader" />
     <None Include="Assets\Plugins\_MK\MKGlowFree\Shaders\VariantsSelective\Legacy\Normal\MK_Normal-Diffuse.shader" />
     <None Include="Assets\Plugins\_MK\MKGlowFree\Shaders\VariantsLuminance\UI\UI-Lit-RefractionDetail.shader" />
     <None Include="Assets\Plugins\_MK\MKGlowFree\Shaders\Inc\Presample.hlsl" />
+    <None Include="Assets\Plugins\PostOutline\Resources\GlowCompositeLeft.shader" />
     <None Include="Assets\Plugins\_MK\MKGlowFree\Shaders\Inc\Sprite.hlsl" />
     <None Include="Assets\Plugins\_MK\MKGlowFree\Shaders\Inc\Upsample.hlsl" />
     <None Include="Assets\Plugins\_MK\MKGlowFree\Shaders\VariantsSelective\Legacy\MKGlowStandardSpecular.shader" />

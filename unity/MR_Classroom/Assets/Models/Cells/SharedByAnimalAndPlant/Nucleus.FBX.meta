@@ -3,7 +3,22 @@ guid: bf8d97c75ff4ab84580986e6289e16da
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Nucleus_blinn35SG
+    second: {fileID: 2100000, guid: e121aa26d91be9e4c9dc467f8a2f08ef, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Nucleus_blinn36SG
+    second: {fileID: 2100000, guid: f7f591cfe5d78b44793baa6c50dd7fe4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Nucleus_blinn38SG
+    second: {fileID: 2100000, guid: c1bb40d2808f8f54a960b6088c17d15f, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
