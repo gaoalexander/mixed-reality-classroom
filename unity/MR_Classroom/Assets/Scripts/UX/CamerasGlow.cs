@@ -36,7 +36,7 @@ namespace MK.Glow.Legacy
                     GlowPrePass outlinePrePass = secondaryCamera.AddComponent<GlowPrePass>();
                     outlinePrePass.size = _outlineSize;
 
-                    if (i == 0)
+                    /*if (i == 0)
                     {
                         outlineComposite.glowCompositeName = "Hidden/GlowCompositeRight";
                         outlinePrePass.glowPrePassTexName = "_GlowPrePassTexRight";
@@ -47,7 +47,7 @@ namespace MK.Glow.Legacy
                         outlineComposite.glowCompositeName = "Hidden/GlowCompositeLeft";
                         outlinePrePass.glowPrePassTexName = "_GlowPrePassTexLeft";
                         outlinePrePass.glowBlurredTexName = "_GlowBlurredTexLeft";
-                    }
+                    }*/
 
                     i++;
                 //}

@@ -525,7 +525,18 @@ namespace UnityEngine.EventSystems
             leftData.button = PointerEventData.InputButton.Left;
             // unchanged from sourcecode
             eventSystem.RaycastAll(leftData, m_RaycastResultCache);
+
             var raycast = FindFirstRaycast(m_RaycastResultCache);
+
+            float distance = 100000f;
+            foreach (var r in m_RaycastResultCache)
+            {
+                if (r.distance < distance && r.gameObject.CompareTag("Interactive"))
+                {
+                    distance = r.distance;
+                    raycast = r;
+                }
+            }
 
             leftData.pointerCurrentRaycast = raycast;
 
