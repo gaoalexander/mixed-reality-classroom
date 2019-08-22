@@ -1,5 +1,0 @@
-sceneSetups:
-- path: Assets/MR_CLASSROOM_DEMO_MAIN.unity
-  isLoaded: 1
-  isActive: 1
-  isSubScene: 0
