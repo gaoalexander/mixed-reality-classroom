@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SimulationController : MonoBehaviour
 {
@@ -14,11 +15,13 @@ public class SimulationController : MonoBehaviour
     public enum Organelle
     {
         None,
+        //Only animal
+        AnimalPlasmaMembrane,
         //Only plant
+        PlantPlasmaMembrane,
+        PlantCellWall,
         Chloroplast,
         Vacuole,
-        //Shared by plant and prokaryotes
-        CellWall,
         //Shared by animal and plant
         Nucleus,
         Centriole,
@@ -29,9 +32,10 @@ public class SimulationController : MonoBehaviour
         Lysosome,
         //Shared by all
         Chromosome,
-        PlasmaMembrane,
         Ribosome,
         //Only prokaryotes
+        ProkaryoticPlasmaMembrane,
+        ProkaryoticCellWall,
         Capsul,
         Flagellum
     }
@@ -50,6 +54,8 @@ public class SimulationController : MonoBehaviour
     //to test while no controller available
     public bool done;
 
+    [SerializeField] private Text[] _titleTexts;
+
     private void OnEnable()
     {
         //_loadedOrganelles = new List<SnapAndCheck>();
@@ -67,23 +73,39 @@ public class SimulationController : MonoBehaviour
         _plantCell.gameObject.SetActive(false);
         _prokaryoticCell.gameObject.SetActive(false);
 
+        string title = "";
+
         switch (currentCell)
         {
             case TypeOfCell.Animal:
                 _animalCell.gameObject.SetActive(true);
                 _correctPositions = _animalCell.correctPositions;
                 _animalCell.transform.position = _startPosition.position;
+
+                title = "Animal Cell";
+
                 break;
             case TypeOfCell.Plant:
                 _plantCell.gameObject.SetActive(true);
                 _correctPositions = _plantCell.correctPositions;
                 _plantCell.transform.position = _startPosition.position;
+
+                title = "Plant Cell";
+
                 break;
             case TypeOfCell.Prokaryotic:
                 _prokaryoticCell.gameObject.SetActive(true);
                 _correctPositions = _prokaryoticCell.correctPositions;
                 _prokaryoticCell.transform.position = _startPosition.position;
+
+                title = "Prokaryotic Cell";
+
                 break;
+        }
+
+        foreach (Text titleText in _titleTexts)
+        {
+            titleText.text = title;
         }
     }
 
