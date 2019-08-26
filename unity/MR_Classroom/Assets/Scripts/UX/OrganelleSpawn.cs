@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class OrganelleSpawn : MonoBehaviour
 {
-    [SerializeField] private GameObject _organelleParent = null;
+    public OrganelleController _organelleToSpawn = null;
+    [SerializeField] private Transform _spawnPosition = null;
 
     [SerializeField] private GameObject _portalEffect;
     [SerializeField] private float _textureSpeed = .5f;
@@ -51,6 +52,16 @@ public class OrganelleSpawn : MonoBehaviour
 
             _portalEffect.transform.localScale = new Vector3(_portalEffect.transform.localScale.x, _portalEffect.transform.localScale.y, Mathf.Lerp(start, end, percentage));
             yield return null;
+        }
+
+        if (start == 0f)
+        {
+            _organelleToSpawn.SetSpawnScale(true, 0f);
+            _organelleToSpawn.gameObject.SetActive(true);
+            _organelleToSpawn.transform.position = _spawnPosition.transform.position;
+
+            yield return new WaitForSeconds(2f);
+            DeactivatePortal();
         }
     }
 

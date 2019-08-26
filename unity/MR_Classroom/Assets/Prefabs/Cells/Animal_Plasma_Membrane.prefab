@@ -171,6 +171,7 @@ GameObject:
   - component: {fileID: 5408513501263918590}
   - component: {fileID: 5408513501263918589}
   - component: {fileID: 5408513501263918588}
+  - component: {fileID: 310876247}
   m_Layer: 0
   m_Name: Animal_Plasma_Membrane
   m_TagString: Untagged
@@ -281,6 +282,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   organelle: 1
   id: 0
+  ignoreAfterFirst: 1
+  _spawnScale: 0.06
   currentOrganellePosition: {fileID: 0}
   previousOrganellePositions: []
   grabFinished: 0
+  scaleToSpawn: 0
+  scaleToOriginal: 0
+--- !u!95 &310876247
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7110978952637524382}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 24a70057fb7bca14386bcafd13d2a5ec, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

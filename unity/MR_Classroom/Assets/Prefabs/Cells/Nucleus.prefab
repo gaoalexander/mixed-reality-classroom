@@ -249,6 +249,7 @@ GameObject:
   - component: {fileID: 1152927611719923221}
   - component: {fileID: 5989890929280614891}
   - component: {fileID: 1113080194553704351}
+  - component: {fileID: 1459612520}
   m_Layer: 0
   m_Name: Nucleus
   m_TagString: Untagged
@@ -367,3 +368,22 @@ MonoBehaviour:
   grabFinished: 0
   scaleToSpawn: 0
   scaleToOriginal: 0
+--- !u!95 &1459612520
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8958672980354414216}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 24a70057fb7bca14386bcafd13d2a5ec, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

@@ -44,7 +44,7 @@ public class OrganelleController : MonoBehaviour
 
         if (scaleToSpawn)
         {
-            SetSpawnScale(true, 0f);
+            SetSpawnScale(true, .4f);
             scaleToSpawn = false;
         }
         if (scaleToOriginal)
@@ -66,10 +66,12 @@ public class OrganelleController : MonoBehaviour
             {
                 StartCoroutine(ScaleAnimation(transform.localScale.x, _spawnScale, animTime));
             }
+            SetIdle(true);
         }
         else
         {
             StartCoroutine(ScaleAnimation(transform.localScale.x, _originalScale, animTime));
+            SetIdle(false);
         }
     }
 
@@ -96,6 +98,34 @@ public class OrganelleController : MonoBehaviour
 
             transform.localScale = new Vector3(newScale, newScale, newScale);
             yield return null;
+        }
+    }
+
+    public void SetIdle(bool enabled)
+    {
+        StartCoroutine(IdleAnimation(enabled));
+    }
+
+    IEnumerator IdleAnimation(bool enabled)
+    {
+        Animator organelleAnimator = GetComponent<Animator>();
+
+        if (enabled)
+        {
+            organelleAnimator.enabled = true;
+            organelleAnimator.SetBool("Idle", true);
+            organelleAnimator.SetBool("Static", false);
+        }
+        else
+        {
+            organelleAnimator.SetBool("Static", true);
+            organelleAnimator.SetBool("Idle", false);
+            yield return new WaitForEndOfFrame();
+            while (organelleAnimator.IsInTransition(organelleAnimator.GetLayerIndex("Base Layer")))
+            {
+                yield return null;
+            }
+            organelleAnimator.enabled = false;
         }
     }
 }

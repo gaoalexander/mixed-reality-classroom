@@ -795,6 +795,7 @@ GameObject:
   - component: {fileID: 2288415851958198362}
   - component: {fileID: 242756968190819210}
   - component: {fileID: -6832058588110006825}
+  - component: {fileID: 2150205731996616209}
   m_Layer: 0
   m_Name: Golgi_Apparatus
   m_TagString: Untagged
@@ -928,6 +929,25 @@ MonoBehaviour:
   grabFinished: 0
   scaleToSpawn: 0
   scaleToOriginal: 0
+--- !u!95 &2150205731996616209
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4079516930896835584}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 24a70057fb7bca14386bcafd13d2a5ec, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &6032223145370993315
 GameObject:
   m_ObjectHideFlags: 0

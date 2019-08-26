@@ -24,7 +24,7 @@ public class SimulationController : MonoBehaviour
         Vacuole,
         //Shared by animal and plant
         Nucleus,
-        Centriole,
+        Centrosome,
         GolgiApparatus,
         RoughEndoplasmicReticulum,
         SmoothEndoplasmicReticulum,

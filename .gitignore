@@ -163,3 +163,5 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 unity/MR_Classroom/Library/
+unity/MR_Classroom/obj/
+unity/MR_Classroom/ProjectSettings/

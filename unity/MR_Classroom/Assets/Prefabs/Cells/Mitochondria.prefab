@@ -171,6 +171,7 @@ GameObject:
   - component: {fileID: 6118482077852341473}
   - component: {fileID: 6189787116110680001}
   - component: {fileID: 6110615088607735797}
+  - component: {fileID: 5539002297287467238}
   m_Layer: 0
   m_Name: Mitochondria
   m_TagString: Untagged
@@ -289,6 +290,25 @@ MonoBehaviour:
   grabFinished: 0
   scaleToSpawn: 0
   scaleToOriginal: 0
+--- !u!95 &5539002297287467238
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7488602987960043493}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 24a70057fb7bca14386bcafd13d2a5ec, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &8666978156385528351
 GameObject:
   m_ObjectHideFlags: 0
