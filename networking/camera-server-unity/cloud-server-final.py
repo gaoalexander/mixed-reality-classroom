@@ -5,14 +5,11 @@ import cv2
 from cv2 import aruco
 
 #-----------------------------------------------------------------------------------
-# SETUP SOCKETS
-
 # CAMERA CLIENT - SERVER SOCKET
 
 '''
-#-----------------------------------------------------------------------------------
-# INITIALIZE / DECLARE GLOBAL VARIABLES
-
+-----------------------------------------------------------------------------------
+INITIALIZE / DECLARE GLOBAL VARIABLES
 
 '''
 import socket
@@ -65,19 +62,28 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
         clients[self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1])] = self.request
         self.request.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         while(True):
-            print(clients)
-            try:
-                # self.request is the TCP socket connected to the client
-                self.data = self.request.recv(4096).strip()
-            except:
-                print ("cannot receive data")
+            # print(clients)
+            message = ""
+            while(True):
+                
+                try:
+                    # self.request is the TCP socket connected to the client
+                    payload = self.request.recv(4096).strip()
+                    message += payload
+                except:
+                    print ("cannot receive data")
+                    return
+                if not payload:
+                    break
+
+            if not message:
+                print("empty message...")
                 return
-            if not self.data:
-                return
+
             #print "{} wrote:".format(self.client_address[0])
-            print (self.data)
+            print (message)
             senddata = {}
-            array = self.data.decode('utf-8').split('`')
+            array = message.decode('utf-8').split('`')
             data = json.loads(array[-2])
             if (data["type"] == "object"):
                 if (data['uid'] in state and state[data['uid']]['lockid'] != data['lockid'] and state[data['uid']]['lockid'] != ""):
@@ -104,6 +110,7 @@ HOST, PORT = "", 20391
 # Create the server, binding to localhost on port 9999
 server = ThreadedTCPServer((HOST, PORT), ThreadedTCPHandler)
 
+print("listening")
 # Activate the server; this will keep running until you
 # interrupt the program with Ctrl-C
 t = threading.Thread(target=server.serve_forever)
@@ -114,10 +121,6 @@ senderThread = threading.Thread(target=sendmessages)
 senderThread.setDaemon(True)
 senderThread.start()
 
-#while(True):
-#    pass
-
-#server.serve_forever()
 #-----------------------------------------------------------------------------------
 
 TCP_IP_ADDRESS = ""                                # LAN IP ADDRESS OF SERVER
