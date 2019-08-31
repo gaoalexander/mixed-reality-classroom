@@ -18,6 +18,11 @@ public class TCPTestClient : MonoBehaviour
     Dictionary<int, GameObject> grabbableObjects;
     public GameObject plasmaMembrane;
     public GameObject centrosomes;
+    Dictionary<GameObject,Vector3> current_positions;
+    Dictionary<GameObject, float> t0;
+    Dictionary<GameObject, float> t1;
+
+    float dt;
 
     public int id;
 
@@ -34,6 +39,7 @@ public class TCPTestClient : MonoBehaviour
     private NetworkStream stream;
     private bool running;
 
+
     private void myLog(string message)
     {
         Debug.Log(message);
@@ -42,7 +48,12 @@ public class TCPTestClient : MonoBehaviour
     private void Start()
     {
         grabbableObjects = new Dictionary<int, GameObject>();
-        for(int i = 0; i < objects.Length; i++)
+        current_positions = new Dictionary< GameObject,Vector3 >();
+        t0 = new Dictionary<GameObject, float>();
+        t1 = new Dictionary<GameObject, float>();
+
+
+        for (int i = 0; i < objects.Length; i++)
         {
             grabbableObjects.Add(objects[i].GetComponent<Grab>().objectId, objects[i]);
         }
@@ -53,13 +64,12 @@ public class TCPTestClient : MonoBehaviour
     {
         if(IsConnected && message != null)
         {
-            Debug.Log("HERE IS THE SERVER MESSAGE :" + message);
+            //Debug.Log("HERE IS THE SERVER MESSAGE :" + message);
             JSONNode current_data = JSON.Parse(message);
 
-            Debug.Log("!!!!!!!" + current_data["type"]);
+            //Debug.Log("!!!!!!!" + current_data["type"]);
             if (current_data["type"] == "active")
             {
-                Debug.Log("Heyoooo");
                 JSONArray current_ids = current_data["ids"].AsArray;
                 for (int a = 0; a < current_ids.Count; a++)
                 {
@@ -82,25 +92,46 @@ public class TCPTestClient : MonoBehaviour
                 //Loop through all objects and update them...
                 for (int i = 0; i < current_data.Count; i++)
                 {
-                    Debug.Log(current_data[i]);
+                    //Debug.Log(current_data[i]);
                     if (current_data[i]["uid"] != null)
                     {
-                        Debug.Log("Updating all objects");
+                        //Debug.Log("Updating all objects");
                         int uid = current_data[i]["uid"].AsInt;
                         float x = current_data[i]["x"].AsFloat;
                         float y = current_data[i]["y"].AsFloat;
                         float z = current_data[i]["z"].AsFloat;
                         GameObject current = grabbableObjects[uid];
-                        current.transform.position = new Vector3(x, y, z);
-                        Debug.Log(string.Format("updated {0} position: {1}, {2}, {3}", uid, x, y, z));
+
+                        current_positions[current] = new Vector3(x, y, z);
+                        if (t1.ContainsKey(current))
+                        {
+                            t0[current] = t1[current];
+                            t1[current] = dt;
+                        }
+                        else
+                        {
+                            t0[current] = 0;
+                            t1[current] = dt;
+                        }
+                        //current.transform.position = Vector3.Lerp(current.transform.position, new Vector3(x, y, z),);
+                        //Debug.Log(string.Format("updated {0} position: {1}, {2}, {3}", uid, x, y, z));
                     }
 
                 }
             }
            
         }
-      
 
+        dt += Time.deltaTime;
+        foreach (KeyValuePair<int, GameObject> entry in grabbableObjects)
+        {
+            GameObject current = entry.Value;
+            if (t1.ContainsKey(current))
+            {
+                float t = dt / (t1[current] - t0[current]);
+                current.transform.position = Vector3.Lerp(current.transform.position, current_positions[current], t);
+            }
+        }
 
     }
 
@@ -146,9 +177,9 @@ public class TCPTestClient : MonoBehaviour
                     // Read incoming stream into byte array.                    
                     while (running && stream.CanRead)
                     {
-                        Debug.Log("BEFORE READING:");
+                        //Debug.Log("BEFORE READING:");
                         length = stream.Read(bytes, 0, bytes.Length);
-                        Debug.Log("AFTER READING:");
+                        //Debug.Log("AFTER READING:");
                         if (length != 0)
                         {
                             var incomingData = new byte[length];
@@ -161,6 +192,7 @@ public class TCPTestClient : MonoBehaviour
                     }
                 }
             }
+            stream.Close();
             socketConnection.Close();
             OnLog("Disconnected from server");
             OnDisconnected(this);
@@ -219,6 +251,8 @@ public class TCPTestClient : MonoBehaviour
 
     public void OnApplicationQuit()
     {
+        stream.Close();
+        socketConnection.Close();
         clientReceiveThread.Join();
         CloseConnection();
     }
