@@ -133,4 +133,9 @@ public class Grab : MonoBehaviour, IPointerDownHandler
         node["z"] = position.z;
         return node;
     }
+
+    public bool isGrabbed()
+    {
+        return isGrabbing;
+    }
 }

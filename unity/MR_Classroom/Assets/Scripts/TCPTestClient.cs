@@ -17,10 +17,11 @@ public class TCPTestClient : MonoBehaviour
     public GameObject[] objects;
     Dictionary<int, GameObject> grabbableObjects;
     public GameObject plasmaMembrane;
-    public GameObject centrosomes;
     Dictionary<GameObject,Vector3> current_positions;
     Dictionary<GameObject, float> t0;
     Dictionary<GameObject, float> t1;
+
+    bool simulationStarted;
 
     float dt;
 
@@ -47,6 +48,7 @@ public class TCPTestClient : MonoBehaviour
 
     private void Start()
     {
+        simulationStarted = false;
         grabbableObjects = new Dictionary<int, GameObject>();
         current_positions = new Dictionary< GameObject,Vector3 >();
         t0 = new Dictionary<GameObject, float>();
@@ -55,6 +57,7 @@ public class TCPTestClient : MonoBehaviour
 
         for (int i = 0; i < objects.Length; i++)
         {
+            //TODO: set the id of the obj not the type here....
             grabbableObjects.Add(objects[i].GetComponent<Grab>().objectId, objects[i]);
         }
         ConnectToTcpServer();
@@ -77,10 +80,6 @@ public class TCPTestClient : MonoBehaviour
                     {
                         plasmaMembrane.SetActive(true);
                     }
-                    else if (current_ids[a].AsInt == 4)
-                    {
-                        centrosomes.SetActive(true);
-                    }
                     else
                     {
                         grabbableObjects[current_ids[a]].SetActive(true);
@@ -92,6 +91,7 @@ public class TCPTestClient : MonoBehaviour
                 //Loop through all objects and update them...
                 for (int i = 0; i < current_data.Count; i++)
                 {
+
                     //Debug.Log(current_data[i]);
                     if (current_data[i]["uid"] != null)
                     {
@@ -101,7 +101,7 @@ public class TCPTestClient : MonoBehaviour
                         float y = current_data[i]["y"].AsFloat;
                         float z = current_data[i]["z"].AsFloat;
                         GameObject current = grabbableObjects[uid];
-
+                        
                         current_positions[current] = new Vector3(x, y, z);
                         if (t1.ContainsKey(current))
                         {
@@ -130,6 +130,10 @@ public class TCPTestClient : MonoBehaviour
             {
                 float t = dt / (t1[current] - t0[current]);
                 current.transform.position = Vector3.Lerp(current.transform.position, current_positions[current], t);
+            }
+            if (!current.GetComponent<Grab>().isGrabbed())
+            {
+                current.GetComponent<OrganelleController>().OnGrabFinished();
             }
         }
 
