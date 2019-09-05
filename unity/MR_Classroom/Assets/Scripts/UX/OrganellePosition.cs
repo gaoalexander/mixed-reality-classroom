@@ -1,13 +1,15 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class OrganellePosition : MonoBehaviour
 {
-    public SimulationController.Organelle[] correctOrganelles = new SimulationController.Organelle[1];
+    public SimulationController.Organelle[] correctOrganelles = new SimulationController.Organelle[0];
 
-    [SerializeField] private bool _snapToCenter;
-    [SerializeField] private Transform[] _snapPositions;
+    [SerializeField] private bool _snapToCenter = false;
+    [SerializeField] private Transform[] _snapPositions = new Transform[0];
+
+    private bool _inFirst = false;
 
     private List<int> _organellesIn = new List<int>();
     private int[] _currentOrganelles = new int[1];
@@ -18,8 +20,8 @@ public class OrganellePosition : MonoBehaviour
         Correct,
         Incorrect
     }
-    public Status[] status = new Status[1];
-    public SimulationController.Organelle[] placedOrganelles = new SimulationController.Organelle[1];
+    public Status[] status = new Status[0];
+    public SimulationController.Organelle[] placedOrganelles = new SimulationController.Organelle[0];
 
     private void OnEnable()
     {
@@ -37,41 +39,59 @@ public class OrganellePosition : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        //if (!_ignoreAfterFirst || !_inFirst)
+        //{
+            //_inFirst = true;
+
         OrganelleController organelle = other.GetComponent<OrganelleController>();
-        _organellesIn.Add(organelle.id);
-        if (organelle.currentOrganellePosition != null)
+
+        if (!organelle.ignoreAfterFirst || organelle.ignoreAfterFirst && organelle.currentOrganellePosition == null)
         {
-            organelle.previousOrganellePositions.Add(organelle.currentOrganellePosition);
+            _organellesIn.Add(organelle.id);
+            if (organelle.currentOrganellePosition != null)
+            {
+                organelle.previousOrganellePositions.Add(organelle.currentOrganellePosition);
+            }
+            organelle.currentOrganellePosition = this;
         }
-        organelle.currentOrganellePosition = this;
+        //}
     }
 
     private void OnTriggerExit(Collider other)
     {
+        //if (_ignoreAfterFirst && _inFirst || !_ignoreAfterFirst)
+        //{
+        //_inFirst = false;
+
         OrganelleController organelle = other.GetComponent<OrganelleController>();
-        _organellesIn.Remove(organelle.id);
-        if (organelle.previousOrganellePositions.Count == 0)
+
+        if (!organelle.ignoreAfterFirst || organelle.ignoreAfterFirst && organelle.currentOrganellePosition == this)
         {
-            organelle.currentOrganellePosition = null;
-        }
-        else
-        {
-            int lastIndex = organelle.previousOrganellePositions.Count - 1;
-            organelle.currentOrganellePosition = organelle.previousOrganellePositions[lastIndex];
-            organelle.previousOrganellePositions.RemoveAt(lastIndex);
-        }
-        int i = 0;
-        foreach (int currentOrganelle in _currentOrganelles)
-        {
-            if (currentOrganelle == organelle.id)
+            _organellesIn.Remove(organelle.id);
+            if (organelle.previousOrganellePositions.Count == 0)
             {
-                _currentOrganelles[i] = -1;
-                status[i] = Status.Empty;
-                placedOrganelles[i] = SimulationController.Organelle.None;
-                break;
+                organelle.currentOrganellePosition = null;
             }
-            i++;
+            else
+            {
+                int lastIndex = organelle.previousOrganellePositions.Count - 1;
+                organelle.currentOrganellePosition = organelle.previousOrganellePositions[lastIndex];
+                organelle.previousOrganellePositions.RemoveAt(lastIndex);
+            }
+            int i = 0;
+            foreach (int currentOrganelle in _currentOrganelles)
+            {
+                if (currentOrganelle == organelle.id)
+                {
+                    _currentOrganelles[i] = -1;
+                    status[i] = Status.Empty;
+                    placedOrganelles[i] = SimulationController.Organelle.None;
+                    break;
+                }
+                i++;
+            }
         }
+        //}
     }
 
     public void OnGrabFinished(OrganelleController organelleObj)
@@ -195,5 +215,6 @@ public class OrganellePosition : MonoBehaviour
             organelleObj.rotation = Quaternion.Lerp(startRot, endRot, percentage);
             yield return null;
         }
+        organelleObj.GetComponent<OrganelleController>().sendPositionToServer(endPos);
     }
 }

@@ -21,6 +21,7 @@ using SimpleJSON;
 public class Grab : MonoBehaviour, IPointerDownHandler
 {
     private bool isGrabbing = false;
+    public bool hasBeenGrabbed = false;
 
     private RigidbodyConstraints originalConstraints;
     private Rigidbody rigidBody;
@@ -31,6 +32,9 @@ public class Grab : MonoBehaviour, IPointerDownHandler
     public TCPTestClient client;
 
     public int objectId;
+
+    public int lastGrabLoop = 0;
+    public bool grabLooping = false;
     
     // these OnPointer functions are automatically called when
     // the pointer interacts with a game object that this script is attached to
@@ -64,6 +68,7 @@ public class Grab : MonoBehaviour, IPointerDownHandler
         {
             rigidBody.constraints = originalConstraints;
             isGrabbing = false;
+            hasBeenGrabbed = true;
         }
 
         if (isGrabbing == true)
@@ -116,7 +121,7 @@ public class Grab : MonoBehaviour, IPointerDownHandler
             Vector3 newLength = MiraController.Direction.normalized * (currentDistance + touchInfluence + touchIncrement);
             Vector3 newPosition = MiraController.Position + newLength;
 
-            Vector3 reallyNewPositon = new Vector3(newPosition.x, 0, newPosition.z);
+            Vector3 reallyNewPositon = new Vector3(newPosition.x, 0.255f, newPosition.z);
             //transform.position = newPosition;
             client.SendTCPMessage(GrabRequest(reallyNewPositon).ToString()); 
         }

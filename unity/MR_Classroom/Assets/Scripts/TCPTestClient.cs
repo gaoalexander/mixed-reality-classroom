@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using SimpleJSON;
 
 public class TCPTestClient : MonoBehaviour
@@ -16,10 +17,13 @@ public class TCPTestClient : MonoBehaviour
 
     public GameObject[] objects;
     Dictionary<int, GameObject> grabbableObjects;
-    public GameObject plasmaMembrane;
     Dictionary<GameObject,Vector3> current_positions;
     Dictionary<GameObject, float> t0;
     Dictionary<GameObject, float> t1;
+
+    public SimulationController sim_controller;
+    public List<OrganelleSpawn> spawn_points;
+
 
     bool simulationStarted;
 
@@ -47,7 +51,7 @@ public class TCPTestClient : MonoBehaviour
     }
 
     private void Start()
-    {
+    {   
         simulationStarted = false;
         grabbableObjects = new Dictionary<int, GameObject>();
         current_positions = new Dictionary< GameObject,Vector3 >();
@@ -76,14 +80,64 @@ public class TCPTestClient : MonoBehaviour
                 JSONArray current_ids = current_data["ids"].AsArray;
                 for (int a = 0; a < current_ids.Count; a++)
                 {
-                    if (current_ids[a].AsInt == 0)
+                        if(current_ids[a] == 47 && !simulationStarted)
                     {
-                        plasmaMembrane.SetActive(true);
+                        sim_controller.currentCell = SimulationController.TypeOfCell.Animal;
+                        sim_controller.StartSimulation();
+                        simulationStarted = true;
+
                     }
-                    else
+                        else if(current_ids[a] == 48 && !simulationStarted)
                     {
-                        grabbableObjects[current_ids[a]].SetActive(true);
+                        sim_controller.currentCell = SimulationController.TypeOfCell.Plant;
+                        sim_controller.StartSimulation();
+                        simulationStarted = true;
+                      
                     }
+                        else if(current_ids[a] == 49 && !simulationStarted)
+                    {
+                        sim_controller.currentCell = SimulationController.TypeOfCell.Prokaryotic;
+                        sim_controller.StartSimulation();
+                        simulationStarted = true;
+                    }
+                    else if(current_ids[a] != 47 && current_ids[a] != 48 && current_ids[a] != 49 && grabbableObjects[current_ids[a]].activeSelf == false && grabbableObjects[current_ids[a]].GetComponent<OrganelleController>().locked == false)
+                    {
+                            grabbableObjects[current_ids[a]].GetComponent<OrganelleController>().locked = true;
+                            int min_amount = 100;
+                            int min_index = -1;
+                            List<int> spawn_indices = new List<int>();
+                            for (int b = 0; b < spawn_points.Count; b++)
+                            {
+                                if (spawn_points[b].organellesActive < min_amount)
+                                {
+                                    min_index = b;
+                                    min_amount = spawn_points[b].organellesActive;
+                                }
+                                if (spawn_points[b].organellesActive == 0)
+                                {
+                                    spawn_indices.Add(b);
+                                }
+                            }
+
+                        if(spawn_indices.Count > 0)
+                        {
+                            int random_index = UnityEngine.Random.Range(0, spawn_indices.Count);
+
+                            Debug.Log("Is it here at least:" + current_ids[a]);
+
+                            spawn_points[spawn_indices[random_index]]._organelleToSpawn = grabbableObjects[current_ids[a]].GetComponent<OrganelleController>();
+                            spawn_points[spawn_indices[random_index]].ActivatePortal();
+                        }
+                        else
+                        {
+                            spawn_points[min_index]._organelleToSpawn = grabbableObjects[current_ids[a]].GetComponent<OrganelleController>();
+                            spawn_points[min_index].ActivatePortal();
+                        }
+                          
+
+                        //grabbableObjects[current_ids[a]].SetActive(true);
+                    }
+                     
                 }
             }
             else
@@ -128,12 +182,36 @@ public class TCPTestClient : MonoBehaviour
             GameObject current = entry.Value;
             if (t1.ContainsKey(current))
             {
+                if (current.transform.position == current_positions[current])
+                {
+                    current.GetComponent<Grab>().lastGrabLoop++;
+                }
+                else
+                {
+                    current.GetComponent<Grab>().lastGrabLoop = 0;
+                    if (current.GetComponent<Grab>().grabLooping == false)
+                    {
+                        current.GetComponent<Grab>().grabLooping = true;
+                        current.GetComponent<OrganelleController>().OnGrabStarted();
+                    }
+                }
+
                 float t = dt / (t1[current] - t0[current]);
                 current.transform.position = Vector3.Lerp(current.transform.position, current_positions[current], t);
+
+                if(current.GetComponent<Grab>().lastGrabLoop > 5 && current.GetComponent<Grab>().grabLooping == true)
+                {
+                    current.GetComponent<OrganelleController>().OnGrabFinished();
+                    current.GetComponent<Grab>().lastGrabLoop = 0;
+                    current.GetComponent<Grab>().grabLooping = false;
+                }
+                
             }
-            if (!current.GetComponent<Grab>().isGrabbed())
+            if (current.GetComponent<Grab>().hasBeenGrabbed == true && !current.GetComponent<Grab>().isGrabbed())
             {
-                current.GetComponent<OrganelleController>().OnGrabFinished();
+                //current.GetComponent<OrganelleController>().OnGrabFinished();
+                current.GetComponent<Grab>().hasBeenGrabbed = false;
+
             }
         }
 

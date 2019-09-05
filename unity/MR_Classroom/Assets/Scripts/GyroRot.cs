@@ -27,8 +27,8 @@ public class GyroRot : MonoBehaviour
         camera.transform.rotation = imu_sign;*/
 
         //Debug.Log("Camera position to set:" + new Vector3(-1 * camera.transform.position.x, camera.transform.position.y, -1 * camera.transform.position.z));
-        camera.transform.position = new Vector3(-1* camera.transform.position.x, camera.transform.position.y, -1* camera.transform.position.z);
-
+        //camera.transform.position = new Vector3(-1* camera.transform.position.x, camera.transform.position.y, -1* camera.transform.position.z);
+        
         //Quaternion imu_rot = Quaternion.Euler(0, 215, 0) * camera.transform.rotation;
         //camera.transform.rotation = new Quaternion(-imu_rot.x, imu_rot.y, -imu_rot.z, imu_rot.w);
 
