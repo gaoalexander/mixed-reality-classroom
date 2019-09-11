@@ -32,10 +32,11 @@ interval = .005
 # how long to hold the lock
 timeout = .050
 
-toflush = []
-
 def sendmessages():
     while True:
+        # flush clients each iteration
+        toflush = []
+        
         message = tosend.get()
 
         for client, socket in clients.items():
