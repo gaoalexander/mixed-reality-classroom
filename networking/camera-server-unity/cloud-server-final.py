@@ -22,11 +22,16 @@ import json
 state = {}
 clients = {}
 
-# MQ
-# tosend = []
+ttl = {}
+
+# message queue
 tosend = Queue(maxsize=0)
 
-# interval = 0.01
+# play with these two values to finetune behavior
+interval = .005
+# how long to hold the lock
+timeout = .050
+
 toflush = []
 
 def sendmessages():
@@ -48,8 +53,21 @@ def sendmessages():
             clients.pop(client)
             toflush.pop(i)
 
-# def sendmessages():
-    # threading.Timer(interval, sendmessages).start()
+def purge():
+    dropkeys = []
+
+    for key in ttl:
+        ttl[key] += interval
+        if ttl[key] >= timeout:
+            state['objects'][key]['lockid'] = ""
+            dropkeys.append(key)
+
+    for i in range(0, len(dropkeys)):
+        clients.pop(dropkeys[i])
+        dropkeys.pop(i)
+
+def purge_locks():
+    threading.Timer(interval, purge).start()
 
 class ThreadedTCPHandler(socketserver.BaseRequestHandler):
     """
@@ -91,7 +109,8 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
                     print("object in use")
                 else:
                     state[data['uid']] = data
-                
+                    ttl[data['uid']] = 0.0
+
                 senddata = state
                 senddata["type"] = "object"
 
@@ -99,7 +118,7 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
 
             elif (data["type"] == "check"):
                 senddata["type"] = "check"
-                senddata["success"] = np.array_equal(combination_ids,target)
+                senddata["success"] = np.array_equal(combination_ids, target)
                 
                 tosend.put(senddata)
 
@@ -121,6 +140,10 @@ t.start()
 senderThread = threading.Thread(target=sendmessages)
 senderThread.setDaemon(True)
 senderThread.start()
+
+purgerThread = threading.Thread(target=purge_locks)
+purgerThread.setDaemon(True)
+purgerThread.start()
 
 #-----------------------------------------------------------------------------------
 
