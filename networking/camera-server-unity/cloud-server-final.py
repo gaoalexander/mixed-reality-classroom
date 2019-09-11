@@ -43,6 +43,7 @@ def sendmessages():
         tosend.task_done()
 
         for i in range(0, len(toflush)):
+            client = toflush[i]
             clients[client].close()
             clients.pop(client)
             toflush.pop(i)
