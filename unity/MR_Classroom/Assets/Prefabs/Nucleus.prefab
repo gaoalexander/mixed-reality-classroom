@@ -245,11 +245,11 @@ GameObject:
   - component: {fileID: 5334725159653524635}
   - component: {fileID: 1113080194553704349}
   - component: {fileID: 1113080194553704348}
-  - component: {fileID: 1113080194553704351}
   - component: {fileID: 1113080194553704346}
   - component: {fileID: 1152927611719923221}
   - component: {fileID: 5989890929280614891}
-  - component: {fileID: -6692268226242186753}
+  - component: {fileID: 1113080194553704351}
+  - component: {fileID: 1459612520}
   m_Layer: 0
   m_Name: Nucleus
   m_TagString: Untagged
@@ -265,7 +265,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8958672980354414216}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0.07, y: 1.232, z: 3.38}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children:
   - {fileID: 3646322499992373438}
@@ -303,23 +303,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1113080194553704351
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8958672980354414216}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88d3abdbb1af3694c8a6bfc3df575bf6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  organelle: 4
-  id: 1
-  currentOrganellePosition: {fileID: 0}
-  previousOrganellePositions: []
-  grabFinished: 0
 --- !u!114 &1113080194553704346
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -346,9 +329,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bbe97414f29c4a5ba14c7eb84c00b98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grabWasSet: 0
   client: {fileID: 0}
-  objectId: 3
+  objectId: 0
 --- !u!114 &5989890929280614891
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -365,7 +347,7 @@ MonoBehaviour:
   _EventMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &-6692268226242186753
+--- !u!114 &1113080194553704351
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -377,8 +359,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88d3abdbb1af3694c8a6bfc3df575bf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  organelle: 4
-  id: 0
+  organelle: 6
+  id: 1
+  ignoreAfterFirst: 0
+  _spawnScale: 0.2
   currentOrganellePosition: {fileID: 0}
   previousOrganellePositions: []
   grabFinished: 0
+  scaleToSpawn: 0
+  scaleToOriginal: 0
+--- !u!95 &1459612520
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8958672980354414216}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 24a70057fb7bca14386bcafd13d2a5ec, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
