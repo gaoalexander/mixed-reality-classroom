@@ -58,11 +58,10 @@ public class TCPTestClient : MonoBehaviour
         t0 = new Dictionary<GameObject, float>();
         t1 = new Dictionary<GameObject, float>();
 
-
         for (int i = 0; i < objects.Length; i++)
         {
             //TODO: set the id of the obj not the type here....
-            grabbableObjects.Add(objects[i].GetComponent<Grab>().objectId, objects[i]);
+            grabbableObjects.Add(objects[i].GetComponent<OrganelleController>().objectId, objects[i]);
         }
         ConnectToTcpServer();
     }
@@ -184,14 +183,14 @@ public class TCPTestClient : MonoBehaviour
             {
                 if (current.transform.position == current_positions[current])
                 {
-                    current.GetComponent<Grab>().lastGrabLoop++;
+                    current.GetComponent<OrganelleController>().lastGrabLoop++;
                 }
                 else
                 {
-                    current.GetComponent<Grab>().lastGrabLoop = 0;
-                    if (current.GetComponent<Grab>().grabLooping == false)
+                    current.GetComponent<OrganelleController>().lastGrabLoop = 0;
+                    if (current.GetComponent<OrganelleController>().grabLooping == false)
                     {
-                        current.GetComponent<Grab>().grabLooping = true;
+                        current.GetComponent<OrganelleController>().grabLooping = true;
                         current.GetComponent<OrganelleController>().OnGrabStarted();
                     }
                 }
@@ -199,18 +198,18 @@ public class TCPTestClient : MonoBehaviour
                 float t = dt / (t1[current] - t0[current]);
                 current.transform.position = Vector3.Lerp(current.transform.position, current_positions[current], t);
 
-                if(current.GetComponent<Grab>().lastGrabLoop > 5 && current.GetComponent<Grab>().grabLooping == true)
+                if(current.GetComponent<OrganelleController>().lastGrabLoop > 5 && current.GetComponent<OrganelleController>().grabLooping == true)
                 {
                     current.GetComponent<OrganelleController>().OnGrabFinished();
-                    current.GetComponent<Grab>().lastGrabLoop = 0;
-                    current.GetComponent<Grab>().grabLooping = false;
+                    current.GetComponent<OrganelleController>().lastGrabLoop = 0;
+                    current.GetComponent<OrganelleController>().grabLooping = false;
                 }
                 
             }
-            if (current.GetComponent<Grab>().hasBeenGrabbed == true && !current.GetComponent<Grab>().isGrabbed())
+            if (current.GetComponent<OrganelleController>().hasBeenGrabbed == true && !current.GetComponent<OrganelleController>().isGrabbed())
             {
                 //current.GetComponent<OrganelleController>().OnGrabFinished();
-                current.GetComponent<Grab>().hasBeenGrabbed = false;
+                current.GetComponent<OrganelleController>().hasBeenGrabbed = false;
 
             }
         }

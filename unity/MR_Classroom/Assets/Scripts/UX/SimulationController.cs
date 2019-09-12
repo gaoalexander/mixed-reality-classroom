@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class SimulationController : MonoBehaviour
 {
     public enum TypeOfCell
@@ -44,6 +45,7 @@ public class SimulationController : MonoBehaviour
     private List<OrganellePosition> _correctPositions = new List<OrganellePosition>();
 
     public TypeOfCell currentCell;
+    public TCPTestClient client;
 
     [SerializeField] private CellController _animalCell;
     [SerializeField] private CellController _plantCell;
@@ -57,6 +59,7 @@ public class SimulationController : MonoBehaviour
     [SerializeField] private Text[] _titleTexts;
     [SerializeField] private GameObject _content;
     [SerializeField] private GameObject _feedback;
+
 
     private void OnEnable()
     {

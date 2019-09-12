@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using SimpleJSON;
 
-public class OrganelleController : MonoBehaviour
+public class OrganelleController : MonoBehaviour, IPointerDownHandler
 {
     public SimulationController.Organelle organelle = SimulationController.Organelle.None;
     public int id = -1;
@@ -29,6 +30,27 @@ public class OrganelleController : MonoBehaviour
     public Transform trash = null;
 
     public TCPTestClient client;
+
+
+    //NOTE: Variables from the Grab class below
+
+
+    private bool isGrabbing = false;
+    public bool hasBeenGrabbed = false;
+
+    private RigidbodyConstraints originalConstraints;
+    private Rigidbody rigidBody;
+
+    private float lastTouchPosition;
+    private float lastTouchCoor;
+
+    public int objectId;
+
+    public int lastGrabLoop = 0;
+    public bool grabLooping = false;
+
+    //NOTE: End of variables from Grab class;
+
 
     private void OnEnable()
     {
@@ -69,6 +91,15 @@ public class OrganelleController : MonoBehaviour
         }
     }
 
+    //NOTE: GRAB CLASS START.
+    private void Start()
+    {
+
+        lastTouchCoor = 0.5f;
+        rigidBody = this.gameObject.GetComponent<Rigidbody>();
+        originalConstraints = rigidBody.constraints;
+    }
+
     private void Update()
     {
         if (grabFinished)
@@ -86,6 +117,75 @@ public class OrganelleController : MonoBehaviour
         {
             SetSpawnScale(false, .4f);
             scaleToOriginal = false;
+        }
+
+
+        //NOTE: GRAB CLASS UPDATE
+
+        // stop grabbing if the user isn't clicking
+        if (isGrabbing == true && MiraController.ClickButton == false)
+        {
+            rigidBody.constraints = originalConstraints;
+            isGrabbing = false;
+            hasBeenGrabbed = true;
+        }
+
+        if (isGrabbing == true)
+        {
+            // freeze the position of the physics simulation temporarily so the object doesn't
+            // spiral out of control while its being interacted with
+            // you could freeze the rotation as well if you wanted
+            rigidBody.constraints = RigidbodyConstraints.FreezePosition;
+
+            float touchInfluence = 0.0f;
+            float thisTouch = 0.0f;
+            float touchIncrement = 0.0f;
+            if (MiraController.TouchHeld == true)
+            {
+                // MiraController.Touchpos.Y goes from 1 to 0 , near to far
+                // we want to change this so the touchpad closer to the user returns negative values
+                // and the upper half returns positive values
+                thisTouch = MiraController.TouchPos.y;
+                // now its 0.5 to -0.5
+                thisTouch -= 0.5f;
+                // now its -0.5 to 0.5
+                thisTouch *= -1.0f;
+                // scale it down so it's not too strong
+                thisTouch *= 0.05f;
+                touchInfluence = lastTouchPosition - thisTouch;
+
+                if (lastTouchCoor > MiraController.TouchPos.y)
+                {
+
+                    touchIncrement = 0.1f;
+                    lastTouchCoor = MiraController.TouchPos.y;
+                }
+                else if (lastTouchCoor < MiraController.TouchPos.y)
+                {
+                    touchIncrement = -0.1f;
+                    lastTouchCoor = MiraController.TouchPos.y;
+                }
+            }
+            lastTouchPosition = thisTouch;
+
+
+            // get the distance from this object to the controller
+
+            float currentDistance = (MiraController.Position - transform.position).magnitude;
+
+            // the new distance of the grabbed object is the current distance,
+            // adjusted by the users touch, in the direction it was from the controller
+
+
+            Vector3 newLength = MiraController.Direction.normalized * (currentDistance + touchInfluence + touchIncrement);
+            Vector3 newPosition = MiraController.Position + newLength;
+
+            Vector3 reallyNewPositon = new Vector3(newPosition.x, 0.255f, newPosition.z);
+            //transform.position = newPosition;
+            Debug.Log("REALLY NEW POSITION");
+            Debug.Log(reallyNewPositon);
+            Debug.Log("~~~~~~~~~~~~~~");
+            client.SendTCPMessage(GrabRequest(reallyNewPositon).ToString());
         }
     }
 
@@ -204,15 +304,41 @@ public class OrganelleController : MonoBehaviour
     {
         client.SendTCPMessage(GrabRequest(pos).ToString());
     }
+
+
+    //NOTE: Methods from the Grab class below.
+
+    // these OnPointer functions are automatically called when
+    // the pointer interacts with a game object that this script is attached to
+    public void OnPointerDown(PointerEventData pointerData)
+    {
+        // onPointerDown is called every frame the pointer is held down on the object
+        // we only want to grab objects if the click button was just pressed
+        // this prevents multiple objects from unintentionally getting grabbed
+        Debug.Log("On Pointer Down");
+        if (MiraController.ClickButtonPressed)
+        {
+            Debug.Log("Click Button Pressed");
+            isGrabbing = true;
+        }
+
+    }
+
     public JSONNode GrabRequest(Vector3 position)
     {
         JSONNode node = new JSONObject();
         node["type"] = "object";
         node["lockid"] = client.id;
-        node["uid"] = id;
+        node["uid"] = objectId;
         node["x"] = position.x;
         node["y"] = position.y;
         node["z"] = position.z;
         return node;
     }
+
+    public bool isGrabbed()
+    {
+        return isGrabbing;
+    }
+
 }
