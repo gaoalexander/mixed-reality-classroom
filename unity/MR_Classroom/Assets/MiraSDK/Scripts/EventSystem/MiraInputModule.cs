@@ -472,7 +472,11 @@ namespace UnityEngine.EventSystems
             if (newEnterTarget.CompareTag("Interactive") != false)
             {
                 if (currentPointerData.pointerEnter == newEnterTarget && newEnterTarget)
+                {
                     pointer.OnPointerHover(newEnterTarget, currentPointerData.pointerCurrentRaycast, isTargetInteractive);
+                    Debug.Log("On Pointer Hover");
+                }
+                  
             }
             return;
 

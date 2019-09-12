@@ -104,13 +104,8 @@ public class MiraWikitudeManager : TransformOverride
             ArCam.ExposeAtPointOfInterest(exposurepoint, CaptureExposureMode.ContinuousAutoExpose);
 
             rotationalOffset = Quaternion.Euler(-30, 0, 0);
-           
-
             // positionalOffset = new Vector3(-5.2f, -0.93599f, -5.0f) * scaleMultiplier;
-
             positionalOffset = new Vector3(-6.006f, -2.846f, -3.689f) * scaleMultiplier;
-
-            Debug.Log("is Spectator false");
             
         }
         else
@@ -126,7 +121,6 @@ public class MiraWikitudeManager : TransformOverride
             ArCam.enabled = true;
 
             imageTracker.AutoToggleVisibility = true;
-            Debug.Log("is Spectator true");
         }
         
     
@@ -218,8 +212,6 @@ public class MiraWikitudeManager : TransformOverride
     {
         
         transform.position = (remoteTargetHeight * scaleMultiplier * camPosition * 0.1f) + camRotation * positionalOffset;
-        Debug.Log("Remote Tracking Offset Set");
-        Debug.Log(rotationalOffset);
         transform.rotation = camRotation * rotationalOffset;
        
     
@@ -234,24 +226,8 @@ public class MiraWikitudeManager : TransformOverride
             // position = imageTarget.PhysicalTargetHeight * scaleMultiplier * position * 0.1f + rotation * positionalOffset;
             // rotation = rotation * rotationalOffset;
             Vector3 relativePosition = position - trackable.transform.position;
-            Vector3 mira_position_convert = trackable.transform.position + imageTarget.PhysicalTargetHeight * scaleMultiplier * relativePosition * 0.1f + rotation * positionalOffset;
-            //position = new Vector3(-mira_position_convert.x, mira_position_convert.y, mira_position_convert.z);
-            position = new Vector3(mira_position_convert.x, mira_position_convert.y, mira_position_convert.z);
-
-            Debug.Log("Camera Override Offset Set");
-            Debug.Log(rotationalOffset);
-
-            Quaternion mira_rotation_convert = rotation * rotationalOffset;
-
-            //camera.localScale = new Vector3(camera.localScale.x, camera.localScale.y, -camera.localScale.z);
-            //rotation = mira_rotation_convert * Quaternion.Euler(0, 180, 0) * Quaternion.Euler(-90, 0, 0);
-
-            //rotation = mira_rotation_convert * Quaternion.Euler(-90, 0, 0) * Quaternion.Euler(0, 180, 0); 
-            //camera.localScale = new Vector3(camera.localScale.x, camera.localScale.y, -camera.localScale.z);
-
-            rotation = mira_rotation_convert * Quaternion.Euler(-110, 0, 0) * Quaternion.Euler(0, 180, 0);
-            camera.localScale = new Vector3(camera.localScale.x, camera.localScale.y, -camera.localScale.z);
-            //rotation = Quaternion.Euler(-30, 0, 0) * rotation;
+            position = trackable.transform.position + imageTarget.PhysicalTargetHeight * scaleMultiplier * relativePosition * 0.1f + rotation * positionalOffset;
+            rotation = rotation * rotationalOffset;
         }
     }
 

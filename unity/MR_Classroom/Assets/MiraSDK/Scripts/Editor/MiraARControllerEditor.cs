@@ -83,8 +83,8 @@ namespace Mira
                     if (FindObjectOfType<WikitudeCamera> ().StaticCamera == true)
                         FindObjectOfType<WikitudeCamera> ().StaticCamera = false;
 
-                    //if (FindObjectOfType<WikitudeCamera> ().EnableInputPlugin)
-                    //    FindObjectOfType<WikitudeCamera> ().EnableInputPlugin = false;
+                    if (FindObjectOfType<WikitudeCamera> ().EnableInputPlugin)
+                        FindObjectOfType<WikitudeCamera> ().EnableInputPlugin = false;
                 }
 			}
             if (GUILayout.Button("Get Support"))
