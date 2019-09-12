@@ -9,13 +9,13 @@ import time
 #-----------------------------------------------------------------------------------
 # SETUP SOCKETS
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 print("FPS:",cap.get(cv2.CAP_PROP_FPS))
 print("RES:",cap.get(cv2.CAP_PROP_FRAME_WIDTH),cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-TCP_IP_ADDRESS = "127.0.0.1"                                # LAN IP ADDRESS OF SERVER
+TCP_IP_ADDRESS = "159.65.252.8"                                # LAN IP ADDRESS OF SERVER
 TCP_PORT_NO = 20380
 # ADDRESS = (TCP_IP_ADDRESS, PORT_NO)
 
