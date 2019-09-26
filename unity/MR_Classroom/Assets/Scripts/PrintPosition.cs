@@ -14,6 +14,6 @@ public class PrintPosition : MonoBehaviour
     void Update()
     {
         //Debug.Log("Object Orientation:" + transform.rotation.ToEuler());
-        Debug.Log("Object Position:" + transform.position);
+        //Debug.Log("Object Position:" + transform.position);
     }
 }

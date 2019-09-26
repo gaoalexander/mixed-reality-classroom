@@ -60,6 +60,8 @@ public class SimulationController : MonoBehaviour
     [SerializeField] private GameObject _content;
     [SerializeField] private GameObject _feedback;
 
+    public bool startSimulationDirectly = false;
+
 
     private void OnEnable()
     {
@@ -75,6 +77,10 @@ public class SimulationController : MonoBehaviour
     private void Start()
     {
         _content.SetActive(false);
+        if (startSimulationDirectly)
+        {
+            StartSimulation();
+        }
     }
 
     public void StartSimulation()
