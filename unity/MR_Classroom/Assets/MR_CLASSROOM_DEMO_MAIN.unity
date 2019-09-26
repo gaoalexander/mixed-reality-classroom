@@ -346,7 +346,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 25300253}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 898f06cf86d0e4b1799cfe2c96a97980, type: 3}
   m_Name: 
@@ -1852,6 +1852,31 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7565481992188580526, guid: a71a474277a8b4b5abb02c011a84159a,
+        type: 3}
+      propertyPath: _staticCamera
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7565481992188580526, guid: a71a474277a8b4b5abb02c011a84159a,
+        type: 3}
+      propertyPath: _enableCameraRendering
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7565481992188580526, guid: a71a474277a8b4b5abb02c011a84159a,
+        type: 3}
+      propertyPath: ActiveOverride
+      value: 
+      objectReference: {fileID: 25300257}
+    - target: {fileID: 7565481992188580526, guid: a71a474277a8b4b5abb02c011a84159a,
+        type: 3}
+      propertyPath: _WikitudeLicenseKey
+      value: 'H9ORKGkINUyIktC/T5y13vhbsGRq+tp4OpmHujzCE/zJUk0c5o9NoxYQgVAG2AjL9UiG2x5EABTK/68GYgfoEu1h32cyU2BxU5f5KPvJcbEr5NwzQTFLSos9sUTkhyvUKv3ZKWUVJpEO005PLlP5U132+U0DhuO2j8Lz49fG2zxTYWx0ZWRfX55LSGMqa/6rjEUWuJXYiJ99vBmpWGRrYRqAGXOryhcdufR1zjo5GkMd0WT15E+I2R1okb6ovJ3+KNxjN6FHoh+66zMNTFL5NB6wfCkDG6oU8DtTv+KvIFeS0VX1Im4jbjB8Q4TCHiOglhlWgp33JmD6yOvu8CjLyMc5WMH1EJ1qsKlsAuVbOIwN+PN6VDpAWmWNYyC0L48EPFjnqCgr9Cb/S13VZsIFlORnLX50AKvW1q7eAwkBV+crhs4k9TJldDl2p38cobOWg7yI9vjO8JNsEPqe3rER1P/1oQ0GGHJvGiwPuJDaaNEaU6ztj/USpmdgOk6S3MSLh8DMUWX3pY/mxikAGLAK7aj4QWxi5qHrlWqoLyp1PFIlKyMCkRGBuNuiHoF5Z1xgqvRcr5AbTIqUEbWfu4a8+qEgqBWykw+ENd9wvtUO2egCVsw+DxeZ03634jr8lqIe5RFJTe+40qCJSfYoiw9i6CWDr0vKvN8CQB0RFlXbrn+I2dKtPiVvm9WrGEAodS8vOz3QJepXHCDgn67SynO2BNs7Q5Vu6iNxZysSJ/yJvag=  '
+      objectReference: {fileID: 0}
+    - target: {fileID: 7565481992188580526, guid: a71a474277a8b4b5abb02c011a84159a,
+        type: 3}
+      propertyPath: _enableInputPlugin
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4465794300573363789, guid: a71a474277a8b4b5abb02c011a84159a,
         type: 3}
       propertyPath: m_IsActive
@@ -2011,26 +2036,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.z
       value: -0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7565481992188580526, guid: a71a474277a8b4b5abb02c011a84159a,
-        type: 3}
-      propertyPath: _staticCamera
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7565481992188580526, guid: a71a474277a8b4b5abb02c011a84159a,
-        type: 3}
-      propertyPath: _enableCameraRendering
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7565481992188580526, guid: a71a474277a8b4b5abb02c011a84159a,
-        type: 3}
-      propertyPath: ActiveOverride
-      value: 
-      objectReference: {fileID: 25300257}
-    - target: {fileID: 7565481992188580526, guid: a71a474277a8b4b5abb02c011a84159a,
-        type: 3}
-      propertyPath: _WikitudeLicenseKey
-      value: 'H9ORKGkINUyIktC/T5y13vhbsGRq+tp4OpmHujzCE/zJUk0c5o9NoxYQgVAG2AjL9UiG2x5EABTK/68GYgfoEu1h32cyU2BxU5f5KPvJcbEr5NwzQTFLSos9sUTkhyvUKv3ZKWUVJpEO005PLlP5U132+U0DhuO2j8Lz49fG2zxTYWx0ZWRfX55LSGMqa/6rjEUWuJXYiJ99vBmpWGRrYRqAGXOryhcdufR1zjo5GkMd0WT15E+I2R1okb6ovJ3+KNxjN6FHoh+66zMNTFL5NB6wfCkDG6oU8DtTv+KvIFeS0VX1Im4jbjB8Q4TCHiOglhlWgp33JmD6yOvu8CjLyMc5WMH1EJ1qsKlsAuVbOIwN+PN6VDpAWmWNYyC0L48EPFjnqCgr9Cb/S13VZsIFlORnLX50AKvW1q7eAwkBV+crhs4k9TJldDl2p38cobOWg7yI9vjO8JNsEPqe3rER1P/1oQ0GGHJvGiwPuJDaaNEaU6ztj/USpmdgOk6S3MSLh8DMUWX3pY/mxikAGLAK7aj4QWxi5qHrlWqoLyp1PFIlKyMCkRGBuNuiHoF5Z1xgqvRcr5AbTIqUEbWfu4a8+qEgqBWykw+ENd9wvtUO2egCVsw+DxeZ03634jr8lqIe5RFJTe+40qCJSfYoiw9i6CWDr0vKvN8CQB0RFlXbrn+I2dKtPiVvm9WrGEAodS8vOz3QJepXHCDgn67SynO2BNs7Q5Vu6iNxZysSJ/yJvag=  '
       objectReference: {fileID: 0}
     - target: {fileID: 1782481041061930583, guid: a71a474277a8b4b5abb02c011a84159a,
         type: 3}
@@ -9765,6 +9770,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1525681110}
   - component: {fileID: 1525681111}
+  - component: {fileID: 1525681112}
   m_Layer: 0
   m_Name: SimulationController
   m_TagString: Untagged
@@ -9814,6 +9820,18 @@ MonoBehaviour:
   - {fileID: 1845754743}
   _content: {fileID: 1806832414}
   _feedback: {fileID: 2091236951}
+--- !u!114 &1525681112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1525681109}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd57e03fdbdf44607966cbd2de35de7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1526278762 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1557344408119627399, guid: 69b31a3b60b61364eb8a0e1b770f2802,

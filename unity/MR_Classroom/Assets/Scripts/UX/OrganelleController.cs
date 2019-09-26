@@ -322,6 +322,29 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler
             isGrabbing = true;
         }
 
+        /*
+        if (MiraController.RightButton)
+        {
+            Debug.Log("Right Button Pressed");
+        }
+        else if (MiraController.LeftButton)
+        {
+            Debug.Log("Left Button Pressed");
+        }
+        else if (MiraController.UpButton)
+        {
+            Debug.Log("Up Button Pressed");
+        }
+        else if (MiraController.DownButton)
+        {
+            Debug.Log("Down Button Pressed");
+        }
+        else if (MiraController.BackButton)
+        {
+            Debug.Log("Back Button Pressed");
+        }*/
+
+
     }
 
     public JSONNode GrabRequest(Vector3 position)

@@ -77,6 +77,7 @@ public class TCPTestClient : MonoBehaviour
             if (current_data["type"] == "active")
             {
                 JSONArray current_ids = current_data["ids"].AsArray;
+                JSONArray current_spawn = current_data["spawn"].AsArray;
                 for (int a = 0; a < current_ids.Count; a++)
                 {
                         if(current_ids[a] == 47 && !simulationStarted)
@@ -203,6 +204,13 @@ public class TCPTestClient : MonoBehaviour
                     current.GetComponent<OrganelleController>().OnGrabFinished();
                     current.GetComponent<OrganelleController>().lastGrabLoop = 0;
                     current.GetComponent<OrganelleController>().grabLooping = false;
+
+                    //Release Message:
+
+                    JSONNode node = new JSONObject();
+                    node["type"] = "release";
+                    node["uid"] = current.GetComponent<OrganelleController>().objectId;
+                    SendTCPMessage(node.ToString());
                 }
                 
             }
