@@ -16,7 +16,6 @@ public class ParentCamera : MonoBehaviour
     IEnumerator WaitAndParentCamera()
     {
         yield return new WaitForEndOfFrame();
-        child.transform.SetParent(parent.transform);     
-
+        child.transform.SetParent(parent.transform);
     }
 }

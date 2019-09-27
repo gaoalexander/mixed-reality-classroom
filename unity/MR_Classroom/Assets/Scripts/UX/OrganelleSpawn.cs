@@ -20,7 +20,28 @@ public class OrganelleSpawn : MonoBehaviour
     private void Start()
     {
         _portalMaterial = _portalEffect.GetComponent<Renderer>().material;
-        _portalEffect.SetActive(false);
+
+        //only for testing
+        if (_organelleToSpawn != null)
+        {
+            activatePortal = true;
+            //ActivatePortal();
+            //StartCoroutine(WaitRandomAndSpawn());
+        }
+        else
+        {
+            _portalEffect.SetActive(false);
+        }
+    }
+
+    //only for testing
+    IEnumerator WaitRandomAndSpawn()
+    {
+        float randomWaitTime = Random.Range(2f, 5f);
+        Debug.Log("Random Wait Time: " + randomWaitTime);
+        yield return new WaitForSeconds(0f);
+        Debug.Log("Activate Portal!!!!!!!!!!!!!!!");
+        ActivatePortal();
     }
 
     public void ActivatePortal()
@@ -35,6 +56,7 @@ public class OrganelleSpawn : MonoBehaviour
 
     IEnumerator ActivateAndScalePortal(float start, float end, float animTime)
     {
+        Debug.Log("Activate And Scale Portal!!!");
         _portalEffect.SetActive(true);
 
         float currentLerpTime = 0f;
@@ -48,7 +70,6 @@ public class OrganelleSpawn : MonoBehaviour
 
         while (Mathf.Abs(start - _portalEffect.transform.localScale.z) < 1)
         {
-
             currentLerpTime += Time.deltaTime;
             if (currentLerpTime > animTime)
             {
@@ -60,6 +81,7 @@ public class OrganelleSpawn : MonoBehaviour
             percentage = percentage * percentage * percentage * (percentage * (6f * percentage - 15f) + 10f);
 
             _portalEffect.transform.localScale = new Vector3(_portalEffect.transform.localScale.x, _portalEffect.transform.localScale.y, Mathf.Lerp(start, end, percentage));
+            Debug.Log("Scaleeeeeee");
             yield return null;
         }
 
@@ -77,7 +99,6 @@ public class OrganelleSpawn : MonoBehaviour
             DeactivatePortal();
             _organelleToSpawn.GetComponent<OrganelleController>().locked = false;
         }
-
     }
 
     private void Update()

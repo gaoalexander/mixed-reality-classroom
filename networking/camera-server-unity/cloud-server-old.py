@@ -5,16 +5,12 @@ import cv2
 from cv2 import aruco
 
 #-----------------------------------------------------------------------------------
-# SETUP SOCKETS
-
 # CAMERA CLIENT - SERVER SOCKET
 
 '''
-#-----------------------------------------------------------------------------------
-# INITIALIZE / DECLARE GLOBAL VARIABLES
-
-
-'''
+    -----------------------------------------------------------------------------------
+    INITIALIZE / DECLARE GLOBAL VARIABLES
+    '''
 import socket
 import socketserver
 import threading
@@ -25,74 +21,108 @@ import json
 state = {}
 clients = {}
 
-# MQ
-# tosend = []
+ttl = {}
+
+# message queue
 tosend = Queue(maxsize=0)
 
-# interval = 0.01
-toflush = []
+# play with these two values to finetune behavior
+interval = .005
+# how long to hold the lock
+timeout = .050
 
 def sendmessages():
     while True:
+        # flush clients each iteration
+        toflush = []
+        
         message = tosend.get()
-
+        
         for client, socket in clients.items():
             try:
                 socket.sendall(json.dumps(message).encode('utf-8'))
             except OSError as e:
                 toflush.append(client)
                 print(e)
-
+    
         tosend.task_done()
-
+        
         for i in range(0, len(toflush)):
+            client = toflush[i]
             clients[client].close()
             clients.pop(client)
             toflush.pop(i)
 
-# def sendmessages():
-    # threading.Timer(interval, sendmessages).start()
+def purge():
+    dropkeys = []
+    
+    for key in ttl:
+        ttl[key] += interval
+        if ttl[key] >= timeout:
+            state['objects'][key]['lockid'] = ""
+            dropkeys.append(key)
+
+for i in range(0, len(dropkeys)):
+    clients.pop(dropkeys[i])
+    dropkeys.pop(i)
+
+def purge_locks():
+    threading.Timer(interval, purge).start()
 
 class ThreadedTCPHandler(socketserver.BaseRequestHandler):
     """
-    The RequestHandler class for our server.
-    It is instantiated once per connection to the server, and must
-    override the handle() method to implement communication to the
-    client.
-    """
+        The RequestHandler class for our server.
+        It is instantiated once per connection to the server, and must
+        override the handle() method to implement communication to the
+        client.
+        """
     
     def handle(self):
         clients[self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1])] = self.request
         self.request.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         while(True):
-            print(clients)
-            try:
-                # self.request is the TCP socket connected to the client
-                self.data = self.request.recv(4096).strip()
-            except:
-                print ("cannot receive data")
+            # print(clients)
+            message = ""
+            while(True):
+                
+                try:
+                    # self.request is the TCP socket connected to the client
+                    payload = self.request.recv(4096).strip()
+                    message += payload
+                except:
+                    print ("cannot receive data")
+                    return
+                if not payload:
+                    break
+        
+            if not message:
+                print("empty message...")
                 return
-            if not self.data:
-                return
+    
             #print "{} wrote:".format(self.client_address[0])
-            print (self.data)
+            print (message)
             senddata = {}
-            array = self.data.decode('utf-8').split('`')
+            array = message.decode('utf-8').split('`')
             data = json.loads(array[-2])
             if (data["type"] == "object"):
                 if (data['uid'] in state and state[data['uid']]['lockid'] != data['lockid'] and state[data['uid']]['lockid'] != ""):
                     print("object in use")
                 else:
                     state[data['uid']] = data
-                
+                    ttl[data['uid']] = 0.0
+            
                 senddata = state
                 senddata["type"] = "object"
-
+        
                 tosend.put(senddata)
-
+            
             elif (data["type"] == "check"):
                 senddata["type"] = "check"
-                senddata["success"] = np.array_equal(combination_ids,target)
+                senddata["success"] = np.array_equal(combination_ids, target)
+            elif (data["type"] == "release"):
+                if(data['uid'] in state):
+                    state[data['uid']]['lockid'] = ""
+                    print("release object")
                 
                 tosend.put(senddata)
 
@@ -104,6 +134,7 @@ HOST, PORT = "", 20391
 # Create the server, binding to localhost on port 9999
 server = ThreadedTCPServer((HOST, PORT), ThreadedTCPHandler)
 
+print("listening")
 # Activate the server; this will keep running until you
 # interrupt the program with Ctrl-C
 t = threading.Thread(target=server.serve_forever)
@@ -114,10 +145,10 @@ senderThread = threading.Thread(target=sendmessages)
 senderThread.setDaemon(True)
 senderThread.start()
 
-#while(True):
-#    pass
+purgerThread = threading.Thread(target=purge_locks)
+purgerThread.setDaemon(True)
+purgerThread.start()
 
-#server.serve_forever()
 #-----------------------------------------------------------------------------------
 
 TCP_IP_ADDRESS = ""                                # LAN IP ADDRESS OF SERVER
@@ -183,5 +214,3 @@ while True:
         #         client.sendall(json.dumps(senddata).encode('utf-8'))
         buf = []                # CLEAR BUFFER
         bytesrecvd = 0          # RESET BYTES RECEIVED COUNTER
-        
-

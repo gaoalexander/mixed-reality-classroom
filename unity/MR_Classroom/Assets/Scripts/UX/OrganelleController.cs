@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using SimpleJSON;
 
-public class OrganelleController : MonoBehaviour, IPointerDownHandler
+public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public SimulationController.Organelle organelle = SimulationController.Organelle.None;
     public int id = -1;
@@ -84,7 +84,7 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler
     public void OnGrabStarted()
     {
         SetSpawnScale(false, .4f);
-        if(spawnContainer != null)
+        if (spawnContainer != null)
         {
             spawnContainer.organellesActive--;
             spawnContainer = null;
@@ -119,15 +119,24 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler
             scaleToOriginal = false;
         }
 
-
         //NOTE: GRAB CLASS UPDATE
 
+        //Debug.Log("Is Grabbing: " + isGrabbing);
         // stop grabbing if the user isn't clicking
         if (isGrabbing == true && MiraController.ClickButton == false)
         {
+            //Debug.Log("Stop Grabbing!");
             rigidBody.constraints = originalConstraints;
             isGrabbing = false;
             hasBeenGrabbed = true;
+            if (client.playLocally)
+            {
+                OnGrabFinished();
+            }
+            else
+            {
+                client.GrabReleased(objectId);
+            }
         }
 
         if (isGrabbing == true)
@@ -168,7 +177,6 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler
             }
             lastTouchPosition = thisTouch;
 
-
             // get the distance from this object to the controller
 
             float currentDistance = (MiraController.Position - transform.position).magnitude;
@@ -182,10 +190,18 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler
 
             Vector3 reallyNewPositon = new Vector3(newPosition.x, 0.255f, newPosition.z);
             //transform.position = newPosition;
-            Debug.Log("REALLY NEW POSITION");
-            Debug.Log(reallyNewPositon);
-            Debug.Log("~~~~~~~~~~~~~~");
-            client.SendTCPMessage(GrabRequest(reallyNewPositon).ToString());
+            //Debug.Log("REALLY NEW POSITION");
+            //Debug.Log(reallyNewPositon);
+            //Debug.Log("~~~~~~~~~~~~~~");
+
+            if (!client.playLocally)
+            {
+                client.SendTCPMessage(GrabRequest(reallyNewPositon).ToString());
+            }
+            else
+            {
+                transform.position = reallyNewPositon;
+            }
         }
     }
 
@@ -295,14 +311,17 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler
             yield return null;
         }
 
-        
+        trash = null;
         gameObject.SetActive(false);
     }
 
 
     public void sendPositionToServer(Vector3 pos)
     {
-        client.SendTCPMessage(GrabRequest(pos).ToString());
+        if (!client.playLocally)
+        {
+            client.SendTCPMessage(GrabRequest(pos).ToString());
+        }
     }
 
 
@@ -320,31 +339,21 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler
         {
             Debug.Log("Click Button Pressed");
             isGrabbing = true;
+            if (client.playLocally)
+            {
+                OnGrabStarted();
+            }
         }
+    }
 
-        /*
-        if (MiraController.RightButton)
-        {
-            Debug.Log("Right Button Pressed");
-        }
-        else if (MiraController.LeftButton)
-        {
-            Debug.Log("Left Button Pressed");
-        }
-        else if (MiraController.UpButton)
-        {
-            Debug.Log("Up Button Pressed");
-        }
-        else if (MiraController.DownButton)
-        {
-            Debug.Log("Down Button Pressed");
-        }
-        else if (MiraController.BackButton)
-        {
-            Debug.Log("Back Button Pressed");
-        }*/
-
-
+    public void OnPointerUp(PointerEventData pointerData)
+    {
+        // onPointerDown is called every frame the pointer is held down on the object
+        // we only want to grab objects if the click button was just pressed
+        // this prevents multiple objects from unintentionally getting grabbed
+        //Debug.Log("On Pointer Up");
+        //isGrabbing = false;
+        //OnGrabFinished();
     }
 
     public JSONNode GrabRequest(Vector3 position)
