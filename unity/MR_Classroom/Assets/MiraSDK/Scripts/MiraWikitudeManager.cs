@@ -137,7 +137,6 @@ public class MiraWikitudeManager : TransformOverride
 	    if(!gameObject.GetComponent<WikitudeCamera> ().EnableCameraRendering && MiraArController.Instance.isSpectator)
 	        gameObject.GetComponent<WikitudeCamera> ().EnableCameraRendering = true;
 
-	
     }
 
     #endregion Unity callbacks
