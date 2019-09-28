@@ -99,9 +99,9 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
                 self.data = self.request.recv(4096).strip()
             except:
                 print ("cannot receive data")
-                return
+                break
             if not self.data:
-                return
+                break
             #print "{} wrote:".format(self.client_address[0])
             print (self.data)
             senddata = {}
@@ -128,7 +128,10 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
                     state[data['uid']]['lockid'] = ""
                     print("release object")      
                 tosend.put(senddata)
-
+        
+        print("killing connection" + self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1]))
+        del clients[self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1])]
+        
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass
 
