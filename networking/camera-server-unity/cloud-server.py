@@ -137,8 +137,8 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
                 continue
 
             if (data["type"] == "object"):
-                print("state: ", state)
-                print("data: ", data)
+                # print("state: ", state)
+                # print("data: ", data)
 
                 if (data['uid'] in state and state[data['uid']]['lockid'] != data['lockid'] and state[data['uid']]['lockid'] != ""):
                     print("object in use")
