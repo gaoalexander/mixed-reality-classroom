@@ -242,7 +242,8 @@ while True:
             senddata["spawn"] = random.sample(range(0,len(spawn_points)), len(senddata["ids"]))
 
             for id in senddata["ids"]:
-                state[data[id]]['active'] = True
+                state[id] = {}
+                state[id]['active'] = True
                 print("deactivate object")
 
 #             senddata["spawn"] = findFreeSpawnPoints(detected.tolist(),spawn_points)
