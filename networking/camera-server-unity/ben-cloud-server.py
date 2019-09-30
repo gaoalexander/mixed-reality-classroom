@@ -40,7 +40,7 @@ def sendmessages():
                 socket.sendall(json.dumps(message).encode('utf-8'))
             except OSError as e:
                 toflush.append(client)
-                print(e)
+                print(client + ":" + str(e))
 
         tosend.task_done()
 
@@ -69,25 +69,24 @@ def generateSpawnPoints(n):
 
 def findFreeSpawnPoints(detected, spawn_points):
     free_points = []
+    all_points = []
+    result = []
     count = 0
     for i in range(0, len(spawn_points)):
-        if(count == len(detected)):
-            break
+        if(detected[count] == 47 or detected[count] == 48 or detected[count] == 49):
+            count += 1
         if(spawn_points[i].isFull == False and detected[count] != 47 and detected[count] != 48 and detected[count] != 49):
-            spawn_manager[detected[count]] = spawn_points[i]
-            spawn_points[i].isFull = True
             free_points.append(spawn_points[i].idnum)
-            count+=1
-        elif (detected[count] == 47 or detected[count] == 48 or detected[count] == 49):
-            count+=1
-    if len(free_points) != len(detected):
-        while(len(free_points) != len(detected)):
-            free_points.append(spawn_points[random.randrange(len(spawn_points))].idnum)
+        all_points.append(spawn_points[i].idnum)
+    if len(free_points) < (len(detected) - count):
+        result = random.sample(free_points,len(detected))
+    else: 
+        result = random.sample(all_points,len(detected))
     
     print("detected:"+str(len(detected)))
     print("spawn points:"+str(len(spawn_points)))
     print("free points:"+str(free_points))
-    return free_points
+    return result
 
 class ThreadedTCPHandler(socketserver.BaseRequestHandler):
     """
@@ -107,9 +106,9 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
                 self.data = self.request.recv(4096).strip()
             except:
                 print ("cannot receive data")
-                return
+                break
             if not self.data:
-                return
+                break
             #print "{} wrote:".format(self.client_address[0])
             print (self.data)
             senddata = {}
@@ -136,14 +135,20 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
                     state[data['uid']]['lockid'] = ""
                     print("release object")      
                 tosend.put(senddata)
-
+        
+        print("killing connection" + self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1]))
+        del clients[self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1])]
+        
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
-    pass
+    allow_reuse_address = True
 
 HOST, PORT = "", 20391
 
 # Create the server, binding to localhost on port 9999
 server = ThreadedTCPServer((HOST, PORT), ThreadedTCPHandler)
+# server.allow_reuse_address = True
+# server.server_bind()     # Manually bind, to support allow_reuse_address
+# server.server_activate()
 
 # Activate the server; this will keep running until you
 # interrupt the program with Ctrl-C
@@ -220,12 +225,12 @@ while True:
         if(detected is not None):
             senddata = {}
             senddata["type"] = "active"
-            detectedList = detected.tolist()
-            senddata["ids"] = detectedList
+            senddata["ids"] = detected.tolist()
             #senddata["spawn"] = random.sample(range(0,len(spawn_points)), len(senddata["ids"]))
-            senddata["spawn"] = findFreeSpawnPoints(detectedList,spawn_points)
+            senddata["spawn"] = findFreeSpawnPoints(detected.tolist(),spawn_points)
             tosend.put(senddata)
         #     for client in clients.values():
         #         client.sendall(json.dumps(senddata).encode('utf-8'))
         buf = []                # CLEAR BUFFER
         bytesrecvd = 0          # RESET BYTES RECEIVED COUNTER
+
