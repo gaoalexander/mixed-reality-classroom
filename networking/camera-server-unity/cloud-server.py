@@ -139,7 +139,7 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
             if (data["type"] == "object"):
                 print("state: ", state)
                 print("data: ", data)
-                
+
                 if (data['uid'] in state and state[data['uid']]['lockid'] != data['lockid'] and state[data['uid']]['lockid'] != ""):
                     print("object in use")
                 else:
@@ -271,6 +271,7 @@ while True:
 
             for id in senddata["ids"]:
                 state[id] = {}
+                state[id]['lockid'] = ''
                 state[id]['active'] = True
             #     print("activate object")
 
