@@ -1,9 +1,19 @@
 fileFormatVersion: 2
 guid: 775e3f6fc0d904d3299071219260983b
 ModelImporter:
-  serializedVersion: 25
+  serializedVersion: 26
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: blinn11SG
+    second: {fileID: 2100000, guid: e086ab8be5ef1084c903d90302eeff4e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: blinn12SG
+    second: {fileID: 2100000, guid: cce50e2a7e4c8b94cba8dcc9c6fac68e, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -38,6 +48,7 @@ ModelImporter:
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
