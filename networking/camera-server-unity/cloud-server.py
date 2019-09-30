@@ -40,7 +40,8 @@ def sendmessages():
                 socket.sendall(json.dumps(message).encode('utf-8'))
             except OSError as e:
                 toflush.append(client)
-                print(client + ":" + str(e))
+                print(str(e) + ":\n" + client)
+                # print(client + ":" + str(e))
 
         tosend.task_done()
 
