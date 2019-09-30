@@ -174,7 +174,10 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
                     senddata['eventid'] = data['uid']
 
                     tosend.put(senddata)
-
+            elif(data["type"] == "restart"):
+                state = {}
+                senddata['type'] = 'restart'
+                tosend.put(senddata)
         
         print("killing connection" + self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1]))
         del clients[self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1])]
