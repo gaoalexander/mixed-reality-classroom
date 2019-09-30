@@ -64,22 +64,37 @@ class SpawnPoint:
 def generateSpawnPoints(n):
     spawn_points = []
     for i in range(0,n):
-        spawn_points.append(SpawnPoint(n,False))
+        spawn_points.append(SpawnPoint(i,False))
     return spawn_points
 
 def findFreeSpawnPoints(detected, spawn_points):
     free_points = []
+    all_points = []
+    result = []
     count = 0
     for i in range(0, len(spawn_points)):
-        if(spawn_points[i].isFull == False):
-            spawn_manager[detected[count]] = spawn_points[i]
-            spawn_points[i].isFull = True
+        if(count >= len(detected)):
+            break
+        if(spawn_points[i].isFull == False and detected[count] != 47 and detected[count] != 48 and detected[count] != 49):
             free_points.append(spawn_points[i].idnum)
-            count+=1
-    if len(free_points) != len(detected):
-        while(len(free_points) != len(detected)):
-            free_points.append(spawn_points[random.randrange(len(spawn_points))].idnum)
-    return free_points
+            spawn_points[i].isFull = True
+            spawn_manager[detected[count]] = spawn_points[i]
+            count += 1
+        elif(detected[count] == 47 or detected[count] == 48 or detected[count] == 49):
+            free_points.append(-1)
+            count +=1
+        all_points.append(spawn_points[i].idnum)
+
+        if(len(free_points) < len(detected)):
+            result = random.sample(all_points,len(detected))
+        else: 
+            result = free_points
+
+    print("detected:"+str(len(detected)))
+    print("spawn points:"+str(len(spawn_points)))
+    print("free points:"+str(free_points))
+    print("Result:"+str(result))
+    return result
 
 class ThreadedTCPHandler(socketserver.BaseRequestHandler):
     """
@@ -219,8 +234,8 @@ while True:
             senddata = {}
             senddata["type"] = "active"
             senddata["ids"] = detected.tolist()
-            senddata["spawn"] = random.sample(range(0,len(spawn_points)), len(senddata["ids"]))
-#             senddata["spawn"] = findFreeSpawnPoints(detected.tolist(),spawn_points)
+            #senddata["spawn"] = random.sample(range(0,len(spawn_points)), len(senddata["ids"]))
+            senddata["spawn"] = findFreeSpawnPoints(detected.tolist(),spawn_points)
             tosend.put(senddata)
         #     for client in clients.values():
         #         client.sendall(json.dumps(senddata).encode('utf-8'))
