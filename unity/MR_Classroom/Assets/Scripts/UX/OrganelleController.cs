@@ -367,6 +367,7 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
     {
         JSONNode node = new JSONObject();
         node["type"] = "object";
+        node["active"] = true;
         node["lockid"] = client.id;
         node["uid"] = objectId;
         node["x"] = position.x;

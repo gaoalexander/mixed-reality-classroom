@@ -85,9 +85,10 @@ public class TCPTestClient : MonoBehaviour
             int deactivatedId = -1;
             int releaseId = -1;
 
-            if (IsConnected && message != null)
+            if (IsConnected && message != null && message.Length > 0)
             {
-                //Debug.Log("HERE IS THE SERVER MESSAGE :" + message);
+                //TODO: CHECK THE MESSAGES WE ARE RECEIVING. 
+                Debug.Log("HERE IS THE SERVER MESSAGE :" + message);
                 JSONNode current_data = JSON.Parse(message);
 
                 //Debug.Log("!!!!!!!" + current_data["type"]);
@@ -97,7 +98,9 @@ public class TCPTestClient : MonoBehaviour
                     JSONArray current_spawn = current_data["spawn"].AsArray;
                     for (int a = 0; a < current_ids.Count; a++)
                     {
-                        InterpretMarker(current_ids[a], current_spawn[a]);
+                       
+                            InterpretMarker(current_ids[a], current_spawn[a]);
+                        
                     }
                 }
                 else if (current_data["type"] == "deactivate")
@@ -207,6 +210,7 @@ public class TCPTestClient : MonoBehaviour
 
     public void InterpretMarker(int markerId, int spawnId)
     {
+        
         if (markerId == 47 && !simulationStarted)
         {
             sim_controller.currentCell = SimulationController.TypeOfCell.Animal;
@@ -227,7 +231,7 @@ public class TCPTestClient : MonoBehaviour
             sim_controller.StartSimulation();
             simulationStarted = true;
         }
-        else if (markerId != 47 && markerId != 48 && markerId != 49 && grabbableObjects[markerId].activeSelf == false && grabbableObjects[markerId].GetComponent<OrganelleController>().locked == false)
+        else if (grabbableObjects.ContainsKey(markerId) && grabbableObjects[markerId].activeSelf == false && grabbableObjects[markerId].GetComponent<OrganelleController>().locked == false)
         {
             grabbableObjects[markerId].GetComponent<OrganelleController>().locked = true;
             //from here, it will be handled from the server
@@ -253,7 +257,7 @@ public class TCPTestClient : MonoBehaviour
                 {
                     int random_index = UnityEngine.Random.Range(0, spawn_indices.Count);
 
-                    Debug.Log("Is it here at least:" + markerId);
+                    //Debug.Log("Is it here at least:" + markerId);
 
                     spawn_points[spawn_indices[random_index]]._organelleToSpawn = grabbableObjects[markerId].GetComponent<OrganelleController>();
                     spawn_points[spawn_indices[random_index]].ActivatePortal();
@@ -342,7 +346,7 @@ public class TCPTestClient : MonoBehaviour
 
     public void CloseConnection()
     {
-        SendTCPMessage("!disconnect");
+        //SendTCPMessage("!disconnect");
         running = false;
     }
 
@@ -355,9 +359,9 @@ public class TCPTestClient : MonoBehaviour
     /// <summary>   
     /// Send message to server using socket connection.     
     /// </summary>  
-    public void SendTCPMessage(string clientMessage = "test")
+    public void SendTCPMessage(string clientMessage)
     {
-        if (socketConnection != null && socketConnection.Connected)
+        if (socketConnection != null && socketConnection.Connected && clientMessage.Length > 0)
         {
             try
             {

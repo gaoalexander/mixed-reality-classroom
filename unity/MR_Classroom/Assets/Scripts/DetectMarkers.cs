@@ -182,7 +182,7 @@ public class DetectMarkers : MonoBehaviour
                         }
                         else
                         {
-                            _client.InterpretMarker(ids[i]);
+                            _client.InterpretMarker(ids[i], -1);
                             _waitForDelay = true;
                             StartCoroutine(WaitAndReenable());
                         }
