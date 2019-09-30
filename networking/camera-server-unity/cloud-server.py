@@ -107,7 +107,8 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
         clients[self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1])] = self.request
         self.request.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        
+        print("new connection:")
+        print(self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1]))
         #send everything once someone connects
         senddata = state
         senddata["type"] = "object"
