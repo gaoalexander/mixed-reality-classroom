@@ -64,7 +64,6 @@ public class OrganelleSpawn : MonoBehaviour
 
         if (start == 0f)
         {
-
             _organelleToSpawn.GetComponent<OrganelleController>().sendPositionToServer(_spawnPosition.transform.position);
         }
 
@@ -87,11 +86,13 @@ public class OrganelleSpawn : MonoBehaviour
 
         if (start == 0f)
         {
+            _organelleToSpawn.trash = null;
+            _organelleToSpawn.currentOrganellePosition = null;
+            _organelleToSpawn.previousOrganellePositions = new List<OrganellePosition>();
             _organelleToSpawn.gameObject.SetActive(true);
             _organelleToSpawn.SetSpawnScale(true, 0f);
             _organelleToSpawn.spawnContainer = this;
             _organelleToSpawn.transform.position = _spawnPosition.transform.position;
-            _organelleToSpawn.GetComponent<OrganelleController>().sendPositionToServer(_spawnPosition.transform.position);
 
             organellesActive++;
 
