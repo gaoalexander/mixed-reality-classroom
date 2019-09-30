@@ -109,14 +109,14 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
         clients[self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1])] = self.request
         self.request.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         print("new connection:")
-        print(self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1]))
+        print(self.request.getpeername()[0])
         #send everything once someone connects
         senddata = state
         senddata["type"] = "object"
         tosend.put(senddata)
 
         while(True):
-            print(clients)
+            # print(clients)
             try:
                 # self.request is the TCP socket connected to the client
                 self.data = self.request.recv(4096).strip()
