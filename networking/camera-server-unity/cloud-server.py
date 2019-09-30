@@ -40,11 +40,14 @@ def sendmessages():
                 socket.sendall(json.dumps(message).encode('utf-8'))
             except OSError as e:
                 toflush.append(client)
-                print(e)
+                print(client + ":" + str(e))
 
         tosend.task_done()
 
         for i in range(0, len(toflush)):
+            
+            client = toflush[i]
+            print("popping" + client)
             clients[client].close()
             clients.pop(client)
             toflush.pop(i)
@@ -96,9 +99,9 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
                 self.data = self.request.recv(4096).strip()
             except:
                 print ("cannot receive data")
-                return
+                break
             if not self.data:
-                return
+                break
             #print "{} wrote:".format(self.client_address[0])
             print (self.data)
             senddata = {}
@@ -125,14 +128,20 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
                     state[data['uid']]['lockid'] = ""
                     print("release object")      
                 tosend.put(senddata)
-
+        
+        print("killing connection" + self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1]))
+        del clients[self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1])]
+        
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
-    pass
+    allow_reuse_address = True
 
 HOST, PORT = "", 20391
 
 # Create the server, binding to localhost on port 9999
 server = ThreadedTCPServer((HOST, PORT), ThreadedTCPHandler)
+# server.allow_reuse_address = True
+# server.server_bind()     # Manually bind, to support allow_reuse_address
+# server.server_activate()
 
 # Activate the server; this will keep running until you
 # interrupt the program with Ctrl-C
@@ -210,8 +219,8 @@ while True:
             senddata = {}
             senddata["type"] = "active"
             senddata["ids"] = detected.tolist()
-            #senddata["spawn"] = random.sample(range(0,len(spawn_points)), len(senddata["ids"]))
-            senddata["spawn"] = findFreeSpawnPoints(detected.tolist(),spawn_points)
+            senddata["spawn"] = random.sample(range(0,len(spawn_points)), len(senddata["ids"]))
+#             senddata["spawn"] = findFreeSpawnPoints(detected.tolist(),spawn_points)
             tosend.put(senddata)
         #     for client in clients.values():
         #         client.sendall(json.dumps(senddata).encode('utf-8'))
