@@ -155,7 +155,7 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
                     tosend.put(senddata)
             elif(data["type"] == "deactivate"):
                 if (data['uid'] in state):
-                    state[data['uid']]['active'] = False
+                    # state[data['uid']]['active'] = False
                     print("deactivate object")
                     senddata = state
                     senddata['type'] = "deactivate"
@@ -257,10 +257,10 @@ while True:
             senddata["spawn"] = findFreeSpawnPoints(detected.tolist(),spawn_points)
             #senddata["spawn"] = random.sample(range(0,len(spawn_points)), len(senddata["ids"]))
 
-            for id in senddata["ids"]:
-                state[id] = {}
-                state[id]['active'] = True
-                print("activate object")
+            # for id in senddata["ids"]:
+            #     state[id] = {}
+            #     state[id]['active'] = True
+            #     print("activate object")
 
             tosend.put(senddata)
         #     for client in clients.values():
