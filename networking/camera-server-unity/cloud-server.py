@@ -138,8 +138,9 @@ class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 HOST, PORT = "", 20391
 
 # Create the server, binding to localhost on port 9999
+SocketServer.ThreadingTCPServer.allow_reuse_address = True
 server = ThreadedTCPServer((HOST, PORT), ThreadedTCPHandler)
-server.allow_reuse_address = True
+# server.allow_reuse_address = True
 # server.server_bind()     # Manually bind, to support allow_reuse_address
 # server.server_activate()
 
