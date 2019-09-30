@@ -135,7 +135,7 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
                     state[data['uid']] = data
                     if(data['uid'] in spawn_manager.keys()):
                         spawn_manager[data['uid']].isFull = False
-                        del spawn_manager[data['uid']] 
+                        del spawn_manager[data['uid']]
                 senddata = state
                 senddata["type"] = "object"
 
