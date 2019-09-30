@@ -141,8 +141,22 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
             elif(data["type"] == "release"):
                 if (data['uid'] in state):
                     state[data['uid']]['lockid'] = ""
-                    print("release object")      
-                tosend.put(senddata)
+                    print("release object")
+                    senddata = state
+                    senddata['type'] = "release"
+                    senddata['eventid'] = data['uid']
+                    
+                    tosend.put(senddata)
+            elif(data["type"] == "deactivate"):
+                if (data['uid'] in state):
+                    state[data['uid']]['active'] = False
+                    print("deactivate object")
+                    senddata = state
+                    senddata['type'] = "deactivate"
+                    senddata['eventid'] = data['uid']
+
+                    tosend.put(senddata)
+
         
         print("killing connection" + self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1]))
         del clients[self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1])]
@@ -234,8 +248,13 @@ while True:
             senddata = {}
             senddata["type"] = "active"
             senddata["ids"] = detected.tolist()
-            #senddata["spawn"] = random.sample(range(0,len(spawn_points)), len(senddata["ids"]))
             senddata["spawn"] = findFreeSpawnPoints(detected.tolist(),spawn_points)
+            #senddata["spawn"] = random.sample(range(0,len(spawn_points)), len(senddata["ids"]))
+
+            for id in senddata["ids"]:
+                state[data[id]]['active'] = True
+                print("deactivate object")
+
             tosend.put(senddata)
         #     for client in clients.values():
         #         client.sendall(json.dumps(senddata).encode('utf-8'))
