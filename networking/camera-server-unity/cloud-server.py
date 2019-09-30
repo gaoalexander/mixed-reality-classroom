@@ -128,7 +128,14 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
             print (self.data)
             senddata = {}
             array = self.data.decode('utf-8').split('`')
-            data = json.loads(array[-2])
+
+            try:
+                data = json.loads(array[-2])
+            except ValueError as e:
+                print("invalid message, ignoring: ", array)
+                print(e)
+                continue
+
             if (data["type"] == "object"):
                 if (data['uid'] in state and state[data['uid']]['lockid'] != data['lockid'] and state[data['uid']]['lockid'] != ""):
                     print("object in use")
