@@ -140,8 +140,8 @@ HOST, PORT = "", 20391
 # Create the server, binding to localhost on port 9999
 server = ThreadedTCPServer((HOST, PORT), ThreadedTCPHandler)
 server.allow_reuse_address = True
-server.server_bind()     # Manually bind, to support allow_reuse_address
-server.server_activate()
+# server.server_bind()     # Manually bind, to support allow_reuse_address
+# server.server_activate()
 
 # Activate the server; this will keep running until you
 # interrupt the program with Ctrl-C
