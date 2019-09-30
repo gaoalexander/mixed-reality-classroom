@@ -64,7 +64,7 @@ class SpawnPoint:
 def generateSpawnPoints(n):
     spawn_points = []
     for i in range(0,n):
-        spawn_points.append(SpawnPoint(i,False))
+        spawn_points.append(SpawnPoint(n,False))
     return spawn_points
 
 def findFreeSpawnPoints(detected, spawn_points):
@@ -73,27 +73,19 @@ def findFreeSpawnPoints(detected, spawn_points):
     result = []
     count = 0
     for i in range(0, len(spawn_points)):
-        if(count >= len(detected)):
-            break
+        if(detected[count] == 47 or detected[count] == 48 or detected[count] == 49):
+            count += 1
         if(spawn_points[i].isFull == False and detected[count] != 47 and detected[count] != 48 and detected[count] != 49):
             free_points.append(spawn_points[i].idnum)
-            spawn_points[i].isFull = True
-            spawn_manager[detected[count]] = spawn_points[i]
-            count += 1
-        elif(detected[count] == 47 or detected[count] == 48 or detected[count] == 49):
-            free_points.append(-1)
-            count +=1
         all_points.append(spawn_points[i].idnum)
-
-        if(len(free_points) < len(detected)):
-            result = random.sample(all_points,len(detected))
-        else: 
-            result = free_points
-
+    if len(free_points) < (len(detected) - count):
+        result = random.sample(free_points,len(detected))
+    else: 
+        result = random.sample(all_points,len(detected))
+    
     print("detected:"+str(len(detected)))
     print("spawn points:"+str(len(spawn_points)))
     print("free points:"+str(free_points))
-    print("Result:"+str(result))
     return result
 
 class ThreadedTCPHandler(socketserver.BaseRequestHandler):
@@ -107,12 +99,6 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
         clients[self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1])] = self.request
         self.request.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        
-        #send everything once someone connects
-        senddata = state
-        senddata["type"] = "object"
-        tosend.put(senddata)
-
         while(True):
             print(clients)
             try:
@@ -147,22 +133,8 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
             elif(data["type"] == "release"):
                 if (data['uid'] in state):
                     state[data['uid']]['lockid'] = ""
-                    print("release object")
-                    senddata = state
-                    senddata['type'] = "release"
-                    senddata['eventid'] = data['uid']
-                    
-                    tosend.put(senddata)
-            elif(data["type"] == "deactivate"):
-                if (data['uid'] in state):
-                    state[data['uid']]['active'] = False
-                    print("deactivate object")
-                    senddata = state
-                    senddata['type'] = "deactivate"
-                    senddata['eventid'] = data['uid']
-
-                    tosend.put(senddata)
-
+                    print("release object")      
+                tosend.put(senddata)
         
         print("killing connection" + self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1]))
         del clients[self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1])]
@@ -254,16 +226,11 @@ while True:
             senddata = {}
             senddata["type"] = "active"
             senddata["ids"] = detected.tolist()
-            senddata["spawn"] = findFreeSpawnPoints(detected.tolist(),spawn_points)
             #senddata["spawn"] = random.sample(range(0,len(spawn_points)), len(senddata["ids"]))
-
-            for id in senddata["ids"]:
-                state[id] = {}
-                state[id]['active'] = True
-                print("deactivate object")
-
+            senddata["spawn"] = findFreeSpawnPoints(detected.tolist(),spawn_points)
             tosend.put(senddata)
         #     for client in clients.values():
         #         client.sendall(json.dumps(senddata).encode('utf-8'))
         buf = []                # CLEAR BUFFER
         bytesrecvd = 0          # RESET BYTES RECEIVED COUNTER
+
