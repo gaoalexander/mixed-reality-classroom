@@ -260,7 +260,7 @@ while True:
             for id in senddata["ids"]:
                 state[id] = {}
                 state[id]['active'] = True
-                print("deactivate object")
+                print("activate object")
 
             tosend.put(senddata)
         #     for client in clients.values():
