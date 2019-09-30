@@ -219,8 +219,8 @@ while True:
             senddata = {}
             senddata["type"] = "active"
             senddata["ids"] = detected.tolist()
-            #senddata["spawn"] = random.sample(range(0,len(spawn_points)), len(senddata["ids"]))
-            senddata["spawn"] = findFreeSpawnPoints(detected.tolist(),spawn_points)
+            senddata["spawn"] = random.sample(range(0,len(spawn_points)), len(senddata["ids"]))
+#             senddata["spawn"] = findFreeSpawnPoints(detected.tolist(),spawn_points)
             tosend.put(senddata)
         #     for client in clients.values():
         #         client.sendall(json.dumps(senddata).encode('utf-8'))
