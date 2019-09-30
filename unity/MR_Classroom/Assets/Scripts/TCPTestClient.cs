@@ -92,7 +92,7 @@ public class TCPTestClient : MonoBehaviour
                     JSONArray current_spawn = current_data["spawn"].AsArray;
                     for (int a = 0; a < current_ids.Count; a++)
                     {
-                        InterpretMarker(current_ids[a]);
+                        InterpretMarker(current_ids[a], current_spawn[a]);
                     }
                 }
                 else
@@ -180,7 +180,7 @@ public class TCPTestClient : MonoBehaviour
         SendTCPMessage(node.ToString());
     }
 
-    public void InterpretMarker(int markerId)
+    public void InterpretMarker(int markerId, int spawnId)
     {
         if (markerId == 47 && !simulationStarted)
         {
@@ -204,9 +204,11 @@ public class TCPTestClient : MonoBehaviour
         }
         else if (markerId != 47 && markerId != 48 && markerId != 49 && grabbableObjects[markerId].activeSelf == false && grabbableObjects[markerId].GetComponent<OrganelleController>().locked == false)
         {
-            grabbableObjects[markerId].GetComponent<OrganelleController>().locked = true;
+           grabbableObjects[markerId].GetComponent<OrganelleController>().locked = true;
+            /*
             int min_amount = 100;
             int min_index = -1;
+
             List<int> spawn_indices = new List<int>();
             for (int b = 0; b < spawn_points.Count; b++)
             {
@@ -235,7 +237,10 @@ public class TCPTestClient : MonoBehaviour
                 spawn_points[min_index]._organelleToSpawn = grabbableObjects[markerId].GetComponent<OrganelleController>();
                 spawn_points[min_index].ActivatePortal();
             }
+            */
 
+            spawn_points[spawnId]._organelleToSpawn = grabbableObjects[markerId].GetComponent<OrganelleController>();
+            spawn_points[spawnId].ActivatePortal();
 
             //grabbableObjects[markerId].SetActive(true);
         }

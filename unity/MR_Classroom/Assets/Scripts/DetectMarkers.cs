@@ -125,7 +125,8 @@ public class DetectMarkers : MonoBehaviour
                         }
                         else
                         {
-                            _client.InterpretMarker(ids[i]);
+                            //TODO: spawn id shouldn't be 0
+                            _client.InterpretMarker(ids[i],0);
                             _waitForDelay = true;
                             StartCoroutine(WaitAndReenable());
                         }
