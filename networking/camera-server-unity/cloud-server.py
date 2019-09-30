@@ -249,8 +249,9 @@ while True:
         #cv2.imshow('local', imarr)
         #cv2.waitKey(1)
         detected = detectMarkers(imarr)
-        print(detected)
+        
         if(detected is not None):
+            print(detected)
             senddata = {}
             senddata["type"] = "active"
             senddata["ids"] = detected.tolist()
