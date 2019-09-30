@@ -24,6 +24,8 @@ public class DetectMarkers : MonoBehaviour
     private bool _waitForDelay = false;
     private bool _animationPlaying = false;
 
+    [HideInInspector] public WikitudeCamera wikitudeCamera;
+
     // Start is called before the first frame update
     /*void Start()
     {
@@ -71,6 +73,9 @@ public class DetectMarkers : MonoBehaviour
             Debug.Log("webcam not found");
             cam = null;
         }
+
+        //wikitudeCamera = FindObjectOfType<WikitudeCamera>();
+        //Texture2D cameraTexture = wikitudeCamera.CameraTexture;
     }
 
     void findWebCams()
@@ -84,6 +89,7 @@ public class DetectMarkers : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
 #if UNITY_EDITOR
         if (!_waitForDelay && cam != null)
         {
@@ -125,7 +131,7 @@ public class DetectMarkers : MonoBehaviour
                         }
                         else
                         {
-                            _client.InterpretMarker(ids[i]);
+                            _client.InterpretMarker(ids[i], -1);
                             _waitForDelay = true;
                             StartCoroutine(WaitAndReenable());
                         }

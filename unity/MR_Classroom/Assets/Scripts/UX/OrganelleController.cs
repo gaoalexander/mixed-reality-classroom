@@ -310,11 +310,18 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
             transform.localScale = new Vector3(originalScale * (1 - percentage), originalScale * (1 - percentage), originalScale * (1 - percentage));
             yield return null;
         }
-
-		trash = null;
-		gameObject.SetActive(false);
+        
+        client.SetObjectInactive(objectId);
+        if (client.playLocally)
+        {
+            Deactivate();
+        }
     }
 
+    public void Deactivate()
+    {
+        gameObject.SetActive(false);
+    }
 
     public void sendPositionToServer(Vector3 pos)
     {
@@ -372,5 +379,4 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
     {
         return isGrabbing;
     }
-
 }

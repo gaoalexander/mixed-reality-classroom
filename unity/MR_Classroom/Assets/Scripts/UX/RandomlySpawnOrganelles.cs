@@ -71,7 +71,7 @@ public class RandomlySpawnOrganelles : MonoBehaviour
                 id = Random.Range(0, 12);
                 yield return null;
             }
-            _client.InterpretMarker(_client.objects[id].GetComponent<OrganelleController>().objectId);
+            _client.InterpretMarker(_client.objects[id].GetComponent<OrganelleController>().objectId, -1);
         }
     }
 
