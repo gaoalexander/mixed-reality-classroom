@@ -133,12 +133,11 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
         del clients[self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1])]
         
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
-    pass
+    allow_reuse_address = True
 
 HOST, PORT = "", 20391
 
 # Create the server, binding to localhost on port 9999
-ThreadingTCPServer.allow_reuse_address = True
 server = ThreadedTCPServer((HOST, PORT), ThreadedTCPHandler)
 # server.allow_reuse_address = True
 # server.server_bind()     # Manually bind, to support allow_reuse_address
