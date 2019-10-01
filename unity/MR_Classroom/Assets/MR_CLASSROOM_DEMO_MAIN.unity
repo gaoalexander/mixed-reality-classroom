@@ -2884,7 +2884,7 @@ PrefabInstance:
     - target: {fileID: 7565523180249679546, guid: a71a474277a8b4b5abb02c011a84159a,
         type: 3}
       propertyPath: _targetCollectionResource._targetPath
-      value: Mira_Beta_Large.wtc
+      value: MiraTrackers.wtc
       objectReference: {fileID: 0}
     - target: {fileID: 7565357031172006102, guid: a71a474277a8b4b5abb02c011a84159a,
         type: 3}
@@ -8427,6 +8427,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _client: {fileID: 900533996}
+  wikitudeCamera: {fileID: 0}
 --- !u!114 &973952655
 MonoBehaviour:
   m_ObjectHideFlags: 0
