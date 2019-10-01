@@ -9,25 +9,25 @@ using static OpenCvSharp.Unity;
 
 public class DetectMarkers : MonoBehaviour
 {
-    WebCamTexture cam = null;
-    private RenderTexture _targetRenderTexture;
-    private Texture2D _cameraFeed;
+	WebCamTexture cam = null;
+	private RenderTexture _targetRenderTexture;
+	private Texture2D _cameraFeed;
 
-    static Dictionary dictionary = CvAruco.GetPredefinedDictionary(PredefinedDictionaryName.Dict4X4_50);
-    Point2f[][] corners;
-    int[] ids;
-    DetectorParameters parameters = DetectorParameters.Create();
-    Point2f[][] rejected;
+	static Dictionary dictionary = CvAruco.GetPredefinedDictionary(PredefinedDictionaryName.Dict4X4_50);
+	Point2f[][] corners;
+	int[] ids;
+	DetectorParameters parameters = DetectorParameters.Create();
+	Point2f[][] rejected;
 
-    [SerializeField] private TCPTestClient _client = null;
+	[SerializeField] private TCPTestClient _client = null;
 
-    private bool _waitForDelay = false;
-    private bool _animationPlaying = false;
+	private bool _waitForDelay = false;
+	private bool _animationPlaying = false;
 
-    [HideInInspector] public WikitudeCamera wikitudeCamera;
+	[HideInInspector] public WikitudeCamera wikitudeCamera;
 
-    // Start is called before the first frame update
-    /*void Start()
+	// Start is called before the first frame update
+	/*void Start()
     {
 #if UNITY_EDITOR
         cam = new WebCamTexture();
@@ -45,14 +45,14 @@ public class DetectMarkers : MonoBehaviour
         //cam.Play();
     }*/
 
-    IEnumerator Start()
-    {
-        findWebCams();
+	IEnumerator Start()
+	{
+		findWebCams();
 
-        yield return Application.RequestUserAuthorization(UserAuthorization.WebCam);
-        if (Application.HasUserAuthorization(UserAuthorization.WebCam))
-        {
-            Debug.Log("webcam found");
+		yield return Application.RequestUserAuthorization(UserAuthorization.WebCam);
+		if (Application.HasUserAuthorization(UserAuthorization.WebCam))
+		{
+			Debug.Log("webcam found");
 #if UNITY_EDITOR
             cam = new WebCamTexture();
             cam.Play();
@@ -66,29 +66,29 @@ public class DetectMarkers : MonoBehaviour
             }
         }
 #endif
-            //cam.Play();
-        }
-        else
-        {
-            Debug.Log("webcam not found");
-            cam = null;
-        }
+			//cam.Play();
+		}
+		else
+		{
+			Debug.Log("webcam not found");
+			cam = null;
+		}
 
-        //wikitudeCamera = FindObjectOfType<WikitudeCamera>();
-        //Texture2D cameraTexture = wikitudeCamera.CameraTexture;
-    }
+		//wikitudeCamera = FindObjectOfType<WikitudeCamera>();
+		//Texture2D cameraTexture = wikitudeCamera.CameraTexture;
+	}
 
-    void findWebCams()
-    {
-        foreach (var device in WebCamTexture.devices)
-        {
-            Debug.Log("Name: " + device.name);
-        }
-    }
+	void findWebCams()
+	{
+		foreach (var device in WebCamTexture.devices)
+		{
+			Debug.Log("Name: " + device.name);
+		}
+	}
 
-    // Update is called once per frame
-    void Update()
-    {
+	// Update is called once per frame
+	void Update()
+	{
 
 #if UNITY_EDITOR
         if (!_waitForDelay && cam != null)
@@ -198,12 +198,12 @@ public class DetectMarkers : MonoBehaviour
             Debug.Log("Stop animation!!!");
         }
 #endif
-    }
+	}
 
-    //Add delay so when a marker is detected it doesn't detect it multiple times right away
-    IEnumerator WaitAndReenable()
-    {
-        yield return new WaitForSeconds(2f);
-        _waitForDelay = false;
-    }
+	//Add delay so when a marker is detected it doesn't detect it multiple times right away
+	IEnumerator WaitAndReenable()
+	{
+		yield return new WaitForSeconds(2f);
+		_waitForDelay = false;
+	}
 }

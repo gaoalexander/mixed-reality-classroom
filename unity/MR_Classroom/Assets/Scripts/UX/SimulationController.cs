@@ -47,6 +47,9 @@ public class SimulationController : MonoBehaviour
     public TypeOfCell currentCell;
     public TCPTestClient client;
 
+    [SerializeField] private GameObject _builtACell;
+    [SerializeField] private GameObject _cellDissection;
+
     [SerializeField] private CellController _animalCell;
     [SerializeField] private CellController _plantCell;
     [SerializeField] private CellController _prokaryoticCell;
@@ -79,45 +82,58 @@ public class SimulationController : MonoBehaviour
         _content.SetActive(false);
         if (startSimulationDirectly)
         {
-            StartSimulation();
+            StartSimulation(0);
         }
     }
 
-    public void StartSimulation()
+    public void StartSimulation(int simToLaunch)
     {
+        _builtACell.SetActive(false);
         _animalCell.gameObject.SetActive(false);
         _plantCell.gameObject.SetActive(false);
         _prokaryoticCell.gameObject.SetActive(false);
+        _cellDissection.SetActive(false);
         _content.SetActive(true);
 
         string title = "";
 
-        switch (currentCell)
+        if (simToLaunch == 0)
         {
-            case TypeOfCell.Animal:
-                _animalCell.gameObject.SetActive(true);
-                _correctPositions = _animalCell.correctPositions;
-                _animalCell.transform.position = _startPosition.position;
+            _builtACell.SetActive(true);
 
-                title = "Animal Cell";
+            switch (currentCell)
+            {
+                case TypeOfCell.Animal:
+                    _animalCell.gameObject.SetActive(true);
+                    _correctPositions = _animalCell.correctPositions;
+                    //_animalCell.transform.position = _startPosition.position;
 
-                break;
-            case TypeOfCell.Plant:
-                _plantCell.gameObject.SetActive(true);
-                _correctPositions = _plantCell.correctPositions;
-                _plantCell.transform.position = _startPosition.position;
+                    title = "Animal Cell";
 
-                title = "Plant Cell";
+                    break;
+                case TypeOfCell.Plant:
+                    _plantCell.gameObject.SetActive(true);
+                    _correctPositions = _plantCell.correctPositions;
+                    //_plantCell.transform.position = _startPosition.position;
 
-                break;
-            case TypeOfCell.Prokaryotic:
-                _prokaryoticCell.gameObject.SetActive(true);
-                _correctPositions = _prokaryoticCell.correctPositions;
-                _prokaryoticCell.transform.position = _startPosition.position;
+                    title = "Plant Cell";
 
-                title = "Prokaryotic Cell";
+                    break;
+                case TypeOfCell.Prokaryotic:
+                    _prokaryoticCell.gameObject.SetActive(true);
+                    _correctPositions = _prokaryoticCell.correctPositions;
+                    //_prokaryoticCell.transform.position = _startPosition.position;
 
-                break;
+                    title = "Prokaryotic Cell";
+
+                    break;
+            }
+        }
+        else if (simToLaunch == 1)
+        {
+            _cellDissection.SetActive(true);
+
+            title = "Cell Dissection";
         }
 
         foreach (Text titleText in _titleTexts)

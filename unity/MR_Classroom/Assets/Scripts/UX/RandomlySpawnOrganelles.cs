@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class RandomlySpawnOrganelles : MonoBehaviour
 {
-    [SerializeField] private TCPTestClient _client = null;
+	[SerializeField] private TCPTestClient _client = null;
 
-    private bool _waitForDelay = false;
-    private bool _touchPressed = false;
+	private bool _waitForDelay = false;
+	private bool _touchPressed = false;
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (_client.playLocally)
-        {
+	// Update is called once per frame
+	void Update()
+	{
+		if (_client.playLocally)
+		{
 #if UNITY_EDITOR
             if (Input.GetKeyDown(KeyCode.O) && !_waitForDelay && !_touchPressed)
             {
@@ -50,36 +50,35 @@ public class RandomlySpawnOrganelles : MonoBehaviour
                 Debug.Log("Stop animation!!!");
             }
 #endif
-        }
-    }
+		}
+	}
 
-    IEnumerator RandomlyFindNonActiveOrganelle()
-    {
-        bool allAlreadyActive = true;
-        for (int i = 0; i < _client.objects.Length; i++)
-        {
-            if (!_client.objects[i].gameObject.activeSelf)
-            {
-                allAlreadyActive = false;
-            }
-        }
-        if (!allAlreadyActive)
-        {
-            int id = Random.Range(0, 12);
-            while (_client.objects[id].gameObject.activeSelf)
-            {
-                id = Random.Range(0, 12);
-                yield return null;
-            }
+	IEnumerator RandomlyFindNonActiveOrganelle()
+	{
+		bool allAlreadyActive = true;
+		for (int i = 0; i < _client.objects.Length; i++)
+		{
+			if (!_client.objects[i].gameObject.activeSelf)
+			{
+				allAlreadyActive = false;
+			}
+		}
+		if (!allAlreadyActive)
+		{
+			int id = Random.Range(0, 12);
+			while (_client.objects[id].gameObject.activeSelf)
+			{
+				id = Random.Range(0, 12);
+				yield return null;
+			}
+			_client.InterpretMarker(_client.objects[id].GetComponent<OrganelleController>().objectId, -1);
+		}
+	}
 
-            _client.InterpretMarker(_client.objects[id].GetComponent<OrganelleController>().objectId, -1);
-        }
-    }
-
-    //Add delay so when a marker is detected it doesn't detect it multiple times right away
-    IEnumerator WaitAndReenable()
-    {
-        yield return new WaitForSeconds(1f);
-        _waitForDelay = false;
-    }
+	//Add delay so when a marker is detected it doesn't detect it multiple times right away
+	IEnumerator WaitAndReenable()
+	{
+		yield return new WaitForSeconds(1f);
+		_waitForDelay = false;
+	}
 }
