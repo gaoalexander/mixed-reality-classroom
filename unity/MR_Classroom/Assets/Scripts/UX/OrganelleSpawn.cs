@@ -64,7 +64,7 @@ public class OrganelleSpawn : MonoBehaviour
 
 		if (start == 0f)
 		{
-			_organelleToSpawn.GetComponent<OrganelleController>().sendPositionToServer(_spawnPosition.transform.position);
+			_organelleToSpawn.GetComponent<OrganelleController>().sendSpawnToServer(_spawnPosition.transform.position);
 		}
 
 		while (Mathf.Abs(start - _portalEffect.transform.localScale.z) < 1)

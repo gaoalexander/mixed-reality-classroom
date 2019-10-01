@@ -53,6 +53,8 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
 
     private MiraReticle _miraReticle = null;
 
+    private bool _moveHorizontally = true;
+
     private void OnEnable()
 	{
 		if (_originalScale == 0f)
@@ -198,7 +200,16 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
             //Vector3 reallyNewPositon = new Vector3(newPosition.x, 0.13f, newPosition.z);
 
             Vector3 newPos = Vector3.zero;
-            bool intersection = LinePlaneIntersection(out newPos, newPosition, MiraController.Direction.normalized, Vector3.up, new Vector3(0f, 0f, 40f));
+            bool intersection = false;
+
+            if (_moveHorizontally)
+            {
+                intersection = LinePlaneIntersection(out newPos, newPosition, MiraController.Direction.normalized, Vector3.up, new Vector3(0f, 0f, 40f));
+            }
+            else
+            {
+                intersection = LinePlaneIntersection(out newPos, newPosition, MiraController.Direction.normalized, Vector3.forward, new Vector3(0f, 0f, 0f));
+            }
 
             Debug.Log("Position: X " + newPos.x + " , Y " + newPos.z);
 
@@ -221,6 +232,11 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
             }
 		}
 	}
+
+    public void ChangeMovingPlane()
+    {
+        _moveHorizontally = !_moveHorizontally;
+    }
 
     public static bool LinePlaneIntersection(out Vector3 intersection, Vector3 linePoint, Vector3 lineVec, Vector3 planeNormal, Vector3 planePoint)
     {
@@ -373,14 +389,21 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
 		{
 			client.SendTCPMessage(GrabRequest(pos).ToString());
 		}
-	}
+    }
 
+    public void sendSpawnToServer(Vector3 pos)
+    {
+        if (!client.playLocally)
+        {
+            client.SendTCPMessage(SpawnRequest(pos).ToString());
+        }
+    }
 
-	//NOTE: Methods from the Grab class below.
+    //NOTE: Methods from the Grab class below.
 
-	// these OnPointer functions are automatically called when
-	// the pointer interacts with a game object that this script is attached to
-	public void OnPointerDown(PointerEventData pointerData)
+    // these OnPointer functions are automatically called when
+    // the pointer interacts with a game object that this script is attached to
+    public void OnPointerDown(PointerEventData pointerData)
 	{
 		// onPointerDown is called every frame the pointer is held down on the object
 		// we only want to grab objects if the click button was just pressed
@@ -418,9 +441,22 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
 		node["y"] = position.y;
 		node["z"] = position.z;
 		return node;
-	}
+    }
 
-	public bool isGrabbed()
+    public JSONNode SpawnRequest(Vector3 position)
+    {
+        JSONNode node = new JSONObject();
+        node["type"] = "spawn";
+        node["active"] = true;
+        node["lockid"] = client.id;
+        node["uid"] = objectId;
+        node["x"] = position.x;
+        node["y"] = position.y;
+        node["z"] = position.z;
+        return node;
+    }
+
+    public bool isGrabbed()
 	{
 		return isGrabbing;
 	}
