@@ -13,11 +13,11 @@ public class TCPTestClient : MonoBehaviour
     public Action<TCPTestClient> OnDisconnected = delegate { };
     public Action<string> OnLog = delegate { };
     public Action<TCPTestServer.ServerMessage> OnMessageReceived = delegate { };
-    string message; 
+    string message;
 
     public GameObject[] objects;
     Dictionary<int, GameObject> grabbableObjects;
-    Dictionary<GameObject,Vector3> current_positions;
+    Dictionary<GameObject, Vector3> current_positions;
     Dictionary<GameObject, float> t0;
     Dictionary<GameObject, float> t1;
 
@@ -48,6 +48,8 @@ public class TCPTestClient : MonoBehaviour
 
     public bool tracking = true;
 
+    public int simToLaunch = -1;
+
     private void myLog(string message)
     {
         Debug.Log(message);
@@ -65,6 +67,7 @@ public class TCPTestClient : MonoBehaviour
         {
             //TODO: set the id of the obj not the type here....
             grabbableObjects.Add(objects[i].GetComponent<OrganelleController>().objectId, objects[i]);
+            objects[i].GetComponent<OrganelleController>().SetOriginalScale();
         }
 
         if (!playLocally)
@@ -74,7 +77,7 @@ public class TCPTestClient : MonoBehaviour
         else
         {
             //gameObject.SetActive(false);
-            sim_controller.StartSimulation();
+            sim_controller.StartSimulation(simToLaunch);
         }
     }
 
@@ -88,7 +91,7 @@ public class TCPTestClient : MonoBehaviour
             if (IsConnected && message != null && message.Length > 0)
             {
                 //TODO: CHECK THE MESSAGES WE ARE RECEIVING. 
-                Debug.Log("HERE IS THE SERVER MESSAGE :" + message);
+                //Debug.Log("HERE IS THE SERVER MESSAGE :" + message);
                 JSONNode current_data = JSON.Parse(message);
 
                 //Debug.Log("!!!!!!!" + current_data["type"]);
@@ -98,9 +101,9 @@ public class TCPTestClient : MonoBehaviour
                     JSONArray current_spawn = current_data["spawn"].AsArray;
                     for (int a = 0; a < current_ids.Count; a++)
                     {
-                       
-                            InterpretMarker(current_ids[a], current_spawn[a]);
-                        
+
+                        InterpretMarker(current_ids[a], current_spawn[a]);
+
                     }
                 }
                 else if (current_data["type"] == "deactivate")
@@ -160,16 +163,15 @@ public class TCPTestClient : MonoBehaviour
                     else
                     {
                         current.GetComponent<OrganelleController>().lastGrabLoop = 0;*/
-                        if (current.GetComponent<OrganelleController>().grabLooping == false)
-                        {
-                            current.GetComponent<OrganelleController>().grabLooping = true;
-                            current.GetComponent<OrganelleController>().OnGrabStarted();
-                        }
+                    if (current.GetComponent<OrganelleController>().grabLooping == false)
+                    {
+                        current.GetComponent<OrganelleController>().grabLooping = true;
+                        current.GetComponent<OrganelleController>().OnGrabStarted();
+                    }
                     //}
 
                     float t = dt / (t1[current] - t0[current]);
                     current.transform.position = Vector3.Lerp(current.transform.position, current_positions[current], t);
-
                 }
                 //we might not need this anymore
                 /*if (current.GetComponent<OrganelleController>().hasBeenGrabbed == true && !current.GetComponent<OrganelleController>().isGrabbed())
@@ -180,9 +182,9 @@ public class TCPTestClient : MonoBehaviour
                 //this condition should come from the server
                 if (current.GetComponent<OrganelleController>().objectId == releaseId && current.GetComponent<OrganelleController>().grabLooping == true)
                 {
+                    current.GetComponent<OrganelleController>().grabLooping = false;
                     current.GetComponent<OrganelleController>().OnGrabFinished();
                     //current.GetComponent<OrganelleController>().lastGrabLoop = 0;
-                    current.GetComponent<OrganelleController>().grabLooping = false;
                 }
                 if (current.GetComponent<OrganelleController>().objectId == deactivatedId)
                 {
@@ -210,25 +212,25 @@ public class TCPTestClient : MonoBehaviour
 
     public void InterpretMarker(int markerId, int spawnId)
     {
-        
+
         if (markerId == 47 && !simulationStarted)
         {
             sim_controller.currentCell = SimulationController.TypeOfCell.Animal;
-            sim_controller.StartSimulation();
+            sim_controller.StartSimulation(0);
             simulationStarted = true;
 
         }
         else if (markerId == 48 && !simulationStarted)
         {
             sim_controller.currentCell = SimulationController.TypeOfCell.Plant;
-            sim_controller.StartSimulation();
+            sim_controller.StartSimulation(0);
             simulationStarted = true;
 
         }
         else if (markerId == 49 && !simulationStarted)
         {
             sim_controller.currentCell = SimulationController.TypeOfCell.Prokaryotic;
-            sim_controller.StartSimulation();
+            sim_controller.StartSimulation(0);
             simulationStarted = true;
         }
         else if (grabbableObjects.ContainsKey(markerId) && grabbableObjects[markerId].activeSelf == false && grabbableObjects[markerId].GetComponent<OrganelleController>().locked == false)
@@ -352,7 +354,7 @@ public class TCPTestClient : MonoBehaviour
 
     public void MessageReceived(TCPTestServer.ServerMessage serverMessage)
     {
-       
+
         //OnMessageReceived(serverMessage);
     }
 
@@ -370,7 +372,7 @@ public class TCPTestClient : MonoBehaviour
                 if (writestream.CanWrite)
                 {
                     // Convert string message to byte array.                 
-                    byte[] clientMessageAsByteArray = Encoding.ASCII.GetBytes(clientMessage+"`");
+                    byte[] clientMessageAsByteArray = Encoding.ASCII.GetBytes(clientMessage + "`");
                     // Write byte array to socketConnection stream.                 
                     writestream.Write(clientMessageAsByteArray, 0, clientMessageAsByteArray.Length);
                     OnLog("sending:" + clientMessage);
@@ -401,4 +403,3 @@ public class TCPTestClient : MonoBehaviour
         }
     }
 }
-

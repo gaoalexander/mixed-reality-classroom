@@ -82,46 +82,17 @@ def findFreeSpawnPoints(detected, spawn_points):
     free_count = 0
     random.shuffle(free_points)
     for id in detected:
-        print("~~~~~~~~~~~~~~~")
-        print("Current ID")
-        print(id)
         if id not in organelles:
-            print("Not an organelle.")
             result.append(-1)
         elif id in spawn_manager:
-            print("Already in spawn manager.")
             result.append(-1)
         elif(free_count >= len(free_points)):
-            print("No more free points left.")
             result.append(random.randrange(0,len(spawn_points)))
-            print("Spawn point:"+str(result[len(result)-1]))
         else:
-            print("Free point.")
             result.append(free_points[free_count].idnum)
-            print("Spawn point:"+str(result[len(result)-1]))
             spawn_manager[id] = free_points[free_count]
             free_points[free_count].isFull = True
             free_count+=1
-        print("~~~~~~~~~~~~~~~")
-
-
-    # for i in range(0, len(spawn_points)):
-    #     if(count >= len(detected)):
-    #         break
-    #     if(spawn_points[i].isFull == False and detected[count] in organelles):
-    #         free_points.append(spawn_points[i].idnum)
-    #         spawn_points[i].isFull = True
-    #         spawn_manager[detected[count]] = spawn_points[i]
-    #         count += 1
-    #     else:
-    #         free_points.append(-1)
-    #         count +=1
-    #     all_points.append(spawn_points[i].idnum)
-
-    #     if(len(free_points) < len(detected)):
-    #         result = random.sample(all_points,len(detected))
-    #     else: 
-    #         result = free_points
     return result
 
 class ThreadedTCPHandler(socketserver.BaseRequestHandler):
@@ -167,7 +138,6 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
             if (data["type"] == "object"):
                 # print("state: ", state)
                 # print("data: ", data)
-
                 if (data['uid'] in state and state[data['uid']]['lockid'] != data['lockid'] and state[data['uid']]['lockid'] != ""):
                     print("object in use")
                 else:
