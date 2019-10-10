@@ -168,7 +168,7 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
 
             float touchInfluence = 0.0f;
             float thisTouch = 0.0f;
-            float touchIncrement = 0.0f;
+            float touchIncrement = 1.0f;
             /*if (MiraController.TouchHeld == true)
 			{
 				// MiraController.Touchpos.Y goes from 1 to 0 , near to far
