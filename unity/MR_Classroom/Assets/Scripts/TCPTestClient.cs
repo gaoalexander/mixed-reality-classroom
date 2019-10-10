@@ -93,7 +93,6 @@ public class TCPTestClient : MonoBehaviour
                 //TODO: CHECK THE MESSAGES WE ARE RECEIVING. 
                 //Debug.Log("HERE IS THE SERVER MESSAGE :" + message);
                 JSONNode current_data = JSON.Parse(message);
-
                 //Debug.Log("!!!!!!!" + current_data["type"]);
                 if (current_data["type"] == "active")
                 {
@@ -113,6 +112,11 @@ public class TCPTestClient : MonoBehaviour
                 else if (current_data["type"] == "release")
                 {
                     releaseId = current_data["eventid"].AsInt;
+                }
+                else if(current_data["type"] == "initialize")
+                {
+                    Debug.Log("###Initialize:");
+                    Debug.Log(current_data.ToString());
                 }
                 else
                 {
@@ -207,6 +211,24 @@ public class TCPTestClient : MonoBehaviour
         JSONNode node = new JSONObject();
         node["type"] = "deactivate";
         node["uid"] = organelleId;
+        SendTCPMessage(node.ToString());
+    }
+
+    public void SetSpawnIds(int[] ids)
+    {
+        JSONNode node = new JSONObject();
+        node["type"] = "active";
+        string ids_array = "[";
+        for(int i = 0; i < ids.Length; i++)
+        {
+            if(i == ids.Length - 1)
+            {
+                ids_array += ids[i].ToString() + "]";
+                break;
+            }
+            ids_array += ids[i].ToString()+",";
+        }
+        node["ids"] = ids_array;      
         SendTCPMessage(node.ToString());
     }
 
