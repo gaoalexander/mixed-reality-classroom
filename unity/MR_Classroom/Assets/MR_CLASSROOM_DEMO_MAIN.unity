@@ -459,6 +459,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce06716a610054665980e1b253be02e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!20 &25300262
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 25300253}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_FocalLength: 50
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
 --- !u!1 &27122289
 GameObject:
   m_ObjectHideFlags: 0
@@ -1924,11 +1967,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1544473787}
     m_Modifications:
-    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
-        type: 3}
-      propertyPath: m_Name
-      value: Mitochondria (1)
-      objectReference: {fileID: 0}
     - target: {fileID: 5888321707434800630, guid: 698c173aef92f7d4386c440b2c7c0e76,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1983,6 +2021,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
+        type: 3}
+      propertyPath: m_Name
+      value: Mitochondria (1)
       objectReference: {fileID: 0}
     - target: {fileID: 6110615088607735797, guid: 698c173aef92f7d4386c440b2c7c0e76,
         type: 3}
@@ -2987,7 +3030,7 @@ PrefabInstance:
     - target: {fileID: 7565481992188580526, guid: a71a474277a8b4b5abb02c011a84159a,
         type: 3}
       propertyPath: _enableCameraRendering
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7565481992188580526, guid: a71a474277a8b4b5abb02c011a84159a,
         type: 3}
@@ -3003,6 +3046,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7565481992188580526, guid: a71a474277a8b4b5abb02c011a84159a,
+        type: 3}
+      propertyPath: _ignoreTrackableScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7565481992188580526, guid: a71a474277a8b4b5abb02c011a84159a,
+        type: 3}
+      propertyPath: _enableInputPlugin
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7565481992188580526, guid: a71a474277a8b4b5abb02c011a84159a,
+        type: 3}
+      propertyPath: _enableCamera2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1782481041061930583, guid: a71a474277a8b4b5abb02c011a84159a,
         type: 3}
@@ -3722,21 +3780,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1484216646}
     m_Modifications:
-    - target: {fileID: 9146909146370893204, guid: 31dc1394553bf5c4d8d28ef557291def,
-        type: 3}
-      propertyPath: m_Name
-      value: Centrosome
-      objectReference: {fileID: 0}
-    - target: {fileID: 9146909146370893204, guid: 31dc1394553bf5c4d8d28ef557291def,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9146909146370893204, guid: 31dc1394553bf5c4d8d28ef557291def,
-        type: 3}
-      propertyPath: m_TagString
-      value: Interactive
-      objectReference: {fileID: 0}
     - target: {fileID: 5236279812383020935, guid: 31dc1394553bf5c4d8d28ef557291def,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3791,6 +3834,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9146909146370893204, guid: 31dc1394553bf5c4d8d28ef557291def,
+        type: 3}
+      propertyPath: m_Name
+      value: Centrosome
+      objectReference: {fileID: 0}
+    - target: {fileID: 9146909146370893204, guid: 31dc1394553bf5c4d8d28ef557291def,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9146909146370893204, guid: 31dc1394553bf5c4d8d28ef557291def,
+        type: 3}
+      propertyPath: m_TagString
+      value: Interactive
       objectReference: {fileID: 0}
     - target: {fileID: 6529331868933396444, guid: 31dc1394553bf5c4d8d28ef557291def,
         type: 3}
@@ -4597,7 +4655,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!81 &333547679
 AudioListener:
   m_ObjectHideFlags: 0
@@ -4661,7 +4719,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 21.625002, y: -7.9200006, z: 0}
 --- !u!1001 &338405028
 PrefabInstance:
@@ -5013,21 +5071,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1484216646}
     m_Modifications:
-    - target: {fileID: 8958672980354414216, guid: f5e0f47d4f363134496c64641f800c09,
-        type: 3}
-      propertyPath: m_Name
-      value: Nucleus
-      objectReference: {fileID: 0}
-    - target: {fileID: 8958672980354414216, guid: f5e0f47d4f363134496c64641f800c09,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8958672980354414216, guid: f5e0f47d4f363134496c64641f800c09,
-        type: 3}
-      propertyPath: m_TagString
-      value: Interactive
-      objectReference: {fileID: 0}
     - target: {fileID: 5334725159653524635, guid: f5e0f47d4f363134496c64641f800c09,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -5082,6 +5125,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8958672980354414216, guid: f5e0f47d4f363134496c64641f800c09,
+        type: 3}
+      propertyPath: m_Name
+      value: Nucleus
+      objectReference: {fileID: 0}
+    - target: {fileID: 8958672980354414216, guid: f5e0f47d4f363134496c64641f800c09,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8958672980354414216, guid: f5e0f47d4f363134496c64641f800c09,
+        type: 3}
+      propertyPath: m_TagString
+      value: Interactive
       objectReference: {fileID: 0}
     - target: {fileID: 1113080194553704351, guid: f5e0f47d4f363134496c64641f800c09,
         type: 3}
@@ -5196,21 +5254,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1484216646}
     m_Modifications:
-    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
-        type: 3}
-      propertyPath: m_Name
-      value: Mitochondria
-      objectReference: {fileID: 0}
-    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
-        type: 3}
-      propertyPath: m_TagString
-      value: Interactive
-      objectReference: {fileID: 0}
     - target: {fileID: 5888321707434800630, guid: 698c173aef92f7d4386c440b2c7c0e76,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -5265,6 +5308,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
+        type: 3}
+      propertyPath: m_Name
+      value: Mitochondria
+      objectReference: {fileID: 0}
+    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
+        type: 3}
+      propertyPath: m_TagString
+      value: Interactive
       objectReference: {fileID: 0}
     - target: {fileID: 6118482077852341473, guid: 698c173aef92f7d4386c440b2c7c0e76,
         type: 3}
@@ -5826,11 +5884,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1544473787}
     m_Modifications:
-    - target: {fileID: 4079516930896835584, guid: c4bdacfac8d3735439cd6b864cad988e,
-        type: 3}
-      propertyPath: m_Name
-      value: Golgi_Apparatus (1)
-      objectReference: {fileID: 0}
     - target: {fileID: 1064541455350679059, guid: c4bdacfac8d3735439cd6b864cad988e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -5885,6 +5938,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4079516930896835584, guid: c4bdacfac8d3735439cd6b864cad988e,
+        type: 3}
+      propertyPath: m_Name
+      value: Golgi_Apparatus (1)
       objectReference: {fileID: 0}
     - target: {fileID: -6832058588110006825, guid: c4bdacfac8d3735439cd6b864cad988e,
         type: 3}
@@ -7389,7 +7447,7 @@ RectTransform:
   m_Children:
   - {fileID: 1738642289}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -7421,36 +7479,6 @@ MonoBehaviour:
   _simDropdown: {fileID: 1554799169}
   _startButton: {fileID: 248357072}
   _okButton: {fileID: 112426129}
---- !u!1 &576379170
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 576379171}
-  m_Layer: 0
-  m_Name: CameraParent
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &576379171
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 576379170}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &582930438 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
@@ -8223,11 +8251,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1544473787}
     m_Modifications:
-    - target: {fileID: 6141062332562034702, guid: 1b81687d79df99f42b5ee62f1862f32a,
-        type: 3}
-      propertyPath: m_Name
-      value: Lysosome
-      objectReference: {fileID: 0}
     - target: {fileID: 7161346278514926109, guid: 1b81687d79df99f42b5ee62f1862f32a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -8282,6 +8305,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6141062332562034702, guid: 1b81687d79df99f42b5ee62f1862f32a,
+        type: 3}
+      propertyPath: m_Name
+      value: Lysosome
       objectReference: {fileID: 0}
     - target: {fileID: -1846380653368235885, guid: 1b81687d79df99f42b5ee62f1862f32a,
         type: 3}
@@ -10136,7 +10164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b2123317d1eb4008a7548f996977727, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parent: {fileID: 576379170}
+  parent: {fileID: 0}
   child: {fileID: 25300253}
 --- !u!1 &912989855
 GameObject:
@@ -10752,11 +10780,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 973952651}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.20000002, y: 0.45579404, z: -0.100000024}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1453384966}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &973952654
 MonoBehaviour:
@@ -10765,13 +10794,17 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 973952651}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cd57e03fdbdf44607966cbd2de35de7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _client: {fileID: 900533996}
-  wikitudeCamera: {fileID: 0}
+  camera: {fileID: 0}
+  _showTestObject: 0
+  _testObject: {fileID: 1453384965}
+  _framesToSkip: 20
+  _useWikitudeCamera: 1
 --- !u!114 &973952655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10792,11 +10825,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1544473787}
     m_Modifications:
-    - target: {fileID: 4079516930896835584, guid: c4bdacfac8d3735439cd6b864cad988e,
-        type: 3}
-      propertyPath: m_Name
-      value: Golgi_Apparatus
-      objectReference: {fileID: 0}
     - target: {fileID: 1064541455350679059, guid: c4bdacfac8d3735439cd6b864cad988e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -10851,6 +10879,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4079516930896835584, guid: c4bdacfac8d3735439cd6b864cad988e,
+        type: 3}
+      propertyPath: m_Name
+      value: Golgi_Apparatus
       objectReference: {fileID: 0}
     - target: {fileID: -6832058588110006825, guid: c4bdacfac8d3735439cd6b864cad988e,
         type: 3}
@@ -11413,11 +11446,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1544473787}
     m_Modifications:
-    - target: {fileID: 8254164803115063447, guid: f050dc3a60d3dbf4c89da220d19fa94a,
-        type: 3}
-      propertyPath: m_Name
-      value: Rough_Endoplasmic_Reticulum (1)
-      objectReference: {fileID: 0}
     - target: {fileID: 4960705089659628164, guid: f050dc3a60d3dbf4c89da220d19fa94a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -11472,6 +11500,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8254164803115063447, guid: f050dc3a60d3dbf4c89da220d19fa94a,
+        type: 3}
+      propertyPath: m_Name
+      value: Rough_Endoplasmic_Reticulum (1)
       objectReference: {fileID: 0}
     - target: {fileID: -3658964668424801514, guid: f050dc3a60d3dbf4c89da220d19fa94a,
         type: 3}
@@ -12602,21 +12635,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1484216646}
     m_Modifications:
-    - target: {fileID: 9146909146370893204, guid: 31dc1394553bf5c4d8d28ef557291def,
-        type: 3}
-      propertyPath: m_Name
-      value: Centrosome (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 9146909146370893204, guid: 31dc1394553bf5c4d8d28ef557291def,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9146909146370893204, guid: 31dc1394553bf5c4d8d28ef557291def,
-        type: 3}
-      propertyPath: m_TagString
-      value: Interactive
-      objectReference: {fileID: 0}
     - target: {fileID: 5236279812383020935, guid: 31dc1394553bf5c4d8d28ef557291def,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -12671,6 +12689,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9146909146370893204, guid: 31dc1394553bf5c4d8d28ef557291def,
+        type: 3}
+      propertyPath: m_Name
+      value: Centrosome (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9146909146370893204, guid: 31dc1394553bf5c4d8d28ef557291def,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9146909146370893204, guid: 31dc1394553bf5c4d8d28ef557291def,
+        type: 3}
+      propertyPath: m_TagString
+      value: Interactive
       objectReference: {fileID: 0}
     - target: {fileID: 6529331868933396444, guid: 31dc1394553bf5c4d8d28ef557291def,
         type: 3}
@@ -13073,21 +13106,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1484216646}
     m_Modifications:
-    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
-        type: 3}
-      propertyPath: m_Name
-      value: Mitochondria (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
-        type: 3}
-      propertyPath: m_TagString
-      value: Interactive
-      objectReference: {fileID: 0}
     - target: {fileID: 5888321707434800630, guid: 698c173aef92f7d4386c440b2c7c0e76,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -13142,6 +13160,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
+        type: 3}
+      propertyPath: m_Name
+      value: Mitochondria (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
+        type: 3}
+      propertyPath: m_TagString
+      value: Interactive
       objectReference: {fileID: 0}
     - target: {fileID: 6118482077852341473, guid: 698c173aef92f7d4386c440b2c7c0e76,
         type: 3}
@@ -13404,21 +13437,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1484216646}
     m_Modifications:
-    - target: {fileID: 6093672987574314965, guid: fde520cee616db8439a2280ec42d3f13,
-        type: 3}
-      propertyPath: m_Name
-      value: Smooth_Endoplasmic_Reticulum
-      objectReference: {fileID: 0}
-    - target: {fileID: 6093672987574314965, guid: fde520cee616db8439a2280ec42d3f13,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6093672987574314965, guid: fde520cee616db8439a2280ec42d3f13,
-        type: 3}
-      propertyPath: m_TagString
-      value: Interactive
-      objectReference: {fileID: 0}
     - target: {fileID: 7118584156339328454, guid: fde520cee616db8439a2280ec42d3f13,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -13473,6 +13491,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6093672987574314965, guid: fde520cee616db8439a2280ec42d3f13,
+        type: 3}
+      propertyPath: m_Name
+      value: Smooth_Endoplasmic_Reticulum
+      objectReference: {fileID: 0}
+    - target: {fileID: 6093672987574314965, guid: fde520cee616db8439a2280ec42d3f13,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6093672987574314965, guid: fde520cee616db8439a2280ec42d3f13,
+        type: 3}
+      propertyPath: m_TagString
+      value: Interactive
       objectReference: {fileID: 0}
     - target: {fileID: 6330564782678361454, guid: fde520cee616db8439a2280ec42d3f13,
         type: 3}
@@ -13963,11 +13996,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1544473787}
     m_Modifications:
-    - target: {fileID: 6093672987574314965, guid: fde520cee616db8439a2280ec42d3f13,
-        type: 3}
-      propertyPath: m_Name
-      value: Smooth_Endoplasmic_Reticulum
-      objectReference: {fileID: 0}
     - target: {fileID: 7118584156339328454, guid: fde520cee616db8439a2280ec42d3f13,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -14022,6 +14050,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6093672987574314965, guid: fde520cee616db8439a2280ec42d3f13,
+        type: 3}
+      propertyPath: m_Name
+      value: Smooth_Endoplasmic_Reticulum
       objectReference: {fileID: 0}
     - target: {fileID: 6330564782678361454, guid: fde520cee616db8439a2280ec42d3f13,
         type: 3}
@@ -14725,21 +14758,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1484216646}
     m_Modifications:
-    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
-        type: 3}
-      propertyPath: m_Name
-      value: Mitochondria (3)
-      objectReference: {fileID: 0}
-    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
-        type: 3}
-      propertyPath: m_TagString
-      value: Interactive
-      objectReference: {fileID: 0}
     - target: {fileID: 5888321707434800630, guid: 698c173aef92f7d4386c440b2c7c0e76,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -14795,6 +14813,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
+        type: 3}
+      propertyPath: m_Name
+      value: Mitochondria (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
+        type: 3}
+      propertyPath: m_TagString
+      value: Interactive
+      objectReference: {fileID: 0}
     - target: {fileID: 6118482077852341473, guid: 698c173aef92f7d4386c440b2c7c0e76,
         type: 3}
       propertyPath: client
@@ -14831,21 +14864,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1484216646}
     m_Modifications:
-    - target: {fileID: 8254164803115063447, guid: f050dc3a60d3dbf4c89da220d19fa94a,
-        type: 3}
-      propertyPath: m_Name
-      value: Rough_Endoplasmic_Reticulum
-      objectReference: {fileID: 0}
-    - target: {fileID: 8254164803115063447, guid: f050dc3a60d3dbf4c89da220d19fa94a,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8254164803115063447, guid: f050dc3a60d3dbf4c89da220d19fa94a,
-        type: 3}
-      propertyPath: m_TagString
-      value: Interactive
-      objectReference: {fileID: 0}
     - target: {fileID: 4960705089659628164, guid: f050dc3a60d3dbf4c89da220d19fa94a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -14900,6 +14918,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8254164803115063447, guid: f050dc3a60d3dbf4c89da220d19fa94a,
+        type: 3}
+      propertyPath: m_Name
+      value: Rough_Endoplasmic_Reticulum
+      objectReference: {fileID: 0}
+    - target: {fileID: 8254164803115063447, guid: f050dc3a60d3dbf4c89da220d19fa94a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8254164803115063447, guid: f050dc3a60d3dbf4c89da220d19fa94a,
+        type: 3}
+      propertyPath: m_TagString
+      value: Interactive
       objectReference: {fileID: 0}
     - target: {fileID: 7696616999917757491, guid: f050dc3a60d3dbf4c89da220d19fa94a,
         type: 3}
@@ -15264,16 +15297,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6529331868933396444, guid: 17358515a58f642598a064f1ac6c4abb,
-        type: 3}
-      propertyPath: objectId
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 6529331868933396444, guid: 17358515a58f642598a064f1ac6c4abb,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 995775392469630107, guid: 17358515a58f642598a064f1ac6c4abb,
         type: 3}
       propertyPath: id
@@ -15289,6 +15312,16 @@ PrefabInstance:
       propertyPath: client
       value: 
       objectReference: {fileID: 900533996}
+    - target: {fileID: 6529331868933396444, guid: 17358515a58f642598a064f1ac6c4abb,
+        type: 3}
+      propertyPath: objectId
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6529331868933396444, guid: 17358515a58f642598a064f1ac6c4abb,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6529331868933396444, guid: 17358515a58f642598a064f1ac6c4abb, type: 3}
     - {fileID: 995775392469630104, guid: 17358515a58f642598a064f1ac6c4abb, type: 3}
@@ -15305,6 +15338,98 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1438486944}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1453384965
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1453384966}
+  - component: {fileID: 1453384969}
+  - component: {fileID: 1453384968}
+  - component: {fileID: 1453384967}
+  m_Layer: 0
+  m_Name: TestObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1453384966
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1453384965}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.378, z: 0}
+  m_LocalScale: {x: 0.29629, y: 0.207403, z: 0.29629}
+  m_Children: []
+  m_Father: {fileID: 973952653}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1453384967
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1453384965}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &1453384968
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1453384965}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &1453384969
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1453384965}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1001 &1478943772
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15312,21 +15437,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1484216646}
     m_Modifications:
-    - target: {fileID: 4079516930896835584, guid: c4bdacfac8d3735439cd6b864cad988e,
-        type: 3}
-      propertyPath: m_Name
-      value: Golgi_Apparatus
-      objectReference: {fileID: 0}
-    - target: {fileID: 4079516930896835584, guid: c4bdacfac8d3735439cd6b864cad988e,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4079516930896835584, guid: c4bdacfac8d3735439cd6b864cad988e,
-        type: 3}
-      propertyPath: m_TagString
-      value: Interactive
-      objectReference: {fileID: 0}
     - target: {fileID: 1064541455350679059, guid: c4bdacfac8d3735439cd6b864cad988e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -15382,6 +15492,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4079516930896835584, guid: c4bdacfac8d3735439cd6b864cad988e,
+        type: 3}
+      propertyPath: m_Name
+      value: Golgi_Apparatus
+      objectReference: {fileID: 0}
+    - target: {fileID: 4079516930896835584, guid: c4bdacfac8d3735439cd6b864cad988e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4079516930896835584, guid: c4bdacfac8d3735439cd6b864cad988e,
+        type: 3}
+      propertyPath: m_TagString
+      value: Interactive
+      objectReference: {fileID: 0}
     - target: {fileID: -6832058588110006825, guid: c4bdacfac8d3735439cd6b864cad988e,
         type: 3}
       propertyPath: id
@@ -15423,11 +15548,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1544473787}
     m_Modifications:
-    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
-        type: 3}
-      propertyPath: m_Name
-      value: Mitochondria
-      objectReference: {fileID: 0}
     - target: {fileID: 5888321707434800630, guid: 698c173aef92f7d4386c440b2c7c0e76,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -15482,6 +15602,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
+        type: 3}
+      propertyPath: m_Name
+      value: Mitochondria
       objectReference: {fileID: 0}
     - target: {fileID: 6110615088607735797, guid: 698c173aef92f7d4386c440b2c7c0e76,
         type: 3}
@@ -17351,11 +17476,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1544473787}
     m_Modifications:
-    - target: {fileID: 8958672980354414216, guid: f5e0f47d4f363134496c64641f800c09,
-        type: 3}
-      propertyPath: m_Name
-      value: Nucleus (1)
-      objectReference: {fileID: 0}
     - target: {fileID: 5334725159653524635, guid: f5e0f47d4f363134496c64641f800c09,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -17410,6 +17530,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8958672980354414216, guid: f5e0f47d4f363134496c64641f800c09,
+        type: 3}
+      propertyPath: m_Name
+      value: Nucleus (1)
       objectReference: {fileID: 0}
     - target: {fileID: 1113080194553704351, guid: f5e0f47d4f363134496c64641f800c09,
         type: 3}
@@ -17510,11 +17635,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1544473787}
     m_Modifications:
-    - target: {fileID: 8958672980354414216, guid: f5e0f47d4f363134496c64641f800c09,
-        type: 3}
-      propertyPath: m_Name
-      value: Nucleus
-      objectReference: {fileID: 0}
     - target: {fileID: 5334725159653524635, guid: f5e0f47d4f363134496c64641f800c09,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -17569,6 +17689,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8958672980354414216, guid: f5e0f47d4f363134496c64641f800c09,
+        type: 3}
+      propertyPath: m_Name
+      value: Nucleus
       objectReference: {fileID: 0}
     - target: {fileID: 1113080194553704351, guid: f5e0f47d4f363134496c64641f800c09,
         type: 3}
@@ -18037,21 +18162,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1484216646}
     m_Modifications:
-    - target: {fileID: 6141062332562034702, guid: 1b81687d79df99f42b5ee62f1862f32a,
-        type: 3}
-      propertyPath: m_Name
-      value: Lysosome
-      objectReference: {fileID: 0}
-    - target: {fileID: 6141062332562034702, guid: 1b81687d79df99f42b5ee62f1862f32a,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6141062332562034702, guid: 1b81687d79df99f42b5ee62f1862f32a,
-        type: 3}
-      propertyPath: m_TagString
-      value: Interactive
-      objectReference: {fileID: 0}
     - target: {fileID: 7161346278514926109, guid: 1b81687d79df99f42b5ee62f1862f32a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -18106,6 +18216,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6141062332562034702, guid: 1b81687d79df99f42b5ee62f1862f32a,
+        type: 3}
+      propertyPath: m_Name
+      value: Lysosome
+      objectReference: {fileID: 0}
+    - target: {fileID: 6141062332562034702, guid: 1b81687d79df99f42b5ee62f1862f32a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6141062332562034702, guid: 1b81687d79df99f42b5ee62f1862f32a,
+        type: 3}
+      propertyPath: m_TagString
+      value: Interactive
       objectReference: {fileID: 0}
     - target: {fileID: -1846380653368235885, guid: 1b81687d79df99f42b5ee62f1862f32a,
         type: 3}
@@ -19116,11 +19241,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1544473787}
     m_Modifications:
-    - target: {fileID: 8254164803115063447, guid: f050dc3a60d3dbf4c89da220d19fa94a,
-        type: 3}
-      propertyPath: m_Name
-      value: Rough_Endoplasmic_Reticulum
-      objectReference: {fileID: 0}
     - target: {fileID: 4960705089659628164, guid: f050dc3a60d3dbf4c89da220d19fa94a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -19175,6 +19295,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8254164803115063447, guid: f050dc3a60d3dbf4c89da220d19fa94a,
+        type: 3}
+      propertyPath: m_Name
+      value: Rough_Endoplasmic_Reticulum
       objectReference: {fileID: 0}
     - target: {fileID: -3658964668424801514, guid: f050dc3a60d3dbf4c89da220d19fa94a,
         type: 3}
@@ -20926,11 +21051,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1544473787}
     m_Modifications:
-    - target: {fileID: 6093672987574314965, guid: fde520cee616db8439a2280ec42d3f13,
-        type: 3}
-      propertyPath: m_Name
-      value: Smooth_Endoplasmic_Reticulum (1)
-      objectReference: {fileID: 0}
     - target: {fileID: 7118584156339328454, guid: fde520cee616db8439a2280ec42d3f13,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -20985,6 +21105,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6093672987574314965, guid: fde520cee616db8439a2280ec42d3f13,
+        type: 3}
+      propertyPath: m_Name
+      value: Smooth_Endoplasmic_Reticulum (1)
       objectReference: {fileID: 0}
     - target: {fileID: 6330564782678361454, guid: fde520cee616db8439a2280ec42d3f13,
         type: 3}
@@ -21587,21 +21712,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1484216646}
     m_Modifications:
-    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
-        type: 3}
-      propertyPath: m_Name
-      value: Mitochondria (2)
-      objectReference: {fileID: 0}
-    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
-        type: 3}
-      propertyPath: m_TagString
-      value: Interactive
-      objectReference: {fileID: 0}
     - target: {fileID: 5888321707434800630, guid: 698c173aef92f7d4386c440b2c7c0e76,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -21656,6 +21766,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
+        type: 3}
+      propertyPath: m_Name
+      value: Mitochondria (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7488602987960043493, guid: 698c173aef92f7d4386c440b2c7c0e76,
+        type: 3}
+      propertyPath: m_TagString
+      value: Interactive
       objectReference: {fileID: 0}
     - target: {fileID: 6118482077852341473, guid: 698c173aef92f7d4386c440b2c7c0e76,
         type: 3}
@@ -22398,11 +22523,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1544473787}
     m_Modifications:
-    - target: {fileID: 6141062332562034702, guid: 1b81687d79df99f42b5ee62f1862f32a,
-        type: 3}
-      propertyPath: m_Name
-      value: Lysosome (1)
-      objectReference: {fileID: 0}
     - target: {fileID: 7161346278514926109, guid: 1b81687d79df99f42b5ee62f1862f32a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -22457,6 +22577,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6141062332562034702, guid: 1b81687d79df99f42b5ee62f1862f32a,
+        type: 3}
+      propertyPath: m_Name
+      value: Lysosome (1)
       objectReference: {fileID: 0}
     - target: {fileID: -1846380653368235885, guid: 1b81687d79df99f42b5ee62f1862f32a,
         type: 3}
@@ -22582,21 +22707,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1484216646}
     m_Modifications:
-    - target: {fileID: 6141062332562034702, guid: 1b81687d79df99f42b5ee62f1862f32a,
-        type: 3}
-      propertyPath: m_Name
-      value: Lysosome (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 6141062332562034702, guid: 1b81687d79df99f42b5ee62f1862f32a,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6141062332562034702, guid: 1b81687d79df99f42b5ee62f1862f32a,
-        type: 3}
-      propertyPath: m_TagString
-      value: Interactive
-      objectReference: {fileID: 0}
     - target: {fileID: 7161346278514926109, guid: 1b81687d79df99f42b5ee62f1862f32a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -22651,6 +22761,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6141062332562034702, guid: 1b81687d79df99f42b5ee62f1862f32a,
+        type: 3}
+      propertyPath: m_Name
+      value: Lysosome (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6141062332562034702, guid: 1b81687d79df99f42b5ee62f1862f32a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6141062332562034702, guid: 1b81687d79df99f42b5ee62f1862f32a,
+        type: 3}
+      propertyPath: m_TagString
+      value: Interactive
       objectReference: {fileID: 0}
     - target: {fileID: -1846380653368235885, guid: 1b81687d79df99f42b5ee62f1862f32a,
         type: 3}

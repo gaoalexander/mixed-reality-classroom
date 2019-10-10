@@ -23,6 +23,7 @@ import random
 
 state = {}
 clients = {}
+organelles = [0,1,2,3,4,5,6,7,8,9,10,11,12,19,27,28,34]
 
 # MQ
 # tosend = []
@@ -40,7 +41,8 @@ def sendmessages():
                 socket.sendall(json.dumps(message).encode('utf-8'))
             except OSError as e:
                 toflush.append(client)
-                print(client + ":" + str(e))
+                print(str(e) + ":\n" + client)
+                # print(client + ":" + str(e))
 
         tosend.task_done()
 
@@ -71,29 +73,26 @@ def findFreeSpawnPoints(detected, spawn_points):
     free_points = []
     all_points = []
     result = []
-    count = 0
+
+    #Check for all free spawn points
     for i in range(0, len(spawn_points)):
-        if(count >= len(detected)):
-            break
-        if(spawn_points[i].isFull == False and detected[count] != 47 and detected[count] != 48 and detected[count] != 49):
-            free_points.append(spawn_points[i].idnum)
-            spawn_points[i].isFull = True
-            spawn_manager[detected[count]] = spawn_points[i]
-            count += 1
-        elif(detected[count] == 47 or detected[count] == 48 or detected[count] == 49):
-            free_points.append(-1)
-            count +=1
-        all_points.append(spawn_points[i].idnum)
+        if not spawn_points[i].isFull:
+            free_points.append(spawn_points[i])
 
-        if(len(free_points) < len(detected)):
-            result = random.sample(all_points,len(detected))
-        else: 
-            result = free_points
-
-    print("detected:"+str(len(detected)))
-    print("spawn points:"+str(len(spawn_points)))
-    print("free points:"+str(free_points))
-    print("Result:"+str(result))
+    free_count = 0
+    random.shuffle(free_points)
+    for id in detected:
+        if id not in organelles:
+            result.append(-1)
+        elif id in spawn_manager:
+            result.append(-1)
+        elif(free_count >= len(free_points)):
+            result.append(random.randrange(0,len(spawn_points)))
+        else:
+            result.append(free_points[free_count].idnum)
+            spawn_manager[id] = free_points[free_count]
+            free_points[free_count].isFull = True
+            free_count+=1
     return result
 
 class ThreadedTCPHandler(socketserver.BaseRequestHandler):
@@ -107,14 +106,15 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
         clients[self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1])] = self.request
         self.request.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        
+        print("new connection:")
+        print(self.request.getpeername()[0])
         #send everything once someone connects
         senddata = state
         senddata["type"] = "object"
         tosend.put(senddata)
 
         while(True):
-            print(clients)
+            # print(clients)
             try:
                 # self.request is the TCP socket connected to the client
                 self.data = self.request.recv(4096).strip()
@@ -127,20 +127,30 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
             print (self.data)
             senddata = {}
             array = self.data.decode('utf-8').split('`')
-            data = json.loads(array[-2])
+
+            try:
+                data = json.loads(array[-2])
+            except ValueError as e:
+                print("invalid message, ignoring: ", array)
+                print(e)
+                continue
+
             if (data["type"] == "object"):
+                # print("state: ", state)
+                # print("data: ", data)
                 if (data['uid'] in state and state[data['uid']]['lockid'] != data['lockid'] and state[data['uid']]['lockid'] != ""):
                     print("object in use")
                 else:
                     state[data['uid']] = data
                     if(data['uid'] in spawn_manager.keys()):
                         spawn_manager[data['uid']].isFull = False
-                        del spawn_manager[data['uid']] 
+                        del spawn_manager[data['uid']]
                 senddata = state
                 senddata["type"] = "object"
 
                 tosend.put(senddata)
-
+            elif (data["type"] == "spawn"):
+                state[data['uid']] = data                
             elif (data["type"] == "check"):
                 senddata["type"] = "check"
                 senddata["success"] = np.array_equal(combination_ids,target)
@@ -229,7 +239,7 @@ def detectMarkers(image_array):
     # combination_ids = np.array([0,1,2])
     if np.array_equal(combination_ids,target):
         print("YOU PICKED THE RIGHT PIECES.")
-    else: print("KEEP TRYING.")
+    #else: print("KEEP TRYING.")
     gray = aruco.drawDetectedMarkers(image_array, corners)
     return combination_ids
 
@@ -249,8 +259,9 @@ while True:
         #cv2.imshow('local', imarr)
         #cv2.waitKey(1)
         detected = detectMarkers(imarr)
-        print(detected)
+        
         if(detected is not None):
+            print(detected)
             senddata = {}
             senddata["type"] = "active"
             senddata["ids"] = detected.tolist()
@@ -259,8 +270,9 @@ while True:
 
             for id in senddata["ids"]:
                 state[id] = {}
+                state[id]['lockid'] = ''
                 state[id]['active'] = True
-                print("deactivate object")
+            #     print("activate object")
 
             tosend.put(senddata)
         #     for client in clients.values():
