@@ -41,7 +41,7 @@ public class OrganellePosition : MonoBehaviour
     {
         //if (!_ignoreAfterFirst || !_inFirst)
         //{
-            //_inFirst = true;
+        //_inFirst = true;
 
         OrganelleController organelle = other.GetComponent<OrganelleController>();
 
@@ -161,7 +161,15 @@ public class OrganellePosition : MonoBehaviour
 
             if (_snapToCenter)
             {
-                StartCoroutine(SnapObject(organelleObj.transform));
+                LeanTween.move(organelleObj.gameObject, transform.position, .5f).setOnComplete(
+                () => {
+                    organelleObj.transform.position = transform.position;
+                });
+                LeanTween.rotate(organelleObj.gameObject, transform.rotation.eulerAngles, .5f).setOnComplete(
+                () => {
+                    organelleObj.transform.rotation = transform.rotation;
+                });
+                //StartCoroutine(SnapObject(organelleObj.transform));
             }
         }
     }
@@ -198,8 +206,9 @@ public class OrganellePosition : MonoBehaviour
         float currentLerpTime = 0f;
         float percentage = 0f;
         float animTime = .5f;
+        float timePassed = 0f;
 
-        while (organelleObj.position != endPos || organelleObj.rotation != endRot)
+        while (organelleObj.position != endPos || organelleObj.rotation != endRot && timePassed <= animTime + .05f)
         {
             currentLerpTime += Time.deltaTime;
             if (currentLerpTime > animTime)
@@ -213,8 +222,10 @@ public class OrganellePosition : MonoBehaviour
 
             organelleObj.position = Vector3.Lerp(startPos, endPos, percentage);
             organelleObj.rotation = Quaternion.Lerp(startRot, endRot, percentage);
+
+            timePassed += Time.deltaTime;
             yield return null;
         }
-        organelleObj.GetComponent<OrganelleController>().sendPositionToServer(endPos);
+        organelleObj.GetComponent<OrganelleController>().sendSpawnToServer(endPos);
     }
 }
