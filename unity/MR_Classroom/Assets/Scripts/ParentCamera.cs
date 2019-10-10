@@ -9,7 +9,7 @@ public class ParentCamera : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(WaitAndParentCamera());
+        //StartCoroutine(WaitAndParentCamera());
     }
 
     // Update is called once per frame

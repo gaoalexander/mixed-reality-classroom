@@ -33,7 +33,7 @@ public class RandomlySpawnOrganelles : MonoBehaviour
             }
 #elif UNITY_IOS
 
-            if (MiraController.TouchPressed && !_waitForDelay && !_touchPressed)
+            if (MiraController.TouchpadButton && !_waitForDelay && !_touchPressed)
             {
                 _touchPressed = true;
                 Debug.Log("Start animation!!!");
@@ -71,7 +71,6 @@ public class RandomlySpawnOrganelles : MonoBehaviour
                 id = Random.Range(0, 12);
                 yield return null;
             }
-
             _client.InterpretMarker(_client.objects[id].GetComponent<OrganelleController>().objectId, -1);
         }
     }
