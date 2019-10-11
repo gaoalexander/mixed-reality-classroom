@@ -83,6 +83,8 @@ def findFreeSpawnPoints(detected, spawn_points):
     random.shuffle(free_points)
     for id in detected:
         if id not in organelles:
+            if((not "sim" in state) and (id == 47 or id == 48 or id == 49)):
+                state["sim"] = id
             result.append(-1)
         elif id in spawn_manager:
             result.append(-1)
@@ -94,6 +96,8 @@ def findFreeSpawnPoints(detected, spawn_points):
             free_points[free_count].isFull = True
             free_count+=1
     return result
+
+spawn_points = generateSpawnPoints(8)
 
 class ThreadedTCPHandler(socketserver.BaseRequestHandler):
     """
@@ -110,10 +114,11 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
         print(self.request.getpeername()[0])
         #send everything once someone connects
         senddata = state
-        senddata["type"] = "object"
+        senddata["type"] = "initialize"
         tosend.put(senddata)
 
         while(True):
+            print(state)
             # print(clients)
             try:
                 # self.request is the TCP socket connected to the client
@@ -124,7 +129,7 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
             if not self.data:
                 break
             #print "{} wrote:".format(self.client_address[0])
-            print (self.data)
+            #print (self.data)
             senddata = {}
             array = self.data.decode('utf-8').split('`')
 
@@ -150,6 +155,9 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
 
                 tosend.put(senddata)
             elif (data["type"] == "spawn"):
+                state[data['uid']] = {}
+                state[data['uid']]['lockid'] = ''
+                state[data['uid']]['active'] = True
                 state[data['uid']] = data                
             elif (data["type"] == "check"):
                 senddata["type"] = "check"
@@ -160,9 +168,16 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
                     print("release object")
                     senddata = state
                     senddata['type'] = "release"
-                    senddata['eventid'] = data['uid']
-                    
+                    senddata['eventid'] = data['uid']        
                     tosend.put(senddata)
+            elif(data["type"] == "active"):
+                senddata["type"] = "active"
+                data["ids"] = data["ids"].replace("[", "")
+                data["ids"] = data["ids"].replace("]", "")
+                senddata["ids"] =  data["ids"].split(',')
+                senddata["ids"] = [int(i) for i in senddata["ids"]]
+                senddata["spawn"] = findFreeSpawnPoints(senddata["ids"],spawn_points)
+                tosend.put(senddata)
             elif(data["type"] == "deactivate"):
                 if (data['uid'] in state):
                     state[data['uid']]['active'] = False
@@ -172,10 +187,7 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
                     senddata['eventid'] = data['uid']
 
                     tosend.put(senddata)
-            elif(data["type"] == "restart"):
-                state = {}
-                senddata['type'] = 'restart'
-                tosend.put(senddata)
+
         
         print("killing connection" + self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1]))
         del clients[self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1])]
@@ -225,7 +237,6 @@ frame = 1
 
 combination_ids = []
 target = [0,1,2]
-spawn_points = generateSpawnPoints(8)
 
 aruco_dict = aruco.Dictionary_get(aruco.DICT_4X4_50)
 parameters =  aruco.DetectorParameters_create()
@@ -264,10 +275,11 @@ while True:
         detected = detectMarkers(imarr)
         
         if(detected is not None):
-            print(detected)
+            #print(detected)
             senddata = {}
             senddata["type"] = "active"
             senddata["ids"] = detected.tolist()
+            print(senddata["ids"])
             senddata["spawn"] = findFreeSpawnPoints(detected.tolist(),spawn_points)
             #senddata["spawn"] = random.sample(range(0,len(spawn_points)), len(senddata["ids"]))
 

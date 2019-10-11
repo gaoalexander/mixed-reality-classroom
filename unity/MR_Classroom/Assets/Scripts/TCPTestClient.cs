@@ -113,7 +113,7 @@ public class TCPTestClient : MonoBehaviour
                 {
                     releaseId = current_data["eventid"].AsInt;
                 }
-                else if(current_data["type"] == "initialize")
+                else if (current_data["type"] == "initialize")
                 {
                     Debug.Log("###Initialize:");
                     Debug.Log(current_data.ToString());
@@ -219,16 +219,16 @@ public class TCPTestClient : MonoBehaviour
         JSONNode node = new JSONObject();
         node["type"] = "active";
         string ids_array = "[";
-        for(int i = 0; i < ids.Length; i++)
+        for (int i = 0; i < ids.Length; i++)
         {
-            if(i == ids.Length - 1)
+            if (i == ids.Length - 1)
             {
                 ids_array += ids[i].ToString() + "]";
                 break;
             }
-            ids_array += ids[i].ToString()+",";
+            ids_array += ids[i].ToString() + ",";
         }
-        node["ids"] = ids_array;      
+        node["ids"] = ids_array;
         SendTCPMessage(node.ToString());
     }
 

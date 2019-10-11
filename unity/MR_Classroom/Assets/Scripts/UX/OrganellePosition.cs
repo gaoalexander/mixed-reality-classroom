@@ -161,7 +161,15 @@ public class OrganellePosition : MonoBehaviour
 
             if (_snapToCenter)
             {
-                StartCoroutine(SnapObject(organelleObj.transform));
+                LeanTween.move(organelleObj.gameObject, transform.position, .5f).setOnComplete(
+                () => {
+                    organelleObj.transform.position = transform.position;
+                });
+                LeanTween.rotate(organelleObj.gameObject, transform.rotation.eulerAngles, .5f).setOnComplete(
+                () => {
+                    organelleObj.transform.rotation = transform.rotation;
+                });
+                //StartCoroutine(SnapObject(organelleObj.transform));
             }
         }
     }
