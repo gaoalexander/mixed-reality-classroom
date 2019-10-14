@@ -23,12 +23,14 @@ import random
 
 state = {}
 clients = {}
+organelles = [0,1,2,3,4,5,6,7,8,9,10,11,12,19,27,28,34]
 
 # MQ
 # tosend = []
 tosend = Queue(maxsize=0)
 
 # interval = 0.01
+expire = 5 * 60
 toflush = []
 
 def sendmessages():
@@ -53,6 +55,17 @@ def sendmessages():
             clients.pop(client)
             toflush.pop(i)
 
+skipped = False
+# poll for clients and clear state if none are connected
+def checkAndFlush():
+    if len(clients) == 0:
+        if not skipped:
+            skipped = True
+            return
+        state = {}
+            
+threading.Timer(expire, checkAndFlush).start()
+            
 # def sendmessages():
     # threading.Timer(interval, sendmessages).start()
 spawn_manager = {}
@@ -72,29 +85,26 @@ def findFreeSpawnPoints(detected, spawn_points):
     free_points = []
     all_points = []
     result = []
-    count = 0
+
+    #Check for all free spawn points
     for i in range(0, len(spawn_points)):
-        if(count >= len(detected)):
-            break
-        if(spawn_points[i].isFull == False and detected[count] != 47 and detected[count] != 48 and detected[count] != 49):
-            free_points.append(spawn_points[i].idnum)
-            spawn_points[i].isFull = True
-            spawn_manager[detected[count]] = spawn_points[i]
-            count += 1
-        elif(detected[count] == 47 or detected[count] == 48 or detected[count] == 49):
-            free_points.append(-1)
-            count +=1
-        all_points.append(spawn_points[i].idnum)
+        if not spawn_points[i].isFull:
+            free_points.append(spawn_points[i])
 
-        if(len(free_points) < len(detected)):
-            result = random.sample(all_points,len(detected))
-        else: 
-            result = free_points
-
-    print("detected:"+str(len(detected)))
-    print("spawn points:"+str(len(spawn_points)))
-    print("free points:"+str(free_points))
-    print("Result:"+str(result))
+    free_count = 0
+    random.shuffle(free_points)
+    for id in detected:
+        if id not in organelles:
+            result.append(-1)
+        elif id in spawn_manager:
+            result.append(-1)
+        elif(free_count >= len(free_points)):
+            result.append(random.randrange(0,len(spawn_points)))
+        else:
+            result.append(free_points[free_count].idnum)
+            spawn_manager[id] = free_points[free_count]
+            free_points[free_count].isFull = True
+            free_count+=1
     return result
 
 class ThreadedTCPHandler(socketserver.BaseRequestHandler):
@@ -110,13 +120,18 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
         self.request.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         print("new connection:")
         print(self.request.getpeername()[0])
+        
         #send everything once someone connects
         if state is None:
             state = {}
             
         senddata = state
-        senddata["type"] = "object"
-        tosend.put(senddata)
+        senddata["initialize"] = "object"
+        
+        try:
+            socket.sendall(json.dumps(senddata).encode('utf-8'))
+        except OSError as e:
+            print(str(e) + ":\n" + client)
 
         while(True):
             # print(clients)
@@ -143,7 +158,6 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
             if (data["type"] == "object"):
                 # print("state: ", state)
                 # print("data: ", data)
-
                 if (data['uid'] in state and state[data['uid']]['lockid'] != data['lockid'] and state[data['uid']]['lockid'] != ""):
                     print("object in use")
                 else:
@@ -155,7 +169,8 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
                 senddata["type"] = "object"
 
                 tosend.put(senddata)
-
+            elif (data["type"] == "spawn"):
+                state[data['uid']] = data                
             elif (data["type"] == "check"):
                 senddata["type"] = "check"
                 senddata["success"] = np.array_equal(combination_ids,target)
@@ -247,7 +262,7 @@ def detectMarkers(image_array):
     # combination_ids = np.array([0,1,2])
     if np.array_equal(combination_ids,target):
         print("YOU PICKED THE RIGHT PIECES.")
-    else: print("KEEP TRYING.")
+    #else: print("KEEP TRYING.")
     gray = aruco.drawDetectedMarkers(image_array, corners)
     return combination_ids
 
