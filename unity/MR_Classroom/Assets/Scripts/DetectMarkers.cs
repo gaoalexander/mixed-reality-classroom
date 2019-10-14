@@ -205,7 +205,6 @@ public class DetectMarkers : MonoBehaviour
                             if (!_client.playLocally)
                             {
                                 //Send id to server
-                                //_client.SendMessage()
 
                             }
                             else
@@ -450,35 +449,36 @@ public class DetectMarkers : MonoBehaviour
 
         if (ids.Length > 0)
         {
-            if (!_client.playLocally)
+            for (int i = 0; i < ids.Length; i++)
             {
-                _client.SetSpawnIds(ids);
-            }
-            else
-            {
-                for (int i = 0; i < ids.Length; i++)
+                if (alreadyFoundIds.Count > 0)
                 {
-                    if (alreadyFoundIds.Count > 0)
+                    foreach (int id in alreadyFoundIds)
                     {
-                        foreach (int id in alreadyFoundIds)
+                        if (ids[i] == id)
                         {
-                            if (ids[i] == id)
-                            {
-                                alreadyFound = true;
-                                break;
-                            }
+                            alreadyFound = true;
+                            break;
                         }
                     }
-                    if (!alreadyFound)
+                }
+                if (!alreadyFound)
+                {
+                    alreadyFoundIds.Add(ids[i]);
+                    Debug.Log("IDS FOUND:");
+                    Debug.Log(ids[i]);
+                    if (!_client.playLocally)
                     {
-                        alreadyFoundIds.Add(ids[i]);
-                        Debug.Log("IDS FOUND:");
-                        Debug.Log(ids[i]);
+                        //Send id to server
+
+                    }
+                    else
+                    {
                         _client.InterpretMarker(ids[i], -1);
+                        _waitForDelay = true;
+                        StartCoroutine(WaitAndReenable());
                     }
                 }
-                _waitForDelay = true;
-                StartCoroutine(WaitAndReenable());
             }
         }
     }

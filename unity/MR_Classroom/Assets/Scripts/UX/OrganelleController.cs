@@ -57,8 +57,6 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
 
     private bool _moveHorizontally = true;
 
-    private int _scaleAnimId = -1;
-
     /*private void Awake()
     {
         _originalScale = transform.localScale.x;
@@ -92,25 +90,9 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
         }
         else
         {
-            //SetSpawnScale(true, .4f);
+            SetSpawnScale(true, .4f);
             //make trash animation using trash.position
-            if (_scaleAnimId > 0)
-            {
-                LeanTween.cancel(_scaleAnimId);
-            }
-            LeanTween.scale(gameObject, Vector3.zero, .5f);
-            LeanTween.move(gameObject, trash.position, .5f).setOnComplete(
-                ()=> {
-                    if (client.playLocally)
-                    {
-                        Deactivate();
-                    }
-                    else
-                    {
-                        client.SetObjectInactive(objectId);
-                    }
-                });
-            //StartCoroutine(TrashOrganelle(trash.position, .5f));
+            StartCoroutine(TrashOrganelle(trash.position, .5f));
         }
     }
 
@@ -127,6 +109,7 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
     //NOTE: GRAB CLASS START.
     private void Start()
     {
+
         lastTouchCoor = 0.5f;
         rigidBody = this.gameObject.GetComponent<Rigidbody>();
         originalConstraints = rigidBody.constraints;
@@ -296,11 +279,6 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
 
     public void SetSpawnScale(bool spawnScale, float animTime)
     {
-        if (_scaleAnimId > 0)
-        {
-            LeanTween.cancel(_scaleAnimId);
-        }
-
         if (spawnScale)
         {
             if (animTime <= 0)
@@ -309,11 +287,7 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
             }
             else
             {
-                _scaleAnimId = LeanTween.scale(gameObject, new Vector3(_spawnScale, _spawnScale, _spawnScale), animTime).setOnComplete(
-                () => {
-                    transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
-                }).id;
-                //StartCoroutine(ScaleAnimation(transform.localScale.x, _spawnScale, animTime));
+                StartCoroutine(ScaleAnimation(transform.localScale.x, _spawnScale, animTime));
             }
             SetIdle(true);
         }
@@ -321,11 +295,7 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
         {
             //Debug.Log("~~~~~~~~");
             //Debug.Log("Local Scale: " + transform.localScale.x + " , Original Scale: " + _originalScale);
-            _scaleAnimId = LeanTween.scale(gameObject, new Vector3(_originalScale, _originalScale, _originalScale), animTime).setOnComplete(
-                () => {
-                    transform.localScale = new Vector3(_originalScale, _originalScale, _originalScale);
-                }).id;
-            //StartCoroutine(ScaleAnimation(transform.localScale.x, _originalScale, animTime));
+            StartCoroutine(ScaleAnimation(transform.localScale.x, _originalScale, animTime));
             SetIdle(false);
         }
     }
