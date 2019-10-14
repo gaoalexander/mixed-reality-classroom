@@ -181,7 +181,7 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
             elif (data["type"] == "check"):
                 senddata["type"] = "check"
                 senddata["success"] = np.array_equal(combination_ids,target)
-             elif(data["type"] == "active"):    
+            elif(data["type"] == "active"):    
                 senddata["type"] = "active" 
                 data["ids"] = data["ids"].replace("[", "")  
                 data["ids"] = data["ids"].replace("]", "")  
