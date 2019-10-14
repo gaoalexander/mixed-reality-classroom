@@ -126,11 +126,10 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
         self.request.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         print("new connection:")
         print(self.request.getpeername()[0])
+
         global state
+
         #send everything once someone connects
-        # if state is None:
-        #     state = {}
-            
         senddata = state
         senddata["type"] = "initialize"
         
