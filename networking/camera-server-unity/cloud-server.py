@@ -55,18 +55,18 @@ def sendmessages():
             clients.pop(client)
             toflush.pop(i)
 
-skipped = False
-# poll for clients and clear state if none are connected
-def checkAndFlush():
-    global skipped
-    
-    if len(clients) == 0:
-        if not skipped:
-            skipped = True
-            return
-        state = {}
+# skipped = False
+# # poll for clients and clear state if none are connected
+# def checkAndFlush():
+#     global skipped
+
+#     if len(clients) == 0:
+#         if not skipped:
+#             skipped = True
+#             return
+#         state = {}
             
-threading.Timer(expire, checkAndFlush).start()
+# threading.Timer(expire, checkAndFlush).start()
             
 # def sendmessages():
     # threading.Timer(interval, sendmessages).start()
@@ -177,17 +177,17 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
                 tosend.put(senddata)
             elif (data["type"] == "spawn"):
                 state[data['uid']] = {} 
-                state[data['uid']]['lockid'] = ''   
+                state[data['uid']]['lockid'] = ''
                 state[data['uid']]['active'] = True
-                state[data['uid']] = data                
+                state[data['uid']] = data
             elif (data["type"] == "check"):
                 senddata["type"] = "check"
                 senddata["success"] = np.array_equal(combination_ids,target)
-             elif(data["type"] == "active"):    
-                senddata["type"] = "active" 
-                data["ids"] = data["ids"].replace("[", "")  
-                data["ids"] = data["ids"].replace("]", "")  
-                senddata["ids"] =  data["ids"].split(',')   
+            elif(data["type"] == "active"):
+                senddata["type"] = "active"
+                data["ids"] = data["ids"].replace("[", "")
+                data["ids"] = data["ids"].replace("]", "")
+                senddata["ids"] =  data["ids"].split(',')
                 senddata["ids"] = [int(i) for i in senddata["ids"]] 
                 senddata["spawn"] = findFreeSpawnPoints(senddata["ids"],spawn_points)   
                 tosend.put(senddata)
@@ -216,6 +216,9 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
         
         print("killing connection" + self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1]))
         del clients[self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1])]
+
+        if len(clients) == 0:
+            state = {}
         
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     allow_reuse_address = True
