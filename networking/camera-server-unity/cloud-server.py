@@ -148,7 +148,7 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
             if not self.data:
                 break
             #print "{} wrote:".format(self.client_address[0])
-            print (self.data)
+            # print (self.data)
             senddata = {}
             array = self.data.decode('utf-8').split('`')
 
