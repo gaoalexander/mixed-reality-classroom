@@ -106,6 +106,11 @@ public class TCPTestClient : MonoBehaviour
 
                     }
                 }
+                else if (current_data["type"] == "initialize")
+                {
+                    Debug.Log("###Initialize:");
+                    Debug.Log(current_data.ToString());
+                }
                 else if (current_data["type"] == "deactivate")
                 {
                     deactivatedId = current_data["eventid"].AsInt;
@@ -209,6 +214,25 @@ public class TCPTestClient : MonoBehaviour
         node["uid"] = organelleId;
         SendTCPMessage(node.ToString());
     }
+
+    public void SetSpawnIds(int[] ids)
+    {
+        JSONNode node = new JSONObject();
+        node["type"] = "active";
+        string ids_array = "[";
+        for (int i = 0; i < ids.Length; i++)
+        {
+            if (i == ids.Length - 1)
+            {
+                ids_array += ids[i].ToString() + "]";
+                break;
+            }
+            ids_array += ids[i].ToString() + ",";
+        }
+        node["ids"] = ids_array;
+        SendTCPMessage(node.ToString());
+    }
+
 
     public void InterpretMarker(int markerId, int spawnId)
     {
