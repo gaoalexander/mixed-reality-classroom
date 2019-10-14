@@ -183,11 +183,11 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
             elif (data["type"] == "check"):
                 senddata["type"] = "check"
                 senddata["success"] = np.array_equal(combination_ids,target)
+                senddata["ids"] =  data["ids"].split(',')
             elif(data["type"] == "active"):
                 senddata["type"] = "active"
                 data["ids"] = data["ids"].replace("[", "")
                 data["ids"] = data["ids"].replace("]", "")
-                senddata["ids"] =  data["ids"].split(',')
                 senddata["ids"] = [int(i) for i in senddata["ids"]] 
                 senddata["spawn"] = findFreeSpawnPoints(senddata["ids"],spawn_points)   
                 tosend.put(senddata)
