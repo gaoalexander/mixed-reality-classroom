@@ -111,6 +111,9 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
         print("new connection:")
         print(self.request.getpeername()[0])
         #send everything once someone connects
+        if state is None:
+            state = {}
+            
         senddata = state
         senddata["type"] = "object"
         tosend.put(senddata)
