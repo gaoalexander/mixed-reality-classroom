@@ -205,6 +205,7 @@ public class DetectMarkers : MonoBehaviour
                             if (!_client.playLocally)
                             {
                                 //Send id to server
+                                //_client.SendMessage()
 
                             }
                             else
@@ -217,7 +218,7 @@ public class DetectMarkers : MonoBehaviour
                     }
                 }
             }
-            #elif UNITY_IOS
+#elif UNITY_IOS
             if (!_waitForDelay && (_wikitudeCamera != null || cam != null))
             {
                 if (!_animationPlaying)
@@ -449,36 +450,35 @@ public class DetectMarkers : MonoBehaviour
 
         if (ids.Length > 0)
         {
-            for (int i = 0; i < ids.Length; i++)
+            if (!_client.playLocally)
             {
-                if (alreadyFoundIds.Count > 0)
+                _client.SetSpawnIds(ids);
+            }
+            else
+            {
+                for (int i = 0; i < ids.Length; i++)
                 {
-                    foreach (int id in alreadyFoundIds)
+                    if (alreadyFoundIds.Count > 0)
                     {
-                        if (ids[i] == id)
+                        foreach (int id in alreadyFoundIds)
                         {
-                            alreadyFound = true;
-                            break;
+                            if (ids[i] == id)
+                            {
+                                alreadyFound = true;
+                                break;
+                            }
                         }
                     }
-                }
-                if (!alreadyFound)
-                {
-                    alreadyFoundIds.Add(ids[i]);
-                    Debug.Log("IDS FOUND:");
-                    Debug.Log(ids[i]);
-                    if (!_client.playLocally)
+                    if (!alreadyFound)
                     {
-                        //Send id to server
-
-                    }
-                    else
-                    {
+                        alreadyFoundIds.Add(ids[i]);
+                        Debug.Log("IDS FOUND:");
+                        Debug.Log(ids[i]);
                         _client.InterpretMarker(ids[i], -1);
-                        _waitForDelay = true;
-                        StartCoroutine(WaitAndReenable());
                     }
                 }
+                _waitForDelay = true;
+                StartCoroutine(WaitAndReenable());
             }
         }
     }
