@@ -108,10 +108,15 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
         self.request.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         print("new connection:")
         print(self.request.getpeername()[0])
+        
         #send everything once someone connects
         senddata = state
-        senddata["type"] = "object"
-        tosend.put(senddata)
+        senddata["initialize"] = "object"
+        
+        try:
+            socket.sendall(json.dumps(senddata).encode('utf-8'))
+        except OSError as e:
+            print(str(e) + ":\n" + client)
 
         while(True):
             # print(clients)
