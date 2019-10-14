@@ -126,7 +126,7 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
         #     state = {}
             
         senddata = state
-        senddata["initialize"] = "object"
+        senddata["type"] = "initialize"
         
         try:
             self.request.sendall(json.dumps(senddata).encode('utf-8'))
