@@ -58,6 +58,8 @@ def sendmessages():
 skipped = False
 # poll for clients and clear state if none are connected
 def checkAndFlush():
+    global skipped
+    
     if len(clients) == 0:
         if not skipped:
             skipped = True
