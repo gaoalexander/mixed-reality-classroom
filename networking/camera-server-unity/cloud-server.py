@@ -30,6 +30,7 @@ organelles = [0,1,2,3,4,5,6,7,8,9,10,11,12,19,27,28,34]
 tosend = Queue(maxsize=0)
 
 # interval = 0.01
+expire = 5 * 60
 toflush = []
 
 def sendmessages():
@@ -54,6 +55,17 @@ def sendmessages():
             clients.pop(client)
             toflush.pop(i)
 
+skipped = False
+# poll for clients and clear state if none are connected
+def checkAndFlush():
+    if len(clients) == 0:
+        if not skipped:
+            skipped = True
+            return
+        state = {}
+            
+threading.Timer(expire, checkAndFlush).start()
+            
 # def sendmessages():
     # threading.Timer(interval, sendmessages).start()
 spawn_manager = {}
