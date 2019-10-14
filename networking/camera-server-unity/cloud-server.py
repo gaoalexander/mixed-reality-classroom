@@ -126,7 +126,7 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
         #     state = {}
             
         senddata = state
-        senddata["initialize"] = "object"
+        senddata["type"] = "initialize"
         
         try:
             self.request.sendall(json.dumps(senddata).encode('utf-8'))
@@ -144,7 +144,7 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
             if not self.data:
                 break
             #print "{} wrote:".format(self.client_address[0])
-            print (self.data)
+            # print (self.data)
             senddata = {}
             array = self.data.decode('utf-8').split('`')
 
