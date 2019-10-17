@@ -50,6 +50,8 @@ public class TCPTestClient : MonoBehaviour
 
     public int simToLaunch = -1;
 
+    public DetectMarkers detectMarkersController = null;
+
     private void myLog(string message)
     {
         Debug.Log(message);
@@ -70,6 +72,12 @@ public class TCPTestClient : MonoBehaviour
             objects[i].GetComponent<OrganelleController>().SetOriginalScale();
         }
 
+        if (simToLaunch == 0)
+        {
+            detectMarkersController.StartCamera();
+            detectMarkersController.startDetection = true;
+        }
+
         if (!playLocally)
         {
             ConnectToTcpServer();
@@ -77,7 +85,10 @@ public class TCPTestClient : MonoBehaviour
         else
         {
             //gameObject.SetActive(false);
-            sim_controller.StartSimulation(simToLaunch);
+            if (simToLaunch == 1)
+            {
+                sim_controller.StartSimulation(simToLaunch);
+            }
         }
     }
 
@@ -93,6 +104,7 @@ public class TCPTestClient : MonoBehaviour
                 //TODO: CHECK THE MESSAGES WE ARE RECEIVING. 
                 //Debug.Log("HERE IS THE SERVER MESSAGE :" + message);
                 JSONNode current_data = JSON.Parse(message);
+
                 //Debug.Log("!!!!!!!" + current_data["type"]);
                 if (current_data["type"] == "active")
                 {
@@ -100,9 +112,43 @@ public class TCPTestClient : MonoBehaviour
                     JSONArray current_spawn = current_data["spawn"].AsArray;
                     for (int a = 0; a < current_ids.Count; a++)
                     {
-
                         InterpretMarker(current_ids[a], current_spawn[a]);
-
+                    }
+                }
+                else if (current_data["type"] == "initialize")
+                {
+                    Debug.Log("###Initialize:");
+                    Debug.Log(current_data.ToString());
+                    if (current_data["sim"].AsInt == 47 && !simulationStarted)
+                    {
+                        sim_controller.currentCell = SimulationController.TypeOfCell.Animal;
+                        sim_controller.StartSimulation(0);
+                        simulationStarted = true;
+                    }
+                    else if (current_data["sim"].AsInt == 48 && !simulationStarted)
+                    {
+                        sim_controller.currentCell = SimulationController.TypeOfCell.Plant;
+                        sim_controller.StartSimulation(0);
+                        simulationStarted = true;
+                    }
+                    else if (current_data["sim"].AsInt == 49 && !simulationStarted)
+                    {
+                        sim_controller.currentCell = SimulationController.TypeOfCell.Prokaryotic;
+                        sim_controller.StartSimulation(0);
+                        simulationStarted = true;
+                    }
+                    for (int i = 0; i < current_data.Count; i++)
+                    {
+                        if (current_data[i]["uid"] != null && grabbableObjects.ContainsKey(current_data[i]["uid"]))
+                        {
+                            int uid = current_data[i]["uid"].AsInt;
+                            float x = current_data[i]["x"].AsFloat;
+                            float y = current_data[i]["y"].AsFloat;
+                            float z = current_data[i]["z"].AsFloat;
+                            GameObject current = grabbableObjects[uid];
+                            current.SetActive(true);
+                            current.transform.position = new Vector3(x, y, z);
+                        }
                     }
                 }
                 else if (current_data["type"] == "deactivate")
@@ -112,11 +158,6 @@ public class TCPTestClient : MonoBehaviour
                 else if (current_data["type"] == "release")
                 {
                     releaseId = current_data["eventid"].AsInt;
-                }
-                else if (current_data["type"] == "initialize")
-                {
-                    Debug.Log("###Initialize:");
-                    Debug.Log(current_data.ToString());
                 }
                 else
                 {
@@ -150,6 +191,7 @@ public class TCPTestClient : MonoBehaviour
 
                     }
                 }
+                message = null;
             }
 
             dt += Time.deltaTime;
@@ -232,71 +274,76 @@ public class TCPTestClient : MonoBehaviour
         SendTCPMessage(node.ToString());
     }
 
+
     public void InterpretMarker(int markerId, int spawnId)
     {
-
-        if (markerId == 47 && !simulationStarted)
+        //separate aruco codes detection based on simulation
+        if (simToLaunch == 0)
         {
-            sim_controller.currentCell = SimulationController.TypeOfCell.Animal;
-            sim_controller.StartSimulation(0);
-            simulationStarted = true;
-
-        }
-        else if (markerId == 48 && !simulationStarted)
-        {
-            sim_controller.currentCell = SimulationController.TypeOfCell.Plant;
-            sim_controller.StartSimulation(0);
-            simulationStarted = true;
-
-        }
-        else if (markerId == 49 && !simulationStarted)
-        {
-            sim_controller.currentCell = SimulationController.TypeOfCell.Prokaryotic;
-            sim_controller.StartSimulation(0);
-            simulationStarted = true;
-        }
-        else if (grabbableObjects.ContainsKey(markerId) && grabbableObjects[markerId].activeSelf == false && grabbableObjects[markerId].GetComponent<OrganelleController>().locked == false)
-        {
-            grabbableObjects[markerId].GetComponent<OrganelleController>().locked = true;
-            //from here, it will be handled from the server
-            if (playLocally)
+            if (markerId == 47 && !simulationStarted)
             {
-                int min_amount = 100;
-                int min_index = -1;
-                List<int> spawn_indices = new List<int>();
-                for (int b = 0; b < spawn_points.Count; b++)
+                sim_controller.currentCell = SimulationController.TypeOfCell.Animal;
+                sim_controller.StartSimulation(0);
+                simulationStarted = true;
+
+            }
+            else if (markerId == 48 && !simulationStarted)
+            {
+                sim_controller.currentCell = SimulationController.TypeOfCell.Plant;
+                sim_controller.StartSimulation(0);
+                simulationStarted = true;
+
+            }
+            else if (markerId == 49 && !simulationStarted)
+            {
+                sim_controller.currentCell = SimulationController.TypeOfCell.Prokaryotic;
+                sim_controller.StartSimulation(0);
+                simulationStarted = true;
+            }
+            else if (grabbableObjects.ContainsKey(markerId) && grabbableObjects[markerId].activeSelf == false && grabbableObjects[markerId].GetComponent<OrganelleController>().locked == false)
+            {
+                grabbableObjects[markerId].GetComponent<OrganelleController>().locked = true;
+                //from here, it will be handled from the server
+                if (playLocally)
                 {
-                    if (spawn_points[b].organellesActive < min_amount)
+                    int min_amount = 100;
+                    int min_index = -1;
+                    List<int> spawn_indices = new List<int>();
+                    for (int b = 0; b < spawn_points.Count; b++)
                     {
-                        min_index = b;
-                        min_amount = spawn_points[b].organellesActive;
+                        if (spawn_points[b].organellesActive < min_amount)
+                        {
+                            min_index = b;
+                            min_amount = spawn_points[b].organellesActive;
+                        }
+                        if (spawn_points[b].organellesActive == 0)
+                        {
+                            spawn_indices.Add(b);
+                        }
                     }
-                    if (spawn_points[b].organellesActive == 0)
+
+                    if (spawn_indices.Count > 0)
                     {
-                        spawn_indices.Add(b);
+                        int random_index = UnityEngine.Random.Range(0, spawn_indices.Count);
+
+                        //Debug.Log("Is it here at least:" + markerId);
+
+                        spawn_points[spawn_indices[random_index]]._organelleToSpawn = grabbableObjects[markerId].GetComponent<OrganelleController>();
+                        spawn_points[spawn_indices[random_index]].ActivatePortal();
                     }
-                }
-
-                if (spawn_indices.Count > 0)
-                {
-                    int random_index = UnityEngine.Random.Range(0, spawn_indices.Count);
-
-                    //Debug.Log("Is it here at least:" + markerId);
-
-                    spawn_points[spawn_indices[random_index]]._organelleToSpawn = grabbableObjects[markerId].GetComponent<OrganelleController>();
-                    spawn_points[spawn_indices[random_index]].ActivatePortal();
+                    else
+                    {
+                        spawn_points[min_index]._organelleToSpawn = grabbableObjects[markerId].GetComponent<OrganelleController>();
+                        spawn_points[min_index].ActivatePortal();
+                    }
                 }
                 else
                 {
-                    spawn_points[min_index]._organelleToSpawn = grabbableObjects[markerId].GetComponent<OrganelleController>();
-                    spawn_points[min_index].ActivatePortal();
+                    //only call this when the spawn index comes from the server
+                    Debug.Log("Marker id: " + markerId + " , Spawn id: " + spawnId);
+                    spawn_points[spawnId]._organelleToSpawn = grabbableObjects[markerId].GetComponent<OrganelleController>();
+                    spawn_points[spawnId].ActivatePortal();
                 }
-            }
-            else
-            {
-                //only call this when the spawn index comes from the server
-                spawn_points[spawnId]._organelleToSpawn = grabbableObjects[markerId].GetComponent<OrganelleController>();
-                spawn_points[spawnId].ActivatePortal();
             }
         }
     }

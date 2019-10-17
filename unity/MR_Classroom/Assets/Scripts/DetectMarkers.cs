@@ -42,11 +42,20 @@ public class DetectMarkers : MonoBehaviour
 
     [SerializeField] private bool _useWikitudeCamera = false;
 
+    public bool startDetection = false;
+
     IEnumerator Start()
     {
         findWebCams();
 
         _wikitudeCamera = FindObjectOfType<WikitudeCamera>();
+#if UNITY_EDITOR
+        _useWikitudeCamera = false;
+#elif UNITY_IOS
+        _useWikitudeCamera = _useWikitudeCamera;
+#else
+        _useWikitudeCamera = false;
+#endif
         if (_useWikitudeCamera)
         {
             Debug.Log("Wikitud Cameraaaaaaaaa!!! " + _wikitudeCamera.GetComponent<Camera>());
@@ -61,13 +70,20 @@ public class DetectMarkers : MonoBehaviour
         }
 
         yield return Application.RequestUserAuthorization(UserAuthorization.WebCam);
+
+        ProcessCamera();
+    }
+
+    private void ProcessCamera()
+    {
         if (Application.HasUserAuthorization(UserAuthorization.WebCam))
         {
-            Debug.Log("webcam found");
+            Debug.Log("Webcam found");
 #if UNITY_EDITOR
+            Debug.Log("Setting up editor");
             cam = new WebCamTexture();
-            cam.Play();
 #elif UNITY_IOS
+            Debug.Log("Setting up iOS");
             if (!_useWikitudeCamera)
             {
                 foreach (WebCamDevice camera in WebCamTexture.devices)
@@ -78,13 +94,17 @@ public class DetectMarkers : MonoBehaviour
                         cam = new WebCamTexture(frontCamName);
                     }
                 }
-                cam.Play();
+                //cam.Play();
             }
+#else
+            Debug.Log("Setting up other platforms");
+            cam = new WebCamTexture();
+            //cam.Play();
 #endif
         }
         else
         {
-            Debug.Log("webcam not found");
+            Debug.Log("Webcam not found!");
             cam = null;
         }
 
@@ -106,7 +126,10 @@ public class DetectMarkers : MonoBehaviour
     IEnumerator WaitAndDestroyBackgroundCamera()
     {
         yield return new WaitForEndOfFrame();
-        GameObject.Find("BackgroundCamera").GetComponent<Camera>().depth = -1000;
+        if (GameObject.Find("BackgroundCamera"))
+        {
+            GameObject.Find("BackgroundCamera").GetComponent<Camera>().depth = -1000;
+        }
         _wikitudeCamera.GetComponent<Camera>().enabled = false;
         //GameObject.Find("BackgroundCamera").GetComponent<Camera>().enabled = false;
         //Debug.Log(GameObject.Find("BackgroundCamera").GetComponent<Camera>());
@@ -131,123 +154,128 @@ public class DetectMarkers : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        //Check for the image after a certain amount of frames to improve performance
-        if (Time.frameCount % _framesToSkip == 0)
+        if (startDetection)
         {
-            //Debug.Log("Check Aruco! " + Time.frameCount);
+            //Check for the image after a certain amount of frames to improve performance
+            if (Time.frameCount % _framesToSkip == 0)
+            {
+                //Debug.Log("Check Aruco! " + Time.frameCount);
 #if UNITY_EDITOR
-            if (!_waitForDelay && cam != null)
-            {
-                if (!_animationPlaying)
+                if (!_waitForDelay && cam != null)
                 {
-                    _animationPlaying = true;
-                    Debug.Log("Start animation!!!");
-                }
-
-                /*Color32[] pix = ((Texture2D)_wikitudeCamera.CameraTexture).GetPixels32();
-                Debug.Log("Is readable????????? " + _wikitudeCamera.CameraTexture.isReadable + " , " + pix.Length + " , " + _wikitudeCamera.CameraTexture.width + "x" + _wikitudeCamera.CameraTexture.height);
-                Texture2D camTexture = new Texture2D(_wikitudeCamera.CameraTexture.width, _wikitudeCamera.CameraTexture.height);
-                camTexture.SetPixels32(pix);
-                camTexture.Apply();
-
-                Mat image = TextureToMat(camTexture, null);
-                if (_testObject != null && _showTestObject)
-                {
-                    _testObject.GetComponent<MeshRenderer>().material.mainTexture = camTexture;
-                }*/
-
-                //Color32[] pix = _wikitudeCamera.CameraTexture.GetPixels32();
-
-                //_camTexture = new Texture2D(_wikitudeCamera.CameraTexture.width, _wikitudeCamera.CameraTexture.height);
-                //_camTexture.SetPixels32(pix);
-                //_camTexture.Apply();
-
-                //Mat image = TextureToMat(_wikitudeCamera.CameraTexture as Texture2D, null);
-                Debug.Log(cam.width + "x" + cam.height);
-                Mat image = TextureToMat(cam, null);
-                if (_testObject != null && _showTestObject)
-                {
-                    _testObject.GetComponent<MeshRenderer>().material.mainTexture = cam;
-                    //Debug.Log("Camera Info: " + _wikitudeCamera.InputFrameWidth + " x " + _wikitudeCamera.InputFrameHeight + " , " + _wikitudeCamera.FlashMode + " , " + _wikitudeCamera.FocusMode + " , " + _wikitudeCamera.ZoomLevel);
-                    //Debug.Log("Render: " + _wikitudeCamera.EnableCameraRendering + " , " + _wikitudeCamera.RequestInputFrameRendering);
-                    //_testObject.GetComponent<MeshRenderer>().material.mainTexture = (Texture2D)_wikitudeCamera.CameraTexture;
-                    //image = TextureToMat((Texture2D)_wikitudeCamera.CameraTexture, null);
-
-                    //_testObject.GetComponent<MeshRenderer>().material.mainTexture = _camTexture;
-                    //image = TextureToMat(_camTexture, null);
-                }
-                CvAruco.DetectMarkers(image, dictionary, out corners, out ids, parameters, out rejected);
-                Debug.Log(image.Width + "x" + image.Height + " , " + ids.Length + " , " + corners.Length + " , " + rejected.Length);
-
-                List<int> alreadyFoundIds = new List<int>();
-                bool alreadyFound = false;
-
-                if (ids.Length > 0)
-                {
-                    for (int i = 0; i < ids.Length; i++)
-                    {
-                        if (alreadyFoundIds.Count > 0)
-                        {
-                            foreach (int id in alreadyFoundIds)
-                            {
-                                if (ids[i] == id)
-                                {
-                                    alreadyFound = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (!alreadyFound)
-                        {
-                            alreadyFoundIds.Add(ids[i]);
-                            Debug.Log("IDS FOUND:");
-                            Debug.Log(ids[i]);
-                            if (!_client.playLocally)
-                            {
-                                //Send id to server
-                                //_client.SendMessage()
-
-                            }
-                            else
-                            {
-                                _client.InterpretMarker(ids[i], -1);
-                                _waitForDelay = true;
-                                StartCoroutine(WaitAndReenable());
-                            }
-                        }
-                    }
-                }
-            }
-            #elif UNITY_IOS
-            if (!_waitForDelay && (_wikitudeCamera != null || cam != null))
-            {
-                if (!_animationPlaying)
-                {
-                    _animationPlaying = true;
-                    Debug.Log("Start animation!!!");
-                }
-
-                if (_useWikitudeCamera)
-                {
-                    StartCoroutine(CheckForMarkersFromWikitudeCameraFeed(_wikitudeCamera));
-                }
-                else
-                {
-                    Debug.Log(cam.width + "x" + cam.height);
                     Mat image = TextureToMat(cam, null);
+
+                    ImageProcessingAndDetection(image);
+
                     if (_testObject != null && _showTestObject)
                     {
                         _testObject.GetComponent<MeshRenderer>().material.mainTexture = cam;
-                        //Debug.Log("Camera Info: " + _wikitudeCamera.InputFrameWidth + " x " + _wikitudeCamera.InputFrameHeight + " , " + _wikitudeCamera.FlashMode + " , " + _wikitudeCamera.FocusMode + " , " + _wikitudeCamera.ZoomLevel);
-                        //Debug.Log("Render: " + _wikitudeCamera.EnableCameraRendering + " , " + _wikitudeCamera.RequestInputFrameRendering);
-                        //_testObject.GetComponent<MeshRenderer>().material.mainTexture = (Texture2D)_wikitudeCamera.CameraTexture;
-                        //image = TextureToMat((Texture2D)_wikitudeCamera.CameraTexture, null);
+                    }
+                }
+#elif UNITY_IOS
+                if (!_waitForDelay && (_wikitudeCamera != null || cam != null))
+                {
+                    //if (!_animationPlaying)
+                    //{
+                    //    _animationPlaying = true;
+                    //    Debug.Log("Start animation!!!");
+                    //}
 
-                        //_testObject.GetComponent<MeshRenderer>().material.mainTexture = _camTexture;
-                        //image = TextureToMat(_camTexture, null);
+                    if (_useWikitudeCamera)
+                    {
+                        StartCoroutine(CheckForMarkersFromWikitudeCameraFeed(_wikitudeCamera));
+                    }
+                    else
+                    {
+                        Mat image = TextureToMat(cam, null);
+
+                        ImageProcessingAndDetection(image);
+
+                        if (_testObject != null && _showTestObject)
+                        {
+                            _testObject.GetComponent<MeshRenderer>().material.mainTexture = cam;
+                            //Debug.Log("Camera Info: " + _wikitudeCamera.InputFrameWidth + " x " + _wikitudeCamera.InputFrameHeight + " , " + _wikitudeCamera.FlashMode + " , " + _wikitudeCamera.FocusMode + " , " + _wikitudeCamera.ZoomLevel);
+                            //Debug.Log("Render: " + _wikitudeCamera.EnableCameraRendering + " , " + _wikitudeCamera.RequestInputFrameRendering);
+                            //_testObject.GetComponent<MeshRenderer>().material.mainTexture = (Texture2D)_wikitudeCamera.CameraTexture;
+                            //image = TextureToMat((Texture2D)_wikitudeCamera.CameraTexture, null);
+
+                            //_testObject.GetComponent<MeshRenderer>().material.mainTexture = _camTexture;
+                            //image = TextureToMat(_camTexture, null);
+                        }
+                    }
+
+                    /*Color32[] pix = ((Texture2D)_wikitudeCamera.CameraTexture).GetPixels32();
+                    Debug.Log("Is readable????????? " + _wikitudeCamera.CameraTexture.isReadable + " , " + pix.Length + " , " + _wikitudeCamera.CameraTexture.width + "x" + _wikitudeCamera.CameraTexture.height + " , " + camera.targetTexture);
+                    Texture2D camTexture = new Texture2D(_wikitudeCamera.CameraTexture.width, _wikitudeCamera.CameraTexture.height);
+                    camTexture.SetPixels32(pix);
+                    camTexture.Apply();
+
+                    Mat image = TextureToMat(camTexture, null);
+                    if (_testObject != null && _showTestObject)
+                    {
+                        _testObject.GetComponent<MeshRenderer>().material.mainTexture = camTexture;
                     }
                     CvAruco.DetectMarkers(image, dictionary, out corners, out ids, parameters, out rejected);
-                    Debug.Log(image.Width + "x" + image.Height + " , " + ids.Length + " , " + corners.Length + " , " + rejected.Length);
+
+                    //Debug.Log("After detecting markers: " + _wikitudeCamera.MirroredFrame + " , " + corners.Length + " , " + ids.Length);
+
+                    List<int> alreadyFoundIds = new List<int>();
+                    bool alreadyFound = false;
+
+                    if (ids.Length > 0)
+                    {
+                        for (int i = 0; i < ids.Length; i++)
+                        {
+                            if (alreadyFoundIds.Count > 0)
+                            {
+                                foreach (int id in alreadyFoundIds)
+                                {
+                                    if (ids[i] == id)
+                                    {
+                                        alreadyFound = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (!alreadyFound)
+                            {
+                                alreadyFoundIds.Add(ids[i]);
+                                Debug.Log("IDS FOUND:");
+                                Debug.Log(ids[i]);
+                                if (!_client.playLocally)
+                                {
+                                    //Send id to server
+
+                                }
+                                else
+                                {
+
+                                    _client.InterpretMarker(ids[i], -1);
+                                    _waitForDelay = true;
+                                    StartCoroutine(WaitAndReenable());
+                                }
+                            }
+                        }
+                    }*/
+                }
+                /*if (MiraController.TouchpadButton && !_waitForDelay && cam != null)
+                {
+        Debug.Log("Touch Pressed");
+                    if (!_animationPlaying)
+                    {
+                        _animationPlaying = true;
+                //_wikitudeCamera.enabled = false;
+                        //cam.Play();
+                        Debug.Log("Start animation!!!");
+                    }
+                    Mat image = TextureToMat(cam, null);
+            if (_testObject != null)
+            {
+                //_testObject.GetComponent<MeshRenderer>().material.mainTexture = cam;
+                _testObject.GetComponent<MeshRenderer>().material.mainTexture = (Texture2D)_wikitudeCamera.CameraTexture;
+                image = TextureToMat((Texture2D)_wikitudeCamera.CameraTexture, null);
+        }
+                    CvAruco.DetectMarkers(image, dictionary, out corners, out ids, parameters, out rejected);
 
                     List<int> alreadyFoundIds = new List<int>();
                     bool alreadyFound = false;
@@ -287,9 +315,25 @@ public class DetectMarkers : MonoBehaviour
                         }
                     }
                 }
+                if (MiraController.TouchReleased)
+                {
+                    //stop animation
+                    _animationPlaying = false;
+                //_wikitudeCamera.enabled = true;
+                    //cam.Stop();
+                    Debug.Log("Stop animation!!!");
+                }*/
+#else
+        if (!_waitForDelay && cam != null)
+            {
+                //if (!_animationPlaying)
+                //{
+                //    _animationPlaying = true;
+                //    Debug.Log("Start animation!!!");
+                //}
 
                 /*Color32[] pix = ((Texture2D)_wikitudeCamera.CameraTexture).GetPixels32();
-                Debug.Log("Is readable????????? " + _wikitudeCamera.CameraTexture.isReadable + " , " + pix.Length + " , " + _wikitudeCamera.CameraTexture.width + "x" + _wikitudeCamera.CameraTexture.height + " , " + camera.targetTexture);
+                Debug.Log("Is readable????????? " + _wikitudeCamera.CameraTexture.isReadable + " , " + pix.Length + " , " + _wikitudeCamera.CameraTexture.width + "x" + _wikitudeCamera.CameraTexture.height);
                 Texture2D camTexture = new Texture2D(_wikitudeCamera.CameraTexture.width, _wikitudeCamera.CameraTexture.height);
                 camTexture.SetPixels32(pix);
                 camTexture.Apply();
@@ -298,10 +342,34 @@ public class DetectMarkers : MonoBehaviour
                 if (_testObject != null && _showTestObject)
                 {
                     _testObject.GetComponent<MeshRenderer>().material.mainTexture = camTexture;
-                }
-                CvAruco.DetectMarkers(image, dictionary, out corners, out ids, parameters, out rejected);
+                }*/
 
-                //Debug.Log("After detecting markers: " + _wikitudeCamera.MirroredFrame + " , " + corners.Length + " , " + ids.Length);
+                //Color32[] pix = _wikitudeCamera.CameraTexture.GetPixels32();
+
+                //_camTexture = new Texture2D(_wikitudeCamera.CameraTexture.width, _wikitudeCamera.CameraTexture.height);
+                //_camTexture.SetPixels32(pix);
+                //_camTexture.Apply();
+
+                //Mat image = TextureToMat(_wikitudeCamera.CameraTexture as Texture2D, null);
+                //Debug.Log(cam.width + "x" + cam.height);
+                Mat image = TextureToMat(cam, null);
+
+                ImageProcessingAndDetection(image);
+
+                if (_testObject != null && _showTestObject)
+                {
+                    _testObject.GetComponent<MeshRenderer>().material.mainTexture = cam;
+                    //Debug.Log("Camera Info: " + _wikitudeCamera.InputFrameWidth + " x " + _wikitudeCamera.InputFrameHeight + " , " + _wikitudeCamera.FlashMode + " , " + _wikitudeCamera.FocusMode + " , " + _wikitudeCamera.ZoomLevel);
+                    //Debug.Log("Render: " + _wikitudeCamera.EnableCameraRendering + " , " + _wikitudeCamera.RequestInputFrameRendering);
+                    //_testObject.GetComponent<MeshRenderer>().material.mainTexture = (Texture2D)_wikitudeCamera.CameraTexture;
+                    //image = TextureToMat((Texture2D)_wikitudeCamera.CameraTexture, null);
+
+                    //_testObject.GetComponent<MeshRenderer>().material.mainTexture = _camTexture;
+                    //image = TextureToMat(_camTexture, null);
+                }
+                /*
+                CvAruco.DetectMarkers(image, dictionary, out corners, out ids, parameters, out rejected);
+                //Debug.Log(image.Width + "x" + image.Height + " , " + ids.Length + " , " + corners.Length + " , " + rejected.Length);
 
                 List<int> alreadyFoundIds = new List<int>();
                 bool alreadyFound = false;
@@ -329,11 +397,11 @@ public class DetectMarkers : MonoBehaviour
                             if (!_client.playLocally)
                             {
                                 //Send id to server
+                                //_client.SendMessage()
 
                             }
                             else
                             {
-
                                 _client.InterpretMarker(ids[i], -1);
                                 _waitForDelay = true;
                                 StartCoroutine(WaitAndReenable());
@@ -342,73 +410,29 @@ public class DetectMarkers : MonoBehaviour
                     }
                 }*/
             }
-            /*if (MiraController.TouchpadButton && !_waitForDelay && cam != null)
-            {
-    Debug.Log("Touch Pressed");
-                if (!_animationPlaying)
-                {
-                    _animationPlaying = true;
-            //_wikitudeCamera.enabled = false;
-                    //cam.Play();
-                    Debug.Log("Start animation!!!");
-                }
-                Mat image = TextureToMat(cam, null);
-        if (_testObject != null)
-        {
-            //_testObject.GetComponent<MeshRenderer>().material.mainTexture = cam;
-            _testObject.GetComponent<MeshRenderer>().material.mainTexture = (Texture2D)_wikitudeCamera.CameraTexture;
-            image = TextureToMat((Texture2D)_wikitudeCamera.CameraTexture, null);
-    }
-                CvAruco.DetectMarkers(image, dictionary, out corners, out ids, parameters, out rejected);
-
-                List<int> alreadyFoundIds = new List<int>();
-                bool alreadyFound = false;
-
-                if (ids.Length > 0)
-                {
-                    for (int i = 0; i < ids.Length; i++)
-                    {
-                        if (alreadyFoundIds.Count > 0)
-                        {
-                            foreach (int id in alreadyFoundIds)
-                            {
-                                if (ids[i] == id)
-                                {
-                                    alreadyFound = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (!alreadyFound)
-                        {
-                            alreadyFoundIds.Add(ids[i]);
-                            Debug.Log("IDS FOUND:");
-                            Debug.Log(ids[i]);
-                            if (!_client.playLocally)
-                            {
-                                //Send id to server
-
-                            }
-                            else
-                            {
-                                _client.InterpretMarker(ids[i], -1);
-                                _waitForDelay = true;
-                                StartCoroutine(WaitAndReenable());
-                            }
-                        }
-                    }
-                }
-            }
-            if (MiraController.TouchReleased)
-            {
-                //stop animation
-                _animationPlaying = false;
-            //_wikitudeCamera.enabled = true;
-                //cam.Stop();
-                Debug.Log("Stop animation!!!");
-            }*/
 #endif
+            }
         }
+    }
+
+    public void StartCamera()
+    {
+#if UNITY_EDITOR
+        if (cam != null)
+        {
+            cam.Play();
+        }
+#elif UNITY_IOS
+        if (!_useWikitudeCamera && cam != null)
+        {
+            cam.Play();
+        }
+#else
+        if (cam != null)
+        {
+            cam.Play();
+        }
+#endif
     }
 
     private IEnumerator CheckForMarkersFromWikitudeCameraFeed(WikitudeCamera wikitudeCamera_)
@@ -437,11 +461,18 @@ public class DetectMarkers : MonoBehaviour
         //Mat grey = new Mat();
         Cv2.CvtColor(image, image, ColorConversionCodes.BGR2GRAY);
         Cv2.Flip(image, image, FlipMode.X);
+
+        ImageProcessingAndDetection(image);
+
         if (_testObject != null)
         {
             _testObject.GetComponent<MeshRenderer>().material.mainTexture = _cameraFeed;
             //_testObject.GetComponent<MeshRenderer>().material.mainTexture = wikitudeCamera_.CameraTexture;
         }
+    }
+
+    private void ImageProcessingAndDetection(Mat image)
+    {
         CvAruco.DetectMarkers(image, dictionary, out corners, out ids, parameters, out rejected);
         //Debug.Log(image.Width + "x" + image.Height + " , CountNonZero: " + image.CountNonZero() + " , " + ids.Length + " , " + corners.Length + " , " + rejected.Length);
 

@@ -51,7 +51,7 @@ public class OrganelleSpawn : MonoBehaviour
 
         LeanTween.cancel(_portalEffect);
         LeanTween.scale(_portalEffect, Vector3.one, .5f).setOnComplete(
-            ()=> {
+            () => {
                 _organelleToSpawn.trash = null;
                 _organelleToSpawn.currentOrganellePosition = null;
                 _organelleToSpawn.previousOrganellePositions = new List<OrganellePosition>();
@@ -74,7 +74,7 @@ public class OrganelleSpawn : MonoBehaviour
     {
         LeanTween.cancel(_portalEffect);
         LeanTween.scale(_portalEffect, Vector3.zero, .35f).setOnComplete(
-            ()=> {
+            () => {
                 _portalEffect.transform.localScale = new Vector3(1f, 1f, 0f);
                 _portalEffect.SetActive(false);
             });

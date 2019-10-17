@@ -18,10 +18,10 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
     public List<OrganellePosition> previousOrganellePositions = new List<OrganellePosition>();
 
     //to test while no controller available
-    public bool grabFinished;
+    public bool grabFinished = false;
 
-    public bool scaleToSpawn;
-    public bool scaleToOriginal;
+    public bool scaleToSpawn = false;
+    public bool scaleToOriginal = false;
 
     public bool locked = false;
 
@@ -29,7 +29,7 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
 
     public Transform trash = null;
 
-    public TCPTestClient client;
+    public TCPTestClient client = null;
 
     bool isScaling = false;
 
@@ -40,8 +40,8 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
     private bool isGrabbing = false;
     public bool hasBeenGrabbed = false;
 
-    private RigidbodyConstraints originalConstraints;
-    private Rigidbody rigidBody;
+    //private RigidbodyConstraints originalConstraints;
+    //private Rigidbody rigidBody;
 
     private float lastTouchPosition;
     private float lastTouchCoor;
@@ -58,6 +58,8 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
     private bool _moveHorizontally = true;
 
     private int _scaleAnimId = -1;
+
+    private float _distance = -1f;
 
     /*private void Awake()
     {
@@ -128,8 +130,8 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
     private void Start()
     {
         lastTouchCoor = 0.5f;
-        rigidBody = this.gameObject.GetComponent<Rigidbody>();
-        originalConstraints = rigidBody.constraints;
+        //rigidBody = this.gameObject.GetComponent<Rigidbody>();
+        //originalConstraints = rigidBody.constraints;
 
         _miraReticle = MiraController.Instance.GetComponentInChildren<MiraReticle>();
     }
@@ -155,12 +157,12 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
 
         //NOTE: GRAB CLASS UPDATE
 
-        //Debug.Log("Is Grabbing: " + isGrabbing);
+        Debug.Log("Mira Clicked: " + MiraController.ClickButton);
         // stop grabbing if the user isn't clicking
         if (isGrabbing == true && MiraController.ClickButton == false)
         {
             //Debug.Log("Stop Grabbing!");
-            rigidBody.constraints = originalConstraints;
+            //rigidBody.constraints = originalConstraints;
             isGrabbing = false;
             //hasBeenGrabbed = true;
             if (client.playLocally)
@@ -176,16 +178,17 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
 
         if (isGrabbing == true)
         {
+            Debug.Log(_miraReticle);
             _miraReticle.gameObject.SetActive(false);
 
             // freeze the position of the physics simulation temporarily so the object doesn't
             // spiral out of control while its being interacted with
             // you could freeze the rotation as well if you wanted
-            rigidBody.constraints = RigidbodyConstraints.FreezePosition;
+            //rigidBody.constraints = RigidbodyConstraints.FreezePosition;
 
-            float touchInfluence = 0.0f;
-            float thisTouch = 0.0f;
-            float touchIncrement = 1.0f;
+            //float touchInfluence = 0.0f;
+            //float thisTouch = 0.0f;
+            //float touchIncrement = 1.0f;
             /*if (MiraController.TouchHeld == true)
 			{
 				// MiraController.Touchpos.Y goes from 1 to 0 , near to far
@@ -212,11 +215,73 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
 					lastTouchCoor = MiraController.TouchPos.y;
 				}
 			}*/
-            lastTouchPosition = thisTouch;
+            //lastTouchPosition = thisTouch;
+
+            // from the MiraGrabExample file
+            // get the distance from this object to the controller
+            Vector3 direction = MiraController.Orientation * Vector3.forward;
+            float currentDistance = (MiraController.Position - transform.position).magnitude;
+            //Debug.Log("Current Distance: " + currentDistance + " , Mira Direction: " + MiraController.Direction.normalized + " , From Quaternion: " + direction + " , Angles: " + MiraController.Orientation.eulerAngles);
+
+            //if (currentDistance > 3.25f)
+            //{
+            //    currentDistance = 3.25f;
+            //}
+
+            // the new distance of the grabbed object is the current distance,
+            // adjusted by the users touch, in the direction it was from the controller
+            Vector3 newLength = direction * currentDistance;
+            //Vector3 newLength = MiraController.Direction.normalized * _distance;
+            Vector3 newPosition = MiraController.Position + newLength;
+
+            float maxDistance = .5f;
+
+            if (newPosition.x > maxDistance)
+            {
+                newPosition = new Vector3(maxDistance, newPosition.y, newPosition.z);
+            }
+            else if (newPosition.x < -maxDistance)
+            {
+                newPosition = new Vector3(-maxDistance, newPosition.y, newPosition.z);
+            }
+            if (newPosition.z > maxDistance)
+            {
+                newPosition = new Vector3(newPosition.x, newPosition.y, maxDistance);
+            }
+            else if (newPosition.z < -maxDistance)
+            {
+                newPosition = new Vector3(newPosition.x, newPosition.y, -maxDistance);
+            }
+            if (newPosition.y > maxDistance)
+            {
+                newPosition = new Vector3(newPosition.x, maxDistance, newPosition.z);
+            }
+            else if (newPosition.y < -maxDistance)
+            {
+                newPosition = new Vector3(newPosition.x, -maxDistance, newPosition.z);
+            }
+
+            if (_moveHorizontally)
+            {
+                newPosition = new Vector3(newPosition.x, 0.13f, newPosition.z);
+            }
+            else
+            {
+                newPosition = new Vector3(newPosition.x, newPosition.y, 0f);
+            }
+
+            if (!client.playLocally)
+            {
+                client.SendTCPMessage(GrabRequest(newPosition).ToString());
+            }
+            else
+            {
+                transform.position = newPosition;
+            }
 
             // get the distance from this object to the controller
 
-            float currentDistance = (MiraController.Position - transform.position).magnitude * 100f;
+            /*float currentDistance = (MiraController.Position - transform.position).magnitude * 100f;
 
             //MiraController.Orientation
 
@@ -258,13 +323,14 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
                 {
                     transform.position = reallyNewPositon;
                 }
-            }
+            }*/
         }
     }
 
     public void ChangeMovingPlane()
     {
         _moveHorizontally = !_moveHorizontally;
+        Debug.Log("Change moving plane: " + _moveHorizontally);
     }
 
     public static bool LinePlaneIntersection(out Vector3 intersection, Vector3 linePoint, Vector3 lineVec, Vector3 planeNormal, Vector3 planePoint)
@@ -469,6 +535,11 @@ public class OrganelleController : MonoBehaviour, IPointerDownHandler, IPointerU
         {
             Debug.Log("Click Button Pressed");
             isGrabbing = true;
+            if (_miraReticle == null)
+            {
+                _miraReticle = MiraController.Instance.GetComponentInChildren<MiraReticle>();
+            }
+            //_distance = (MiraController.Position - transform.position).magnitude;
             if (client.playLocally)
             {
                 OnGrabStarted();
