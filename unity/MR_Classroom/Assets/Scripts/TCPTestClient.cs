@@ -151,6 +151,48 @@ public class TCPTestClient : MonoBehaviour
                         }
                     }
                 }
+                else if (current_data["type"] == "initialize")
+                {
+                    Debug.Log("###Initialize:");
+                    Debug.Log(current_data.ToString());
+                    if (current_data["sim"].AsInt == 47 && !simulationStarted)
+                    {
+                        sim_controller.currentCell = SimulationController.TypeOfCell.Animal;
+                        sim_controller.StartSimulation(0);
+                        simulationStarted = true;
+
+                    }
+                    else if (current_data["sim"].AsInt == 48 && !simulationStarted)
+                    {
+                        sim_controller.currentCell = SimulationController.TypeOfCell.Plant;
+                        sim_controller.StartSimulation(0);
+                        simulationStarted = true;
+
+                    }
+                    else if (current_data["sim"].AsInt == 49 && !simulationStarted)
+                    {
+                        sim_controller.currentCell = SimulationController.TypeOfCell.Prokaryotic;
+                        sim_controller.StartSimulation(0);
+                        simulationStarted = true;
+                    }
+                        for(int i = 0; i < current_data.Count; i++)
+                        {
+                            if (current_data[i]["uid"] != null && grabbableObjects.ContainsKey(current_data[i]["uid"]))
+                            {
+                            
+                                int uid = current_data[i]["uid"].AsInt;
+                                float x = current_data[i]["x"].AsFloat;
+                                float y = current_data[i]["y"].AsFloat;
+                                float z = current_data[i]["z"].AsFloat;
+                                GameObject current = grabbableObjects[uid];
+                                current.SetActive(true);
+                                current.transform.position =  new Vector3(x, y, z);
+                            }   
+                        }
+                   
+
+
+                }
                 else if (current_data["type"] == "deactivate")
                 {
                     deactivatedId = current_data["eventid"].AsInt;

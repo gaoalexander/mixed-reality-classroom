@@ -30,6 +30,7 @@ organelles = [0,1,2,3,4,5,6,7,8,9,10,11,12,19,27,28,34]
 tosend = Queue(maxsize=0)
 
 # interval = 0.01
+expire = 5 * 60
 toflush = []
 
 def sendmessages():
@@ -54,6 +55,19 @@ def sendmessages():
             clients.pop(client)
             toflush.pop(i)
 
+# skipped = False
+# # poll for clients and clear state if none are connected
+# def checkAndFlush():
+#     global skipped
+
+#     if len(clients) == 0:
+#         if not skipped:
+#             skipped = True
+#             return
+#         state = {}
+            
+# threading.Timer(expire, checkAndFlush).start()
+            
 # def sendmessages():
     # threading.Timer(interval, sendmessages).start()
 spawn_manager = {}
@@ -83,7 +97,7 @@ def findFreeSpawnPoints(detected, spawn_points):
     random.shuffle(free_points)
     for id in detected:
         if id not in organelles:
-            if((not "sim" in state) and (id == 47 or id == 48 or id == 49)):
+            if((not "sim" in state) and (id == 47 or id == 48 or id == 49)):    
                 state["sim"] = id
             result.append(-1)
         elif id in spawn_manager:
@@ -112,13 +126,20 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
         self.request.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         print("new connection:")
         print(self.request.getpeername()[0])
+        global state
         #send everything once someone connects
+        # if state is None:
+        #     state = {}
+            
         senddata = state
         senddata["type"] = "initialize"
-        tosend.put(senddata)
+        
+        try:
+            self.request.sendall(json.dumps(senddata).encode('utf-8'))
+        except OSError as e:
+            print(str(e) + ":\n" + self.request.getpeername())
 
         while(True):
-            print(state)
             # print(clients)
             try:
                 # self.request is the TCP socket connected to the client
@@ -129,7 +150,7 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
             if not self.data:
                 break
             #print "{} wrote:".format(self.client_address[0])
-            #print (self.data)
+            # print (self.data)
             senddata = {}
             array = self.data.decode('utf-8').split('`')
 
@@ -155,29 +176,33 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
 
                 tosend.put(senddata)
             elif (data["type"] == "spawn"):
-                state[data['uid']] = {}
+                state[data['uid']] = {} 
                 state[data['uid']]['lockid'] = ''
                 state[data['uid']]['active'] = True
-                state[data['uid']] = data                
+                state[data['uid']]['uid'] = data['uid'];
+                state[data['uid']] = data['x']
+                state[data['uid']] = data['y']
+                state[data['uid']] = data['z']
             elif (data["type"] == "check"):
                 senddata["type"] = "check"
                 senddata["success"] = np.array_equal(combination_ids,target)
+            elif(data["type"] == "active"):
+                senddata["type"] = "active"
+                data["ids"] = data["ids"].replace("[", "")
+                data["ids"] = data["ids"].replace("]", "")
+                senddata["ids"] =  data["ids"].split(',')
+                senddata["ids"] = [int(i) for i in senddata["ids"]] 
+                senddata["spawn"] = findFreeSpawnPoints(senddata["ids"],spawn_points)   
+                tosend.put(senddata)
             elif(data["type"] == "release"):
                 if (data['uid'] in state):
                     state[data['uid']]['lockid'] = ""
                     print("release object")
                     senddata = state
                     senddata['type'] = "release"
-                    senddata['eventid'] = data['uid']        
+                    senddata['eventid'] = data['uid']
+                    
                     tosend.put(senddata)
-            elif(data["type"] == "active"):
-                senddata["type"] = "active"
-                data["ids"] = data["ids"].replace("[", "")
-                data["ids"] = data["ids"].replace("]", "")
-                senddata["ids"] =  data["ids"].split(',')
-                senddata["ids"] = [int(i) for i in senddata["ids"]]
-                senddata["spawn"] = findFreeSpawnPoints(senddata["ids"],spawn_points)
-                tosend.put(senddata)
             elif(data["type"] == "deactivate"):
                 if (data['uid'] in state):
                     state[data['uid']]['active'] = False
@@ -187,10 +212,16 @@ class ThreadedTCPHandler(socketserver.BaseRequestHandler):
                     senddata['eventid'] = data['uid']
 
                     tosend.put(senddata)
-
+            elif(data["type"] == "restart"):
+                state = {}
+                senddata['type'] = 'restart'
+                tosend.put(senddata)
         
         print("killing connection" + self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1]))
         del clients[self.request.getpeername()[0] + ":" + str(self.request.getpeername()[1])]
+
+        if len(clients) == 0:
+            state = {}
         
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     allow_reuse_address = True
@@ -275,11 +306,10 @@ while True:
         detected = detectMarkers(imarr)
         
         if(detected is not None):
-            #print(detected)
+            print(detected)
             senddata = {}
             senddata["type"] = "active"
             senddata["ids"] = detected.tolist()
-            print(senddata["ids"])
             senddata["spawn"] = findFreeSpawnPoints(detected.tolist(),spawn_points)
             #senddata["spawn"] = random.sample(range(0,len(spawn_points)), len(senddata["ids"]))
 
